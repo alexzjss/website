@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>blog</title>
+	<style>
+		:root {
+			--bg: #f8f7f3;
+			--ink: #1a1a1a;
+			--muted: #57534e;
+			--card: #ffffff;
+			--line: #d6d3d1;
+			--accent: #0f766e;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			padding: 2rem 1rem;
+			font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+			color: var(--ink);
+			background:
+				radial-gradient(circle at 10% 10%, #e7f5f3 0, transparent 32%),
+				radial-gradient(circle at 90% 90%, #fef3c7 0, transparent 36%),
+				var(--bg);
+		}
+
+		main {
+			max-width: 860px;
+			margin: 0 auto;
+			padding: 1.25rem;
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			background: color-mix(in srgb, var(--card) 92%, #f0fdfa);
+			box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+		}
+
+		h1 {
+			margin: 0;
+			font-size: clamp(1.8rem, 4vw, 2.5rem);
+		}
+
+		.status {
+			margin: 0.35rem 0 1rem;
+			color: var(--muted);
+			font-size: 0.98rem;
+		}
+
+		.toolbar {
+			display: flex;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+			flex-wrap: wrap;
+		}
+
+		button {
+			border: 1px solid var(--accent);
+			background: var(--accent);
+			color: #fff;
+			border-radius: 999px;
+			padding: 0.45rem 0.85rem;
+			cursor: pointer;
+			font: inherit;
+		}
+
+		button:hover {
+			filter: brightness(1.06);
+		}
+
+		.tree {
+			list-style: none;
+			padding-left: 0;
+			margin: 0;
+			border-top: 1px solid var(--line);
+		}
+
+		.tree ul {
+			list-style: none;
+			margin: 0;
+			padding: 0.35rem 0 0.35rem 1.1rem;
+			border-left: 1px dashed var(--line);
+		}
+
+		.tree li {
+			padding: 0.26rem 0;
+		}
+
+		.folder {
+			color: #0f172a;
+			font-weight: 600;
+		}
+
+		.file a {
+			color: #0f766e;
+			text-decoration: none;
+		}
+
+		.file a:hover {
+			text-decoration: underline;
+		}
+
+		@media (max-width: 640px) {
+			main {
+				padding: 1rem;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<h1>Blog</h1>
+		<p class="status" id="status">Carregando itens de ./blog/...</p>
+		<div class="toolbar">
+			<button type="button" id="refreshBtn">Atualizar agora</button>
+		</div>
+		<ul class="tree" id="tree"></ul>
+	</main>
+
+	<script>
+		const BLOG_ROOT = "./blog/";
+		const REFRESH_EVERY_MS = 5000;
+
+		const treeElement = document.getElementById("tree");
+		const statusElement = document.getElementById("status");
+		const refreshButton = document.getElementById("refreshBtn");
+
+		let lastSerializedTree = "";
+
+		function setStatus(message) {
+			statusElement.textContent = message;
+		}
+
+		function isHiddenName(name) {
+			return name.startsWith(".");
+		}
+
+		function normalizePath(pathname) {
+			return pathname.endsWith("/") ? pathname : pathname + "/";
+		}
+
+		function readEntriesFromDirectoryHtml(htmlText, baseUrl) {
+			const parser = new DOMParser();
+			const documentNode = parser.parseFromString(htmlText, "text/html");
+			const anchors = Array.from(documentNode.querySelectorAll("a[href]"));
+			const entriesByPath = new Map();
+
+			for (const anchor of anchors) {
+				const href = anchor.getAttribute("href");
+				if (!href || href.startsWith("#") || href.startsWith("?")) {
+					continue;
+				}
+
+				const targetUrl = new URL(href, baseUrl);
+				if (targetUrl.origin !== baseUrl.origin) {
+					continue;
+				}
+
+				if (!targetUrl.pathname.startsWith(baseUrl.pathname)) {
+					continue;
+				}
+
+				const relativePath = targetUrl.pathname.slice(baseUrl.pathname.length);
+				if (!relativePath || relativePath === "../") {
+					continue;
+				}
+
+				const cleanedRelative = relativePath.replace(/\/+$/, "");
+				const firstSegment = cleanedRelative.split("/")[0];
+				if (!firstSegment || isHiddenName(firstSegment)) {
+					continue;
+				}
+
+				const isDirectory = href.endsWith("/") || relativePath.includes("/");
+				const entryPath = firstSegment + (isDirectory ? "/" : "");
+
+				if (!entriesByPath.has(entryPath)) {
+					entriesByPath.set(entryPath, {
+						name: firstSegment,
+						isDirectory
+					});
+				}
+			}
+
+			return Array.from(entriesByPath.values()).sort((a, b) => {
+				if (a.isDirectory !== b.isDirectory) {
+					return a.isDirectory ? -1 : 1;
+				}
+				return a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" });
+			});
+		}
+
+		async function fetchDirectoryTree(url, visited = new Set()) {
+			const normalized = normalizePath(url.pathname);
+			if (visited.has(normalized)) {
+				return { name: url.pathname.split("/").filter(Boolean).pop() || "blog", children: [] };
+			}
+			visited.add(normalized);
+
+			const response = await fetch(url.href, { cache: "no-store" });
+			if (!response.ok) {
+				throw new Error(`Falha ao ler ${url.pathname} (${response.status})`);
+			}
+
+			const contentType = response.headers.get("content-type") || "";
+			if (!contentType.includes("text/html")) {
+				throw new Error("O servidor nao expoe listagem de diretorio em HTML para ./blog/.");
+			}
+
+			const html = await response.text();
+			const entries = readEntriesFromDirectoryHtml(html, url);
+			const children = [];
+
+			for (const entry of entries) {
+				if (entry.isDirectory) {
+					const childUrl = new URL(entry.name + "/", url);
+					const childNode = await fetchDirectoryTree(childUrl, visited);
+					children.push({
+						type: "directory",
+						name: entry.name,
+						href: childUrl.pathname,
+						children: childNode.children
+					});
+				} else {
+					children.push({
+						type: "file",
+						name: entry.name,
+						href: new URL(entry.name, url).pathname
+					});
+				}
+			}
+
+			return {
+				name: url.pathname.split("/").filter(Boolean).pop() || "blog",
+				children
+			};
+		}
+
+		function renderTree(nodes, parentElement) {
+			parentElement.innerHTML = "";
+			for (const node of nodes) {
+				const item = document.createElement("li");
+				if (node.type === "directory") {
+					const label = document.createElement("span");
+					label.className = "folder";
+					label.textContent = node.name + "/";
+					item.appendChild(label);
+
+					const childList = document.createElement("ul");
+					renderTree(node.children, childList);
+					item.appendChild(childList);
+				} else {
+					item.className = "file";
+					const link = document.createElement("a");
+					link.href = node.href;
+					link.textContent = node.name;
+					item.appendChild(link);
+				}
+				parentElement.appendChild(item);
+			}
+		}
+
+		async function refreshTree() {
+			try {
+				setStatus("Atualizando listagem...");
+				const rootUrl = new URL(BLOG_ROOT, window.location.href);
+				const tree = await fetchDirectoryTree(rootUrl);
+				const serializedTree = JSON.stringify(tree.children);
+
+				if (serializedTree !== lastSerializedTree) {
+					renderTree(tree.children, treeElement);
+					lastSerializedTree = serializedTree;
+				}
+
+				const now = new Date();
+				setStatus(`Atualizado em ${now.toLocaleTimeString("pt-BR")}`);
+			} catch (error) {
+				setStatus(error instanceof Error ? error.message : "Nao foi possivel carregar o blog.");
+			}
+		}
+
+		refreshButton.addEventListener("click", refreshTree);
+		refreshTree();
+		setInterval(refreshTree, REFRESH_EVERY_MS);
+	</script>
+</body>
+</html>
