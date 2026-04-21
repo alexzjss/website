@@ -1,0 +1,1 @@
+https://huggingface.co/ - site com database de diferentes modelos
