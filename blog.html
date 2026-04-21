@@ -124,6 +124,7 @@
 	<script>
 		const BLOG_ROOT = "./blog/";
 		const REFRESH_EVERY_MS = 5000;
+		const GITHUB_API_BASE = "https://api.github.com";
 
 		const treeElement = document.getElementById("tree");
 		const statusElement = document.getElementById("status");
@@ -141,6 +142,37 @@
 
 		function normalizePath(pathname) {
 			return pathname.endsWith("/") ? pathname : pathname + "/";
+		}
+
+		function sortEntries(entries) {
+			return entries.sort((a, b) => {
+				if (a.isDirectory !== b.isDirectory) {
+					return a.isDirectory ? -1 : 1;
+				}
+				return a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" });
+			});
+		}
+
+		function detectGitHubRepoContext() {
+			if (!window.location.hostname.endsWith("github.io")) {
+				return null;
+			}
+
+			const owner = window.location.hostname.split(".")[0];
+			const segments = window.location.pathname.split("/").filter(Boolean);
+			const firstSegment = segments[0] || "";
+			const hasProjectPrefix = firstSegment && !firstSegment.includes(".");
+			const repo = hasProjectPrefix ? firstSegment : `${owner}.github.io`;
+
+			return { owner, repo };
+		}
+
+		function blogRootPathInRepo() {
+			return BLOG_ROOT.replace(/^\.?\//, "").replace(/\/$/, "");
+		}
+
+		function toWebsiteHrefFromRepoPath(repoPath) {
+			return `./${repoPath}`;
 		}
 
 		function readEntriesFromDirectoryHtml(htmlText, baseUrl) {
@@ -186,15 +218,10 @@
 				}
 			}
 
-			return Array.from(entriesByPath.values()).sort((a, b) => {
-				if (a.isDirectory !== b.isDirectory) {
-					return a.isDirectory ? -1 : 1;
-				}
-				return a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" });
-			});
+			return sortEntries(Array.from(entriesByPath.values()));
 		}
 
-		async function fetchDirectoryTree(url, visited = new Set()) {
+		async function fetchDirectoryTreeFromHtml(url, visited = new Set()) {
 			const normalized = normalizePath(url.pathname);
 			if (visited.has(normalized)) {
 				return { name: url.pathname.split("/").filter(Boolean).pop() || "blog", children: [] };
@@ -218,7 +245,7 @@
 			for (const entry of entries) {
 				if (entry.isDirectory) {
 					const childUrl = new URL(entry.name + "/", url);
-					const childNode = await fetchDirectoryTree(childUrl, visited);
+					const childNode = await fetchDirectoryTreeFromHtml(childUrl, visited);
 					children.push({
 						type: "directory",
 						name: entry.name,
@@ -238,6 +265,80 @@
 				name: url.pathname.split("/").filter(Boolean).pop() || "blog",
 				children
 			};
+		}
+
+		function encodeRepoPath(pathname) {
+			return pathname
+				.split("/")
+				.filter(Boolean)
+				.map((segment) => encodeURIComponent(segment))
+				.join("/");
+		}
+
+		async function fetchGithubDirectory(owner, repo, repoPath) {
+			const encodedPath = encodeRepoPath(repoPath);
+			const apiUrl = `${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${encodedPath}`;
+			const response = await fetch(apiUrl, {
+				headers: {
+					Accept: "application/vnd.github+json"
+				},
+				cache: "no-store"
+			});
+
+			if (!response.ok) {
+				throw new Error(`Falha ao ler API do GitHub em ${repoPath} (${response.status})`);
+			}
+
+			const data = await response.json();
+			if (!Array.isArray(data)) {
+				throw new Error("Resposta inesperada da API do GitHub para listagem de pasta.");
+			}
+
+			const entries = sortEntries(
+				data
+					.filter((item) => item && (item.type === "dir" || item.type === "file"))
+					.filter((item) => !isHiddenName(item.name))
+					.map((item) => ({ name: item.name, isDirectory: item.type === "dir", path: item.path }))
+			);
+
+			const children = [];
+			for (const entry of entries) {
+				if (entry.isDirectory) {
+					const childNode = await fetchGithubDirectory(owner, repo, entry.path);
+					children.push({
+						type: "directory",
+						name: entry.name,
+						href: toWebsiteHrefFromRepoPath(entry.path) + "/",
+						children: childNode.children
+					});
+				} else {
+					children.push({
+						type: "file",
+						name: entry.name,
+						href: toWebsiteHrefFromRepoPath(entry.path)
+					});
+				}
+			}
+
+			return {
+				name: repoPath.split("/").filter(Boolean).pop() || "blog",
+				children
+			};
+		}
+
+		async function fetchDirectoryTree() {
+			const rootUrl = new URL(BLOG_ROOT, window.location.href);
+			try {
+				return await fetchDirectoryTreeFromHtml(rootUrl);
+			} catch (htmlError) {
+				const githubContext = detectGitHubRepoContext();
+				if (!githubContext) {
+					throw htmlError;
+				}
+
+				const repoPath = blogRootPathInRepo();
+				return fetchGithubDirectory(githubContext.owner, githubContext.repo, repoPath);
+			}
 		}
 
 		function renderTree(nodes, parentElement) {
@@ -267,8 +368,7 @@
 		async function refreshTree() {
 			try {
 				setStatus("Atualizando listagem...");
-				const rootUrl = new URL(BLOG_ROOT, window.location.href);
-				const tree = await fetchDirectoryTree(rootUrl);
+				const tree = await fetchDirectoryTree();
 				const serializedTree = JSON.stringify(tree.children);
 
 				if (serializedTree !== lastSerializedTree) {
