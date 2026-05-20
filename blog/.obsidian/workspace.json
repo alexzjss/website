@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "aulas/neural networks - 3b1b.md",
+                "file": "essays/como chatgpt funciona - fabio akita.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "neural networks - 3b1b"
+              "title": "como chatgpt funciona - fabio akita"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "aulas/neural networks - 3b1b.md",
+                "file": "essays/como chatgpt funciona - fabio akita.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for neural networks - 3b1b"
+              "title": "Backlinks for como chatgpt funciona - fabio akita"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "aulas/neural networks - 3b1b.md",
+                "file": "essays/como chatgpt funciona - fabio akita.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from neural networks - 3b1b"
+              "title": "Outgoing links from como chatgpt funciona - fabio akita"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "aulas/neural networks - 3b1b.md",
+                "file": "essays/como chatgpt funciona - fabio akita.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of neural networks - 3b1b"
+              "title": "Outline of como chatgpt funciona - fabio akita"
             }
           }
         ]
@@ -185,9 +185,9 @@
   },
   "active": "68f546f0a7e0f219",
   "lastOpenFiles": [
+    "aulas/neural networks - 3b1b.md",
     "essays/the fear of enjoying your life - alastair.md",
     "essays/como chatgpt funciona - fabio akita.md",
-    "aulas/neural networks - 3b1b.md",
     "aulas",
     "essays/Untitled.md",
     "Untitled.md",

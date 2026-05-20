@@ -37,5 +37,11 @@ A derivada mede a taxa de mudança de uma função, logo, ela diz como o y muda 
 Gradientes de múltiplas variáveis é um vetor que aponta na direção da ascendente mais íngrime da função, importante para algoritmos como o Gradient Descendent (encontrar a função de custo mínimo para otimização de machine learning).
 ## Loss Function
 Uma função que quantifica a discrepância entre resultados previstos com os valores reais da função (treinado pela máquina)
+# Stable Diffusion
+Usa um modelo de difusão (diferente dos transformers) com um processo de distribuição como um gaussian noise, gradualmente refinando o barulho até chegar numa imagem semelhante aos dados recebidos no treinamento. Esse processo aprende a predizer o próximo passo da difusão.
+# Contexto
+Backtracking em memória, as respostas costumam ser boas porque levam em conta o texto anterior parcialmente, mas existe um limite do quanto elas podem voltar atrás (GPT-4 lê até 32K tokens em backtrack, o GPT-5.4 tem 128K de tokens) e as respostas também tem um limite, o que torna mais caro o próximo resultado e maiores as chances de perder o contexto e a coerência em respostas ou trabalhos longos. 
 
-(28min)
+Em processos longos, grande parte do gasto da máquina vai todo para manter o gerenciamento do contexto de tokens ao invés do trabalho atual.
+# Transformers
+GPT = Generative Pre-Trained Transformer, é apenas um gerador de texto, um auto-complete em larga escala.
