@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Espaço para a foto">
+  <rect width="400" height="500" fill="#e6e6e2"/>
+  <circle cx="200" cy="195" r="66" fill="#cfcfc9"/>
+  <path d="M60 470c0-77 63-139 140-139s140 62 140 139z" fill="#cfcfc9"/>
+  <text x="200" y="492" font-family="monospace" font-size="15" fill="#8a8a84" text-anchor="middle">troque por public/images/alex.jpg</text>
+</svg>
