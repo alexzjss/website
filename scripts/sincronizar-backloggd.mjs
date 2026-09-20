@@ -32,22 +32,12 @@ function htmlValue(value) {
   return decodeXml(value.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim())
 }
 
-function imageUrl(card) {
-  const image = card.match(/<img\b[^>]*>/i)?.[0] ?? ''
-  const source = image.match(/\b(?:src|data-src|data-original)=["']([^"']+)["']/i)?.[1]
-  if (source) return source
-
-  const srcset = image.match(/\bsrcset=["']([^"']+)["']/i)?.[1]
-  return srcset?.split(',').at(-1)?.trim().split(/\s+/)[0] ?? ''
-}
-
 function parseGames(html) {
   return [...html.matchAll(/<a\s+[^>]*href=["'](\/games\/[^"'?]+)["'][^>]*>[\s\S]{0,5000}?<\/a>/gi)]
     .map(([, gamePath]) => {
       const start = Math.max(0, html.indexOf(gamePath) - 1200)
       const card = html.slice(start, Math.min(html.length, start + 6500))
       const rating = card.match(/data-rating=["']([\d.]+)["']/i)
-      const cover = imageUrl(card)
 
       if (!gamePath) return null
 
@@ -64,7 +54,6 @@ function parseGames(html) {
         data: new Date().toISOString().slice(0, 10),
         resumo: 'Jogo zerado no Backloggd.',
         tags: ['Backloggd', 'Zerados'],
-        ...(cover ? { capa: cover } : {}),
         origemUrl: `https://backloggd.com${gamePath}`,
         corpo: [{ tipo: 'p', texto: 'Jogo zerado no Backloggd.' }],
       }
@@ -79,12 +68,45 @@ function normalizeTitle(title) {
     .replace(/[^\da-z]+/g, '')
 }
 
+async function buscarCapaSteam(titulo) {
+  const url = `https://steamcommunity.com/actions/SearchApps/${encodeURIComponent(titulo)}`
+  const response = await fetch(url)
+  if (!response.ok) return ''
+
+  const resultados = await response.json()
+  const resultado = resultados.find((item) => normalizeTitle(item.name) === normalizeTitle(titulo))
+  return resultado
+    ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${resultado.appid}/library_600x900.jpg`
+    : ''
+}
+
+async function adicionarCapas(reviews) {
+  const resultado = []
+  for (let index = 0; index < reviews.length; index += 6) {
+    const lote = reviews.slice(index, index + 6)
+    resultado.push(
+      ...(await Promise.all(
+        lote.map(async (review) => {
+          try {
+            const capa = await buscarCapaSteam(review.titulo)
+            if (capa) return { ...review, capa }
+          } catch {
+            // O snapshot continua válido mesmo se a fonte de capas falhar.
+          }
+          const { capa: _capa, ...semCapa } = review
+          return semCapa
+        }),
+      )),
+    )
+  }
+  return resultado
+}
+
 function parseFeed(xml) {
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, item]) => {
     const title = tagValue(item, 'title').replace(/\s+-\s+★.*$/, '')
     const guid = tagValue(item, 'guid').replace(/^backloggd-review-/, '')
     const reviewUrl = tagValue(item, 'link')
-    const cover = tagValue(item, 'url')
 
     return {
       slug: `backloggd-${guid}`,
@@ -94,7 +116,6 @@ function parseFeed(xml) {
       data: toDate(tagValue(item, 'pubDate')),
       resumo: tagValue(item, 'description'),
       tags: ['Backloggd'],
-      ...(cover ? { capa: cover } : {}),
       ...(reviewUrl ? { origemUrl: reviewUrl } : {}),
       corpo: [{ tipo: 'p', texto: tagValue(item, 'description') }],
     }
@@ -130,7 +151,7 @@ try {
   const games = (await Promise.all(gameResponses.map((response) => response.text()))).flatMap(parseGames)
   const reviewed = parseFeed(await feedResponse.text())
   if (games.length === 0) throw new Error('nenhum jogo encontrado; resposta pode ser o desafio anti-bot')
-  const reviews = mergeGames(games, reviewed)
+  const reviews = await adicionarCapas(mergeGames(games, reviewed))
   writeFileSync(outputPath, render(reviews), 'utf8')
   console.log(`Backloggd sincronizado: ${reviews.length} jogo(s) zerado(s), ${reviewed.length} com review.`)
 } catch (error) {

@@ -48,8 +48,11 @@ export default function ReviewPage() {
             <img
               src={capa}
               alt={`Capa de ${review.titulo}`}
+              loading="lazy"
               onError={(e) => {
-                if (!e.currentTarget.src.includes('generica')) e.currentTarget.src = CAPA_GENERICA
+                if (e.currentTarget.src !== new URL(CAPA_GENERICA, window.location.href).href) {
+                  e.currentTarget.src = CAPA_GENERICA
+                }
               }}
             />
           </span>
