@@ -47,7 +47,7 @@ secao("RESUMO PROFISSIONAL")
 S.append(Paragraph(
     "Estudante de Sistemas de Informação (USP) atuando em Ciência de Dados, Inteligência Artificial e Engenharia "
     "de Software com Python, Java, JavaScript e SQL. Histórico consistente de liderança e trabalho em equipe na "
-    "coordenação de projetos multidisciplinares em cinco organizações estudantis, com resultados reconhecidos e "
+     "coordenação de projetos multidisciplinares em sete organizações estudantis, com resultados reconhecidos e "
     "projetos entregues em produção. Em busca de estágio em Tecnologia da Informação com foco em Dados e IA e "
     "desenvolvimento de software.", corpo))
 

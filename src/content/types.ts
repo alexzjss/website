@@ -123,6 +123,8 @@ export type Review = {
   steamAppId?: number
   /** URL ou caminho local de capa; tem prioridade sobre o steamAppId */
   capa?: string
+  /** URL da publicação original, quando a review vem de uma fonte externa */
+  origemUrl?: string
   corpo: ReviewBlock[]
 }
 

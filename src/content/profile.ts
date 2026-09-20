@@ -8,14 +8,14 @@ export const profile: Profile = {
   manchete: 'Dados, inteligência artificial e engenharia de software com impacto real.',
   resumo: [
     'Estudante de Sistemas de Informação na USP atuando em Ciência de Dados, Inteligência Artificial e Engenharia de Software com Python, Java, JavaScript e SQL.',
-    'Tenho histórico de liderança e trabalho em equipe na coordenação de projetos multidisciplinares em cinco organizações estudantis, com resultados inovadores reconhecidos. Procuro estágio em Tecnologia da Informação com foco em Dados e IA e desenvolvimento de software.',
+    'Tenho histórico de liderança e trabalho em equipe na coordenação de projetos multidisciplinares em sete organizações estudantis, com resultados inovadores reconhecidos. Procuro estágio em Tecnologia da Informação com foco em Dados e IA e desenvolvimento de software.',
   ],
   local: 'São Paulo, SP — Brasil',
   email: 'alexzjss@gmail.com',
   telefone: '+55 (11) 92220-9858',
   foto: './images/alex.jpg',
   avatar: './images/alex-avatar.jpg',
-  cv: './curriculo.pdf',
+  cv: '/curriculo.pdf',
   linkedin: 'https://www.linkedin.com/in/alex-jsz/',
   github: 'https://github.com/alexzjss',
   links: [
@@ -29,6 +29,6 @@ export const profile: Profile = {
 export const metricas: Metrica[] = [
   { valor: '700+', rotulo: 'alunos atendidos pelo DaSIboard' },
   { valor: '3', rotulo: 'primeiros lugares em competições' },
-  { valor: '5', rotulo: 'organizações estudantis' },
+  { valor: '7', rotulo: 'organizações estudantis' },
   { valor: '1', rotulo: 'bolsa de iniciação científica' },
 ]

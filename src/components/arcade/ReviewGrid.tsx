@@ -94,23 +94,45 @@ export default function ReviewGrid() {
 
       <div className="prateleira">
         {lista.map((r, i) => (
-          <Link
-            key={r.slug}
-            to={`/arcade/reviews/${r.slug}`}
-            className="review-card"
-            style={{ '--atraso': `${i * 70}ms` } as React.CSSProperties}
-          >
-            <Capa url={capaVertical(r)} titulo={r.titulo} />
-            <span className="review-nota-bolha">{r.nota.toFixed(1)}</span>
-            <span className="review-card-corpo">
-              <span className="review-card-titulo">{r.titulo}</span>
-              <span className="review-card-meta">
-                {r.plataforma}
-                {r.tempoDeJogo ? ` · ${r.tempoDeJogo}` : ''}
+          r.origemUrl ? (
+            <a
+              key={r.slug}
+              href={r.origemUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="review-card"
+              style={{ '--atraso': `${i * 70}ms` } as React.CSSProperties}
+            >
+              <Capa url={capaVertical(r)} titulo={r.titulo} />
+              <span className="review-nota-bolha">{r.nota.toFixed(1)}</span>
+              <span className="review-card-corpo">
+                <span className="review-card-titulo">{r.titulo}</span>
+                <span className="review-card-meta">
+                  {r.plataforma}
+                  {r.tempoDeJogo ? ` · ${r.tempoDeJogo}` : ''}
+                </span>
+                <span className="review-card-resumo">{r.resumo}</span>
               </span>
-              <span className="review-card-resumo">{r.resumo}</span>
-            </span>
-          </Link>
+            </a>
+          ) : (
+            <Link
+              key={r.slug}
+              to={`/arcade/reviews/${r.slug}`}
+              className="review-card"
+              style={{ '--atraso': `${i * 70}ms` } as React.CSSProperties}
+            >
+              <Capa url={capaVertical(r)} titulo={r.titulo} />
+              <span className="review-nota-bolha">{r.nota.toFixed(1)}</span>
+              <span className="review-card-corpo">
+                <span className="review-card-titulo">{r.titulo}</span>
+                <span className="review-card-meta">
+                  {r.plataforma}
+                  {r.tempoDeJogo ? ` · ${r.tempoDeJogo}` : ''}
+                </span>
+                <span className="review-card-resumo">{r.resumo}</span>
+              </span>
+            </Link>
+          )
         ))}
       </div>
     </>
