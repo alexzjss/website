@@ -1,9 +1,46 @@
 import type { Review } from '../content/types'
+import { capasBackloggdGeradas } from '../content/reviews/backloggd-capas'
 
 /** Usada quando não há capa nem appId, ou quando a imagem externa falha. */
 export const CAPA_GENERICA = '/images/capas/generica.jpg'
 
+const appIdsSteam: Record<string, number> = {
+  'God of War Ragnarök': 2322010,
+  'Life Is Strange': 319630,
+  Hades: 1145360,
+  'Kaze and the Wild Masks': 829280,
+  'Batman: Arkham Origins': 209000,
+  'Sonic Generations': 71340,
+  'Dragon Ball: Sparking! Zero': 1790600,
+  'Dead Cells': 588650,
+  'Stardew Valley': 413150,
+  'Elden Ring': 1245620,
+  'Chrono Trigger': 613830,
+  'Hogwarts Legacy': 990080,
+  'Resident Evil 4': 2050650,
+  'We Were Here Too': 677160,
+  'United Heist': 2119740,
+  'We Were Here': 582500,
+  'Resident Evil Requiem': 3764200,
+  'Injustice 2': 627270,
+  'Terminator 2D: No Fate': 1718460,
+  Balatro: 2379780,
+  Portal: 400,
+  'Mortal Kombat 11': 976310,
+  Dispatch: 2592160,
+  'Marvel Cosmic Invasion': 2753970,
+  'Clair Obscur: Expedition 33': 1903340,
+  'Silent Hill 2': 2124490,
+  'Star Wars Jedi: Fallen Order': 1172380,
+  'The Last of Us Part I': 1888930,
+  'A Short Hike': 1055540,
+  'LEGO Batman: The Videogame': 21000,
+  Celeste: 504230,
+}
+
 const capasBackloggd: Record<string, string> = {
+  'Super Mario Odyssey':
+    'https://mario.wiki.gallery/images/3/37/SuperMarioOdyssey_-_NA_boxart.jpg',
   'X-Men: Mutant Apocalypse': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2dgk.jpg',
   'Super Mario World': 'https://images.igdb.com/igdb/image/upload/t_cover_big/co8lo8.jpg',
   'Call of Duty: Warzone': 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa8id.jpg',
@@ -61,15 +98,20 @@ const capasBackloggd: Record<string, string> = {
  */
 export function capaVertical(review: Review): string {
   if (review.capa) return review.capa
+  if (appIdsSteam[review.titulo])
+    return `https://cdn.cloudflare.steamstatic.com/steam/apps/${appIdsSteam[review.titulo]}/library_600x900.jpg`
   if (review.steamAppId)
     return `https://cdn.cloudflare.steamstatic.com/steam/apps/${review.steamAppId}/library_600x900.jpg`
-  if (review.plataforma === 'Backloggd') return capasBackloggd[review.titulo] ?? CAPA_GENERICA
+  if (review.plataforma === 'Backloggd')
+    return capasBackloggdGeradas[review.titulo] ?? capasBackloggd[review.titulo] ?? CAPA_GENERICA
   return CAPA_GENERICA
 }
 
 /** Imagem horizontal, usada como fundo do cabeçalho do post. */
 export function capaHorizontal(review: Review): string | null {
+  if (appIdsSteam[review.titulo])
+    return `https://cdn.cloudflare.steamstatic.com/steam/apps/${appIdsSteam[review.titulo]}/header.jpg`
   if (review.steamAppId)
     return `https://cdn.cloudflare.steamstatic.com/steam/apps/${review.steamAppId}/header.jpg`
-  return review.capa || capasBackloggd[review.titulo] || null
+  return review.capa || capasBackloggdGeradas[review.titulo] || capasBackloggd[review.titulo] || null
 }

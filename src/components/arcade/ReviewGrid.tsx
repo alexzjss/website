@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { reviews } from '../../content/reviews'
+import type { Review } from '../../content/types'
+import { buscarReviewsBackloggd } from '../../lib/backloggd'
 import { CAPA_GENERICA, capaVertical } from '../../lib/capas'
 
 type Ordem = 'data' | 'nota'
@@ -41,22 +43,31 @@ function Capa({ url, titulo }: { url: string; titulo: string }) {
 
 /** Prateleira de reviews com capa, filtro por gênero e ordenação. */
 export default function ReviewGrid() {
+  const [dados, setDados] = useState<Review[]>(() =>
+    reviews.filter((review) => review.plataforma !== 'Backloggd'),
+  )
   const [tag, setTag] = useState<string | null>(null)
   const [ordem, setOrdem] = useState<Ordem>('data')
 
-  const tags = useMemo(() => {
-    const todas = reviews.flatMap((r) => r.tags)
-    return Array.from(new Set(todas)).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  useEffect(() => {
+    buscarReviewsBackloggd()
+      .then((backloggd) => setDados([...reviews.filter((review) => review.plataforma !== 'Backloggd'), ...backloggd]))
+      .catch(() => undefined)
   }, [])
 
+  const tags = useMemo(() => {
+    const todas = dados.flatMap((r) => r.tags)
+    return Array.from(new Set(todas)).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  }, [dados])
+
   const lista = useMemo(() => {
-    const filtradas = tag ? reviews.filter((r) => r.tags.includes(tag)) : reviews
+    const filtradas = tag ? dados.filter((r) => r.tags.includes(tag)) : dados
     return [...filtradas].sort((a, b) =>
       ordem === 'nota' ? b.nota - a.nota : a.data < b.data ? 1 : -1,
     )
-  }, [tag, ordem])
+  }, [dados, tag, ordem])
 
-  if (reviews.length === 0)
+  if (dados.length === 0)
     return (
       <p className="vazio">
         Nenhuma review ainda. Crie um arquivo em src/content/reviews/ para publicar a primeira.

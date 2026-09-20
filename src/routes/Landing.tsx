@@ -13,6 +13,7 @@ export default function Landing() {
   const [ativo, setAtivo] = useState<Lado | null>(null)
   const [entrando, setEntrando] = useState<Lado | null>(null)
   const [pronto, setPronto] = useState(false)
+  const [fotoArcadeDisponivel, setFotoArcadeDisponivel] = useState(true)
 
   // animação de entrada da tela
   useEffect(() => {
@@ -42,8 +43,8 @@ export default function Landing() {
 
   const classe = (lado: Lado) =>
     [
-      'landing-choice',
-      `choice-${lado}`,
+      'split-panel',
+      `split-${lado}`,
       ativo === lado ? 'is-active' : '',
       ativo && ativo !== lado ? 'is-recuado' : '',
       entrando === lado ? 'is-entrando' : '',
@@ -54,101 +55,77 @@ export default function Landing() {
 
   return (
     <main
-      className={`landing ${pronto ? 'is-pronto' : ''}`}
+      className={`split ${pronto ? 'is-pronto' : ''}`}
       data-ativo={ativo ?? undefined}
       data-entrando={entrando ?? undefined}
     >
       <SkipLink />
-      <div className="landing-atmosfera" aria-hidden="true">
-        <div className="landing-brilho landing-brilho-pro" />
-        <div className="landing-brilho landing-brilho-arcade" />
-        <div className="grade-neon" />
-        <div className="estrelas">
+      <a
+        href="#/pro"
+        className={classe('pro')}
+        onMouseEnter={() => setAtivo('pro')}
+        onMouseLeave={() => setAtivo(null)}
+        onFocus={() => setAtivo('pro')}
+        onBlur={() => setAtivo(null)}
+        onClick={(e) => {
+          e.preventDefault()
+          entrar('pro')
+        }}
+      >
+        <div className="split-pro-bg" aria-hidden="true" />
+        <div className="split-inner">
+          <p className="split-eyebrow">Ambiente profissional</p>
+          <img className="split-photo-pro" src={profile.foto} alt={`Retrato de ${profile.nome}`} />
+          <p className="split-label">{profile.subtitulo}</p>
+          <h1 className="split-title">{profile.nome}</h1>
+          <p className="split-sub">Currículo, pesquisa, stack e entregas.</p>
+          <span className="split-cta">Abrir o dossiê <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+
+      <a
+        href="#/arcade"
+        className={classe('arcade')}
+        onMouseEnter={() => setAtivo('arcade')}
+        onMouseLeave={() => setAtivo(null)}
+        onFocus={() => setAtivo('arcade')}
+        onBlur={() => setAtivo(null)}
+        onClick={(e) => {
+          e.preventDefault()
+          entrar('arcade')
+        }}
+      >
+        <div className="grade-neon" aria-hidden="true" />
+        <div className="estrelas" aria-hidden="true">
           {Array.from({ length: 18 }).map((_, i) => (
             <span key={i} style={{ '--i': i } as React.CSSProperties} />
           ))}
         </div>
-        <div className="scanlines" />
-      </div>
-
-      <header className="landing-topo">
-        <span className="landing-marca">ALEX<span>/</span>01</span>
-        <span className="landing-status">
-          <i aria-hidden="true" /> arquivo pessoal online
-        </span>
-      </header>
-
-      <section className="landing-conteudo" id="conteudo">
-        <div className="landing-identidade">
-          <div className="landing-avatar-wrap">
-            <img className="landing-avatar" src={profile.avatar} alt="" />
-            <span className="landing-avatar-sinal" aria-hidden="true" />
-          </div>
-          <p className="landing-kicker">Duas formas de conhecer meu trabalho</p>
-          <h1 className="landing-nome">{profile.nome}</h1>
-          <p className="landing-intro">
-            Tecnologia, curiosidade e projetos que merecem ser explorados com calma.
-          </p>
+        <div className="split-inner">
+          <p className="split-eyebrow arcade-eyebrow">Ambiente divertido</p>
+          {fotoArcadeDisponivel ? (
+            <img
+              className="split-photo-arcade"
+              src="./images/alex-arcade.jpg"
+              alt="Retrato de Alex no ambiente arcade"
+              onError={() => setFotoArcadeDisponivel(false)}
+            />
+          ) : (
+            <div className="split-photo-arcade split-photo-placeholder" aria-hidden="true">
+              <span>SUA FOTO</span>
+              <small>adicione alex-arcade.jpg em public/images</small>
+            </div>
+          )}
+          <h2 className="split-title arcade-title pixel" data-texto="ARCADE">ARCADE</h2>
+          <p className="split-sub arcade-sub">Projetos pessoais, jogos, troféus e reviews.</p>
+          <span className="split-cta arcade-cta">Inserir ficha <span aria-hidden="true">▶</span></span>
         </div>
+        <div className="scanlines" aria-hidden="true" />
+      </a>
 
-        <div className="landing-escolhas" aria-label="Escolha uma experiência">
-          <a
-            href="#/pro"
-            className={classe('pro')}
-            onMouseEnter={() => setAtivo('pro')}
-            onMouseLeave={() => setAtivo(null)}
-            onFocus={() => setAtivo('pro')}
-            onBlur={() => setAtivo(null)}
-            onClick={(e) => {
-              e.preventDefault()
-              entrar('pro')
-            }}
-          >
-            <span className="landing-choice-index">01 / trabalho</span>
-            <span className="landing-choice-title">Dossiê profissional</span>
-            <span className="landing-choice-description">
-              Dados, inteligência artificial, software e experiência.
-            </span>
-            <span className="landing-choice-action">
-              Entrar no dossiê <span aria-hidden="true">↗</span>
-            </span>
-          </a>
-
-          <a
-            href="#/arcade"
-            className={classe('arcade')}
-            onMouseEnter={() => setAtivo('arcade')}
-            onMouseLeave={() => setAtivo(null)}
-            onFocus={() => setAtivo('arcade')}
-            onBlur={() => setAtivo(null)}
-            onClick={(e) => {
-              e.preventDefault()
-              entrar('arcade')
-            }}
-          >
-            <span className="landing-choice-index">02 / curiosidade</span>
-            <span className="landing-choice-title arcade-title pixel" data-texto="ARCADE">
-              ARCADE
-            </span>
-            <span className="landing-choice-description">
-              Projetos pessoais, troféus, linha do tempo e reviews de jogos.
-            </span>
-            <span className="landing-choice-action arcade-cta">
-              Inserir ficha <span aria-hidden="true">▶</span>
-            </span>
-          </a>
-        </div>
-
-        <p className="landing-hint">
-          <kbd>←</kbd><kbd>→</kbd> navegar <span aria-hidden="true">·</span> <kbd>Enter</kbd> escolher
-        </p>
-      </section>
-
-      <footer className="landing-rodape">
-        <span>São Paulo, Brasil</span>
-        <span> sistemas de informação · usp</span>
-      </footer>
-      <div className="landing-flash" aria-hidden="true" />
+      <div className="split-seam" aria-hidden="true" />
+      <p className="split-hint"><kbd>←</kbd> <kbd>→</kbd> escolher <span>·</span> <kbd>Enter</kbd> entrar</p>
+      <div className="split-flash" aria-hidden="true" />
     </main>
   )
 }

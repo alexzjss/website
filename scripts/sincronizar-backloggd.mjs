@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 const gamesUrl = 'https://backloggd.com/u/zackxz/games/played/categories:games/'
 const feedUrl = 'https://backloggd.com/u/zackxz/reviews/rss/'
@@ -6,6 +6,7 @@ const gamesPages = Array.from({ length: 10 }, (_, index) =>
   index === 0 ? gamesUrl : `${gamesUrl}?page=${index + 1}`,
 )
 const outputPath = new URL('../src/content/reviews/backloggd.ts', import.meta.url)
+const coversOutputPath = new URL('../src/content/reviews/backloggd-capas.ts', import.meta.url)
 
 function decodeXml(value) {
   return value
@@ -102,6 +103,36 @@ async function adicionarCapas(reviews) {
   return resultado
 }
 
+function titulosDoSnapshot() {
+  if (!existsSync(outputPath)) return []
+  const source = readFileSync(outputPath, 'utf8')
+  return [...source.matchAll(/\['[^']+',\s*'([^']*)',\s*[\d.]+\]/g)].map(([, titulo]) => titulo)
+}
+
+async function gerarCacheDeCapas() {
+  const capas = {}
+  const titulos = titulosDoSnapshot()
+  for (let index = 0; index < titulos.length; index += 6) {
+    const resultados = await Promise.all(
+      titulos.slice(index, index + 6).map(async (titulo) => {
+        try {
+          return [titulo, await buscarCapaSteam(titulo)]
+        } catch {
+          return [titulo, '']
+        }
+      }),
+    )
+    for (const [titulo, capa] of resultados) {
+      if (capa) capas[titulo] = capa
+    }
+  }
+  writeFileSync(
+    coversOutputPath,
+    `// Gerado por scripts/sincronizar-backloggd.mjs. Nao edite manualmente.\nexport const capasBackloggdGeradas: Record<string, string> = ${JSON.stringify(capas, null, 2)}\n`,
+    'utf8',
+  )
+}
+
 function parseFeed(xml) {
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, item]) => {
     const title = tagValue(item, 'title').replace(/\s+-\s+★.*$/, '')
@@ -155,6 +186,7 @@ try {
   writeFileSync(outputPath, render(reviews), 'utf8')
   console.log(`Backloggd sincronizado: ${reviews.length} jogo(s) zerado(s), ${reviewed.length} com review.`)
 } catch (error) {
+  await gerarCacheDeCapas()
   if (existsSync(outputPath)) {
     console.warn(`Nao foi possivel sincronizar o Backloggd; usando o snapshot local. ${error.message}`)
   } else {

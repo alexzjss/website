@@ -1,16 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { getReview, reviews } from '../content/reviews'
 import { CAPA_GENERICA, capaHorizontal, capaVertical } from '../lib/capas'
 import SkipLink from '../components/SkipLink'
 import { usePagina } from '../lib/seo'
 import { formatarData } from '../lib/datas'
+import type { Review } from '../content/types'
+import { buscarReviewsBackloggd } from '../lib/backloggd'
 
 export default function ReviewPage() {
   const { slug } = useParams()
   const navigate = useNavigate()
-  const review = slug ? getReview(slug) : undefined
+  const [review, setReview] = useState<Review | undefined>(() => (slug ? getReview(slug) : undefined))
+  const [carregando, setCarregando] = useState(false)
   usePagina(review ? `${review.titulo} — review` : undefined, review?.resumo)
+
+  useEffect(() => {
+    if (!slug || !slug.startsWith('backloggd-game-') || review) return
+    setCarregando(true)
+    buscarReviewsBackloggd()
+      .then((backloggd) => setReview(backloggd.find((item) => item.slug === slug)))
+      .finally(() => setCarregando(false))
+  }, [review, slug])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -20,7 +31,10 @@ export default function ReviewPage() {
     return () => window.removeEventListener('keydown', onKey)
   }, [navigate])
 
-  if (!review) return <Navigate to="/arcade/reviews" replace />
+  if (!review) {
+    if (carregando) return <p>Carregando review...</p>
+    return <Navigate to="/arcade/reviews" replace />
+  }
 
   const banner = capaHorizontal(review)
   const capa = capaVertical(review)
