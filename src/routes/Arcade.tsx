@@ -6,6 +6,8 @@ import SkipLink from '../components/SkipLink'
 import { usePagina } from '../lib/seo'
 import { caminhos } from '../content/arcade'
 import { profile } from '../content/profile'
+import { reviews } from '../content/reviews'
+import { capaHorizontal } from '../lib/capas'
 
 export default function Arcade() {
   usePagina('Arcade', 'Projetos pessoais, troféus, linha do tempo e reviews de jogos.')
@@ -42,6 +44,15 @@ export default function Arcade() {
   return (
     <div className="arcade">
       <SkipLink />
+      <div className="arcade-cenarios" aria-hidden="true">
+        <div className="arcade-cenarios-faixa">
+          {[...reviews, ...reviews].map((review, i) => {
+            const capa = capaHorizontal(review)
+            return capa ? <span key={`${review.slug}-${i}`} style={{ backgroundImage: `url(${capa})` }} /> : null
+          })}
+        </div>
+        <div className="arcade-cenarios-vinheta" />
+      </div>
       <div className="grade-neon" aria-hidden="true" />
       <div className="scanlines" aria-hidden="true" />
 

@@ -95,7 +95,7 @@ export default function Pro() {
               ))}
             </h1>
             <p className="hero-sub">{profile.titulo}</p>
-            <div className="hero-acoes">
+            <div className="hero-acoes hero-acoes-conectadas">
               <a
                 className="botao botao-primario"
                 href={profile.cv}
@@ -123,9 +123,12 @@ export default function Pro() {
             </div>
           </div>
 
-          <p className="hero-rolagem" aria-hidden="true">
-            role para conhecer
-          </p>
+          <a className="hero-rolagem" href="#curriculo" aria-label="Rolar para conhecer o currículo">
+            <span className="hero-rolagem-seta" aria-hidden="true">
+              ↓
+            </span>
+            <span>role para conhecer</span>
+          </a>
         </section>
 
         {/* ---------------- métricas ---------------- */}

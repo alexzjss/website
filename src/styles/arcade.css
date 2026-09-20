@@ -13,6 +13,51 @@
   overflow-x: hidden;
 }
 
+.arcade-cenarios {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #080713;
+  pointer-events: none;
+}
+
+.arcade-cenarios-faixa {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  opacity: 0.5;
+  filter: saturate(0.85) contrast(1.1);
+  animation: passaCenarios 42s linear infinite;
+}
+
+.arcade-cenarios-faixa span {
+  display: block;
+  width: clamp(25rem, 42vw, 45rem);
+  height: 100%;
+  flex: 0 0 auto;
+  background-position: center;
+  background-size: cover;
+}
+
+.arcade-cenarios-vinheta {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8, 7, 19, 0.95) 0%, rgba(8, 7, 19, 0.35) 36%, rgba(8, 7, 19, 0.72) 100%),
+    linear-gradient(0deg, rgba(8, 7, 19, 0.94) 0%, rgba(8, 7, 19, 0.14) 45%, rgba(8, 7, 19, 0.78) 100%),
+    radial-gradient(ellipse at center, transparent 20%, rgba(8, 7, 19, 0.72) 100%);
+}
+
+@keyframes passaCenarios {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 .arcade .scanlines,
 .start .scanlines {
   position: fixed;
@@ -207,6 +252,10 @@
   padding: clamp(2rem, 6vw, 3.5rem) clamp(1.25rem, 5vw, 4rem) 5rem;
 }
 
+.arcade-menu {
+  max-width: 54rem;
+}
+
 .arcade-h1 {
   font-family: var(--pixel);
   font-weight: 800;
@@ -256,6 +305,15 @@
   gap: 0.65rem;
 }
 
+.menu-lista::before {
+  content: '◈  SELECT MISSION';
+  display: block;
+  color: var(--arcade-fraco);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.25rem 0.25rem;
+}
+
 .menu-lista li {
   animation: sobe 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   animation-delay: var(--atraso, 0ms);
@@ -268,8 +326,10 @@
   gap: 1rem;
   padding: 1.05rem 1.15rem;
   text-decoration: none;
-  border: 1px solid rgba(159, 151, 196, 0.24);
-  background: rgba(21, 12, 44, 0.55);
+  border: 1px solid rgba(159, 151, 196, 0.3);
+  border-left: 3px solid rgba(159, 151, 196, 0.38);
+  background: linear-gradient(90deg, rgba(20, 15, 43, 0.9), rgba(21, 12, 44, 0.52));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(5, 3, 16, 0.18);
   transition:
     border-color 0.18s ease,
     transform 0.18s ease,
@@ -279,27 +339,28 @@
 
 .menu-item.is-cursor {
   transform: translateX(8px);
+  background: linear-gradient(90deg, rgba(38, 25, 65, 0.94), rgba(21, 12, 44, 0.65));
 }
 
 .menu-item.cor-ciano.is-cursor {
   border-color: var(--ciano);
-  box-shadow: -4px 0 0 var(--ciano);
+  box-shadow: -4px 0 0 var(--ciano), inset 0 0 28px rgba(47, 230, 224, 0.11), 0 8px 24px rgba(5, 3, 16, 0.25);
 }
 .menu-item.cor-magenta.is-cursor {
   border-color: var(--magenta);
-  box-shadow: -4px 0 0 var(--magenta);
+  box-shadow: -4px 0 0 var(--magenta), inset 0 0 28px rgba(255, 61, 139, 0.11), 0 8px 24px rgba(5, 3, 16, 0.25);
 }
 .menu-item.cor-ambar.is-cursor {
   border-color: var(--ambar);
-  box-shadow: -4px 0 0 var(--ambar);
+  box-shadow: -4px 0 0 var(--ambar), inset 0 0 28px rgba(255, 201, 74, 0.11), 0 8px 24px rgba(5, 3, 16, 0.25);
 }
 .menu-item.cor-verde.is-cursor {
   border-color: var(--verde);
-  box-shadow: -4px 0 0 var(--verde);
+  box-shadow: -4px 0 0 var(--verde), inset 0 0 28px rgba(103, 234, 142, 0.11), 0 8px 24px rgba(5, 3, 16, 0.25);
 }
 .menu-item.cor-roxo.is-cursor {
   border-color: var(--roxo);
-  box-shadow: -4px 0 0 var(--roxo);
+  box-shadow: -4px 0 0 var(--roxo), inset 0 0 28px rgba(180, 114, 255, 0.11), 0 8px 24px rgba(5, 3, 16, 0.25);
 }
 
 .menu-icone {
@@ -354,6 +415,12 @@
 
 .arcade-rodape a {
   color: var(--ciano);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arcade-cenarios-faixa {
+    animation: none;
+  }
 }
 
 /* --------------------------- grade de projetos pessoais --------------------------- */

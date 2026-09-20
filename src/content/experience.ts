@@ -23,16 +23,6 @@ export const experiencias: Experience[] = [
     tags: ['Java', 'Maven', 'Benchmarks', 'Pesquisa'],
   },
   {
-    cargo: 'Coordenador de Projetos de TI',
-    organizacao: 'DASI USP',
-    inicio: 'Mar 2026',
-    fim: 'Atual',
-    local: 'São Paulo, SP',
-    descricao:
-      'Lidero equipe técnica multidisciplinar na infraestrutura tecnológica da entidade, otimizando o fluxo de informações para mais de 700 estudantes.',
-    tags: ['Liderança', 'Infraestrutura'],
-  },
-  {
     cargo: 'Pesquisador de Dados e Inteligência Artificial',
     organizacao: 'Hype USP',
     inicio: 'Jun 2026',
@@ -51,6 +41,16 @@ export const experiencias: Experience[] = [
     descricao:
       'Desenvolvo, em equipe, soluções de software Full-Stack e Mobile com impacto social real, da concepção à produção.',
     tags: ['TypeScript', 'React', 'Mobile'],
+  },
+  {
+    cargo: 'Coordenador de Projetos de TI',
+    organizacao: 'DASI USP',
+    inicio: 'Mar 2026',
+    fim: 'Atual',
+    local: 'São Paulo, SP',
+    descricao:
+      'Lidero equipe técnica multidisciplinar na infraestrutura tecnológica da entidade, otimizando o fluxo de informações para mais de 700 estudantes.',
+    tags: ['Liderança', 'Infraestrutura'],
   },
   {
     cargo: 'Design, Criação e Comunicação',
