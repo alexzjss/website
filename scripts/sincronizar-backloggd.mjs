@@ -32,17 +32,29 @@ function htmlValue(value) {
   return decodeXml(value.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim())
 }
 
+function imageUrl(card) {
+  const image = card.match(/<img\b[^>]*>/i)?.[0] ?? ''
+  const source = image.match(/\b(?:src|data-src|data-original)=["']([^"']+)["']/i)?.[1]
+  if (source) return source
+
+  const srcset = image.match(/\bsrcset=["']([^"']+)["']/i)?.[1]
+  return srcset?.split(',').at(-1)?.trim().split(/\s+/)[0] ?? ''
+}
+
 function parseGames(html) {
-  return [...html.matchAll(/<div class="card mx-auto game-cover([^>]*)>([\s\S]*?)<div class="game-text-centered">([\s\S]*?)<\/div>\s*<\/div>/g)]
-    .map(([, attributes, card, rawTitle]) => {
-      const game = card.match(/<a href="(\/games\/[^"?]+)"/i)
-      const cover = card.match(/<img[^>]+src="([^"]+)"/i)
-      const rating = attributes.match(/data-rating="([\d.]+)"/i)
+  return [...html.matchAll(/<a\s+[^>]*href=["'](\/games\/[^"'?]+)["'][^>]*>[\s\S]{0,5000}?<\/a>/gi)]
+    .map(([, gamePath]) => {
+      const start = Math.max(0, html.indexOf(gamePath) - 1200)
+      const card = html.slice(start, Math.min(html.length, start + 6500))
+      const rating = card.match(/data-rating=["']([\d.]+)["']/i)
+      const cover = imageUrl(card)
 
-      if (!game) return null
+      if (!gamePath) return null
 
-      const titulo = htmlValue(rawTitle)
-      const slug = game[1].replace(/^\/games\//, '').replace(/\/$/, '')
+      const titleMatch = card.match(/<div[^>]*class=["'][^"']*game-text-centered[^"']*["'][^>]*>([\s\S]*?)<\/div>/i)
+      const titulo = htmlValue(titleMatch?.[1] ?? '')
+      const slug = gamePath.replace(/^\/games\//, '').replace(/\/$/, '')
+      if (!titulo) return null
 
       return {
         slug: `backloggd-game-${slug}`,
@@ -52,8 +64,8 @@ function parseGames(html) {
         data: new Date().toISOString().slice(0, 10),
         resumo: 'Jogo zerado no Backloggd.',
         tags: ['Backloggd', 'Zerados'],
-        ...(cover ? { capa: cover[1] } : {}),
-        origemUrl: `https://backloggd.com${game[1]}`,
+        ...(cover ? { capa: cover } : {}),
+        origemUrl: `https://backloggd.com${gamePath}`,
         corpo: [{ tipo: 'p', texto: 'Jogo zerado no Backloggd.' }],
       }
     })

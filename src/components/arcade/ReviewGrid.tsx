@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { reviews } from '../../content/reviews'
 import { CAPA_GENERICA, capaVertical } from '../../lib/capas'
@@ -6,17 +6,35 @@ import { CAPA_GENERICA, capaVertical } from '../../lib/capas'
 type Ordem = 'data' | 'nota'
 
 function Capa({ url, titulo }: { url: string; titulo: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [visivel, setVisivel] = useState(false)
+  const [falhou, setFalhou] = useState(false)
+
+  useEffect(() => {
+    const elemento = ref.current
+    if (!elemento) return
+
+    const observador = new IntersectionObserver(
+      ([entrada]) => {
+        setVisivel(entrada.isIntersecting)
+        if (!entrada.isIntersecting) setFalhou(false)
+      },
+      { rootMargin: '200px 0px' },
+    )
+    observador.observe(elemento)
+    return () => observador.disconnect()
+  }, [])
+
   return (
-    <span className="capa">
-      <img
-        src={url}
-        alt={`Capa de ${titulo}`}
-        loading="lazy"
-        onError={(e) => {
-          if (e.currentTarget.src.endsWith(CAPA_GENERICA.replace('./', ''))) return
-          e.currentTarget.src = CAPA_GENERICA
-        }}
-      />
+    <span className="capa" ref={ref}>
+      {visivel ? (
+        <img
+          src={falhou ? CAPA_GENERICA : url}
+          alt={`Capa de ${titulo}`}
+          loading="lazy"
+          onError={() => setFalhou(true)}
+        />
+      ) : null}
     </span>
   )
 }
