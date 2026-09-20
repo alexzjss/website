@@ -2,6 +2,9 @@ import { existsSync, writeFileSync } from 'node:fs'
 
 const gamesUrl = 'https://backloggd.com/u/zackxz/games/played/categories:games/'
 const feedUrl = 'https://backloggd.com/u/zackxz/reviews/rss/'
+const gamesPages = Array.from({ length: 10 }, (_, index) =>
+  index === 0 ? gamesUrl : `${gamesUrl}?page=${index + 1}`,
+)
 const outputPath = new URL('../src/content/reviews/backloggd.ts', import.meta.url)
 
 function decodeXml(value) {
@@ -30,26 +33,23 @@ function htmlValue(value) {
 }
 
 function parseGames(html) {
-  return [...html.matchAll(/<div class="row pt-2 pb-1 review-card">([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/g)]
-    .map(([, card]) => {
-      const game = card.match(/<a href="(\/games\/[^"?]+)"[^>]*>([^<]+)<\/a>/i)
-      const cover = card.match(/<img[^>]+src="([^"]+)"[^>]+alt="([^"]+)"/i)
-      const rating = card.match(/stars-top" style="width:(\d+)%/i)
-      const status = card.match(/play-type completed/i)
-      const platform = card.match(/review-platform[^>]*>[\s\S]*?<p[^>]*>([^<]+)</i)
-      const date = card.match(/<time datetime="([^"]+)"/i)
+  return [...html.matchAll(/<div class="card mx-auto game-cover([^>]*)>([\s\S]*?)<div class="game-text-centered">([\s\S]*?)<\/div>\s*<\/div>/g)]
+    .map(([, attributes, card, rawTitle]) => {
+      const game = card.match(/<a href="(\/games\/[^"?]+)"/i)
+      const cover = card.match(/<img[^>]+src="([^"]+)"/i)
+      const rating = attributes.match(/data-rating="([\d.]+)"/i)
 
-      if (!game || !status) return null
+      if (!game) return null
 
-      const titulo = htmlValue(game[2])
+      const titulo = htmlValue(rawTitle)
       const slug = game[1].replace(/^\/games\//, '').replace(/\/$/, '')
 
       return {
         slug: `backloggd-game-${slug}`,
         titulo,
-        plataforma: platform ? htmlValue(platform[1]) : 'Backloggd',
-        nota: rating ? Number(rating[1]) / 10 : 0,
-        data: toDate(date?.[1] || ''),
+        plataforma: 'Backloggd',
+        nota: rating ? Number(rating[1]) : 0,
+        data: new Date().toISOString().slice(0, 10),
         resumo: 'Jogo zerado no Backloggd.',
         tags: ['Backloggd', 'Zerados'],
         ...(cover ? { capa: cover[1] } : {}),
@@ -107,12 +107,17 @@ export const reviews: Review[] = ${JSON.stringify(reviews, null, 2)}
 }
 
 try {
-  const [gamesResponse, feedResponse] = await Promise.all([fetch(gamesUrl), fetch(feedUrl)])
-  if (!gamesResponse.ok) throw new Error(`jogos HTTP ${gamesResponse.status}`)
+  const [gameResponses, feedResponse] = await Promise.all([
+    Promise.all(gamesPages.map((url) => fetch(url))),
+    fetch(feedUrl),
+  ])
+  const failedGamesResponse = gameResponses.find((response) => !response.ok)
+  if (failedGamesResponse) throw new Error(`jogos HTTP ${failedGamesResponse.status}`)
   if (!feedResponse.ok) throw new Error(`reviews HTTP ${feedResponse.status}`)
 
-  const games = parseGames(await gamesResponse.text())
+  const games = (await Promise.all(gameResponses.map((response) => response.text()))).flatMap(parseGames)
   const reviewed = parseFeed(await feedResponse.text())
+  if (games.length === 0) throw new Error('nenhum jogo encontrado; resposta pode ser o desafio anti-bot')
   const reviews = mergeGames(games, reviewed)
   writeFileSync(outputPath, render(reviews), 'utf8')
   console.log(`Backloggd sincronizado: ${reviews.length} jogo(s) zerado(s), ${reviewed.length} com review.`)
