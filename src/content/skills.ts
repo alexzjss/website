@@ -3,7 +3,7 @@ import type { Certification, SkillGroup } from './types'
 export const skills: SkillGroup[] = [
   {
     grupo: 'Linguagens',
-    itens: ['Python', 'JavaScript', 'TypeScript', 'Java', 'C', 'SQL'],
+    itens: ['Python', 'JavaScript', 'Java', 'C', 'SQL'],
   },
   {
     grupo: 'Dados e IA',
@@ -11,9 +11,8 @@ export const skills: SkillGroup[] = [
     itens: [
       'Ciência de Dados',
       'Machine Learning',
-      'Análise e modelagem de dados',
-      'IA generativa',
-      'Agentes de IA',
+      'Análise e Modelagem de Dados',
+      'IA Generativa',
       'PostgreSQL',
       'MySQL',
     ],
@@ -32,6 +31,7 @@ export const skills: SkillGroup[] = [
       'Pensamento analítico',
       'Gestão de projetos',
       'Negociação',
+      'Adaptabilidade',
     ],
   },
 ]

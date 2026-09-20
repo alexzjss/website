@@ -3,12 +3,12 @@ import type { Metrica, Profile } from './types'
 export const profile: Profile = {
   nome: 'Alex de Jesus Santana',
   apelido: 'Alex',
-  titulo: 'Dados, Inteligência Artificial e Engenharia de Software',
+  titulo: 'Sistemas de Informação — USP | Dados e Inteligência Artificial | Engenharia de Software',
   subtitulo: 'Sistemas de Informação — USP',
-  manchete: 'Construo software que sai do papel e chega em produção.',
+  manchete: 'Dados, inteligência artificial e engenharia de software com impacto real.',
   resumo: [
     'Estudante de Sistemas de Informação na USP atuando em Ciência de Dados, Inteligência Artificial e Engenharia de Software com Python, Java, JavaScript e SQL.',
-    'Coordeno projetos multidisciplinares em cinco organizações estudantis e pesquiso teste e depuração de software no grupo SAEG. Procuro estágio em Tecnologia da Informação com foco em Dados e IA e desenvolvimento de software.',
+    'Tenho histórico de liderança e trabalho em equipe na coordenação de projetos multidisciplinares em cinco organizações estudantis, com resultados inovadores reconhecidos. Procuro estágio em Tecnologia da Informação com foco em Dados e IA e desenvolvimento de software.',
   ],
   local: 'São Paulo, SP — Brasil',
   email: 'alexzjss@gmail.com',
@@ -28,7 +28,7 @@ export const profile: Profile = {
 /** Números que aparecem logo abaixo da dobra, no lado profissional. */
 export const metricas: Metrica[] = [
   { valor: '700+', rotulo: 'alunos atendidos pelo DaSIboard' },
-  { valor: '4', rotulo: 'primeiros lugares em competições' },
+  { valor: '3', rotulo: 'primeiros lugares em competições' },
   { valor: '5', rotulo: 'organizações estudantis' },
   { valor: '1', rotulo: 'bolsa de iniciação científica' },
 ]
