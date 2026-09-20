@@ -90,7 +90,7 @@ export default function Pro() {
             <h1 className="hero-titulo">
               {profile.manchete.split(' ').map((palavra, i) => (
                 <span key={i} className="palavra" style={{ '--i': i } as React.CSSProperties}>
-                  {palavra}{' '}
+                  {palavra}
                 </span>
               ))}
             </h1>

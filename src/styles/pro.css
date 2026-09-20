@@ -144,7 +144,6 @@
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.035em;
-  word-spacing: 0.12em;
   margin: 0 auto 1.25rem;
   max-width: 16ch;
   background: linear-gradient(180deg, var(--grafite) 40%, #43434a);
@@ -155,10 +154,15 @@
 
 .hero-titulo .palavra {
   display: inline-block;
+  margin-right: 0.18em;
   opacity: 0;
   transform: translateY(0.5em);
   animation: palavraEntra 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   animation-delay: calc(var(--i) * 70ms + 120ms);
+}
+
+.hero-titulo .palavra:last-child {
+  margin-right: 0;
 }
 
 @keyframes palavraEntra {
