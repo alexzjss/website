@@ -9,14 +9,26 @@ import { profile } from '../content/profile'
 import { reviews } from '../content/reviews'
 import { capaHorizontal } from '../lib/capas'
 
+function arcadeJaFoiIniciado() {
+  try {
+    return sessionStorage.getItem('arcade-start') === 'ok'
+  } catch {
+    return false
+  }
+}
+
 export default function Arcade() {
   usePagina('Arcade', 'Projetos pessoais, troféus, linha do tempo e reviews de jogos.')
   const navigate = useNavigate()
-  const [iniciado, setIniciado] = useState(() => sessionStorage.getItem('arcade-start') === 'ok')
+  const [iniciado, setIniciado] = useState(arcadeJaFoiIniciado)
   const [cursor, setCursor] = useState(0)
 
   const iniciar = useCallback(() => {
-    sessionStorage.setItem('arcade-start', 'ok')
+    try {
+      sessionStorage.setItem('arcade-start', 'ok')
+    } catch {
+      // O menu deve continuar acessível mesmo sem persistência de sessão.
+    }
     setIniciado(true)
   }, [])
 
