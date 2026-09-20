@@ -1,8 +1,6 @@
 const gamesUrl = 'https://backloggd.com/u/zackxz/games/played/categories:games/'
 const feedUrl = 'https://backloggd.com/u/zackxz/reviews/rss/'
-const gamesPages = Array.from({ length: 10 }, (_, index) =>
-  index === 0 ? gamesUrl : `${gamesUrl}?page=${index + 1}`,
-)
+const maxGamePages = 50
 
 function decodeXml(value) {
   return value
@@ -19,23 +17,32 @@ function htmlValue(value) {
   return decodeXml(value.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim())
 }
 
+function attributeValue(value, attribute) {
+  const match = value.match(new RegExp(`${attribute}=["']([^"']+)["']`, 'i'))
+  return match ? decodeXml(match[1]) : ''
+}
+
 function tagValue(item, tag) {
   const match = item.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`))
   return match ? decodeXml(match[1].trim()) : ''
 }
 
 function parseGames(html) {
-  return [...html.matchAll(/<a\s+[^>]*href=["'](\/games\/[^"'?]+)["'][^>]*>[\s\S]{0,5000}?<\/a>/gi)]
-    .map(([, gamePath]) => {
-      const start = Math.max(0, html.indexOf(gamePath) - 1200)
-      const card = html.slice(start, Math.min(html.length, start + 6500))
+  const caminhos = new Set(
+    [...html.matchAll(/href=["'](\/games\/[^"'?\s#]+)["']/gi)].map(([, caminho]) => caminho),
+  )
+
+  return [...caminhos]
+    .map((gamePath) => {
+      const inicio = html.indexOf(gamePath)
+      const card = html.slice(Math.max(0, inicio - 1800), Math.min(html.length, inicio + 6500))
       const titleMatch = card.match(/<div[^>]*class=["'][^"']*game-text-centered[^"']*["'][^>]*>([\s\S]*?)<\/div>/i)
-      const image = card.match(/<img\b[^>]*>/i)?.[0] ?? ''
-      const cover = image.match(/\b(?:src|data-src|data-original)=["']([^"']+)["']/i)?.[1] ?? ''
+      const imageMatch = card.match(/<img\b[^>]*(?:src|data-src)=["'][^"']+["'][^>]*>/i)
       const rating = card.match(/data-rating=["']([\d.]+)["']/i)
-      const titulo = htmlValue(titleMatch?.[1] ?? '')
+      const titulo = htmlValue(titleMatch?.[1] ?? attributeValue(imageMatch?.[0] ?? '', 'alt'))
       if (!titulo) return null
       const slug = gamePath.replace(/^\/games\//, '').replace(/\/$/, '')
+      const capa = attributeValue(imageMatch?.[0] ?? '', 'data-src') || attributeValue(imageMatch?.[0] ?? '', 'src')
       return {
         slug: `backloggd-game-${slug}`,
         titulo,
@@ -44,7 +51,7 @@ function parseGames(html) {
         data: new Date().toISOString().slice(0, 10),
         resumo: 'Jogo zerado no Backloggd.',
         tags: ['Backloggd', 'Zerados'],
-        ...(cover ? { capa: cover } : {}),
+        ...(capa ? { capa } : {}),
         origemUrl: `https://backloggd.com${gamePath}`,
         corpo: [{ tipo: 'p', texto: 'Jogo zerado no Backloggd.' }],
       }
@@ -53,39 +60,61 @@ function parseGames(html) {
 }
 
 function normalizeTitle(title) {
-  return title.toLowerCase().replace(/\s*\([^)]*\)\s*$/, '').replace(/[^\da-z]+/g, '')
+  return title
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .replace(/\s*\([^)]*\)\s*$/, '')
+    .replace(/[^\da-z]+/g, '')
 }
 
 function parseFeed(xml) {
-  return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, item]) => ({
-    slug: `backloggd-${tagValue(item, 'guid').replace(/^backloggd-review-/, '')}`,
-    titulo: tagValue(item, 'title').replace(/\s+-\s+★.*$/, ''),
-    plataforma: 'Backloggd',
-    nota: Number(tagValue(item, 'backloggd:user_rating')) || 0,
-    data: tagValue(item, 'pubDate') || new Date().toISOString().slice(0, 10),
-    resumo: tagValue(item, 'description'),
-    tags: ['Backloggd'],
-    ...(tagValue(item, 'link') ? { origemUrl: tagValue(item, 'link') } : {}),
-    corpo: [{ tipo: 'p', texto: tagValue(item, 'description') }],
-  }))
+  return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, item]) => {
+    const titulo = tagValue(item, 'title').replace(/\s+-\s+★.*$/, '')
+    return {
+      slug: `backloggd-${tagValue(item, 'guid').replace(/^backloggd-review-/, '')}`,
+      titulo,
+      plataforma: 'Backloggd',
+      nota: Number(tagValue(item, 'backloggd:user_rating')) || 0,
+      data: tagValue(item, 'pubDate') || new Date().toISOString().slice(0, 10),
+      resumo: tagValue(item, 'description'),
+      tags: ['Backloggd'],
+      ...(tagValue(item, 'link') ? { origemUrl: tagValue(item, 'link') } : {}),
+      corpo: [{ tipo: 'p', texto: tagValue(item, 'description') }],
+    }
+  })
+}
+
+async function buscarPaginasDeJogos() {
+  const jogos = []
+  const vistos = new Set()
+
+  for (let pagina = 1; pagina <= maxGamePages; pagina += 1) {
+    const url = pagina === 1 ? gamesUrl : `${gamesUrl}?page=${pagina}`
+    const response = await fetch(url)
+    if (!response.ok) continue
+    const novos = parseGames(await response.text()).filter((jogo) => !vistos.has(jogo.slug))
+    novos.forEach((jogo) => vistos.add(jogo.slug))
+    jogos.push(...novos)
+    if (novos.length === 0) break
+  }
+  return jogos
 }
 
 export default async function handler(request, response) {
   try {
-    const responses = await Promise.all([...gamesPages.map(fetch), fetch(feedUrl)])
-    const failed = responses.find((item) => !item.ok)
-    if (failed) throw new Error(`Backloggd respondeu HTTP ${failed.status}`)
-    const bodies = await Promise.all(responses.map((item) => item.text()))
-    const games = bodies.slice(0, -1).flatMap(parseGames)
-    if (!games.length) throw new Error('Backloggd retornou uma página sem jogos')
-    const reviewed = parseFeed(bodies.at(-1))
+    const [games, feedResponse] = await Promise.all([buscarPaginasDeJogos().catch(() => []), fetch(feedUrl)])
+    const reviewed = feedResponse.ok ? parseFeed(await feedResponse.text()) : []
     const byTitle = new Map(reviewed.map((item) => [normalizeTitle(item.titulo), item]))
     const result = games.map((game) => {
       const review = byTitle.get(normalizeTitle(game.titulo))
       return review ? { ...game, ...review, slug: game.slug } : game
     })
+    const jogosImportados = new Set(result.map((item) => normalizeTitle(item.titulo)))
+    const payload = [...result, ...reviewed.filter((item) => !jogosImportados.has(normalizeTitle(item.titulo)))]
+    if (!payload.length) throw new Error('Backloggd não retornou jogos ou reviews')
     response.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=3600')
-    response.status(200).json(result)
+    response.status(200).json(payload)
   } catch (error) {
     response.status(502).json({ error: error instanceof Error ? error.message : 'Falha ao consultar Backloggd' })
   }

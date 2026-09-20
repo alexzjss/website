@@ -13,15 +13,21 @@ export default function ReviewPage() {
   const navigate = useNavigate()
   const [review, setReview] = useState<Review | undefined>(() => (slug ? getReview(slug) : undefined))
   const [carregando, setCarregando] = useState(false)
+  const [proximas, setProximas] = useState<Review[]>(reviews)
   usePagina(review ? `${review.titulo} — review` : undefined, review?.resumo)
 
   useEffect(() => {
-    if (!slug || !slug.startsWith('backloggd-game-') || review) return
+    if (!slug || review) return
     setCarregando(true)
     buscarReviewsBackloggd()
       .then((backloggd) => setReview(backloggd.find((item) => item.slug === slug)))
       .finally(() => setCarregando(false))
   }, [review, slug])
+
+  useEffect(() => {
+    if (reviews.length > 0) return
+    buscarReviewsBackloggd().then(setProximas).catch(() => undefined)
+  }, [])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -38,8 +44,8 @@ export default function ReviewPage() {
 
   const banner = capaHorizontal(review)
   const capa = capaVertical(review)
-  const indice = reviews.findIndex((r) => r.slug === review.slug)
-  const proxima = reviews[(indice + 1) % reviews.length]
+  const indice = proximas.findIndex((r) => r.slug === review.slug)
+  const proxima = indice >= 0 ? proximas[(indice + 1) % proximas.length] : undefined
 
   return (
     <div className="arcade">

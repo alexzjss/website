@@ -7,7 +7,7 @@ import type { Review } from '../types'
 const modulos = import.meta.glob<{ review?: Review; reviews?: Review[] }>('./*.ts', { eager: true })
 
 export const reviews: Review[] = Object.entries(modulos)
-  .filter(([caminho]) => !caminho.endsWith('/index.ts'))
+  .filter(([caminho]) => !caminho.endsWith('/index.ts') && !caminho.endsWith('/backloggd.ts'))
   .flatMap(([, modulo]) => (modulo.review ? [modulo.review] : (modulo.reviews ?? [])))
   .sort((a, b) => (a.data < b.data ? 1 : -1))
 

@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { reviews } from '../../content/reviews'
 import type { Review } from '../../content/types'
 import { buscarReviewsBackloggd } from '../../lib/backloggd'
+import { buscarCapaRemota } from '../../lib/capasRemotas'
 import { CAPA_GENERICA, capaVertical } from '../../lib/capas'
 
 type Ordem = 'data' | 'nota'
 
-function Capa({ url, titulo }: { url: string; titulo: string }) {
+function Capa({ url, titulo, remota }: { url: string; titulo: string; remota: boolean }) {
   const ref = useRef<HTMLSpanElement>(null)
   const [visivel, setVisivel] = useState(false)
+  const [capa, setCapa] = useState(remota && url === CAPA_GENERICA ? '' : url)
   const [falhou, setFalhou] = useState(false)
 
   useEffect(() => {
@@ -27,11 +28,18 @@ function Capa({ url, titulo }: { url: string; titulo: string }) {
     return () => observador.disconnect()
   }, [])
 
+  useEffect(() => {
+    if (!visivel || !remota || capa) return
+    buscarCapaRemota(titulo)
+      .then((resultado) => setCapa(resultado))
+      .catch(() => setFalhou(true))
+  }, [capa, remota, titulo, visivel])
+
   return (
     <span className="capa" ref={ref}>
       {visivel ? (
         <img
-          src={falhou ? CAPA_GENERICA : url}
+          src={falhou || !capa ? CAPA_GENERICA : capa}
           alt={`Capa de ${titulo}`}
           loading="lazy"
           onError={() => setFalhou(true)}
@@ -43,16 +51,17 @@ function Capa({ url, titulo }: { url: string; titulo: string }) {
 
 /** Prateleira de reviews com capa, filtro por gênero e ordenação. */
 export default function ReviewGrid() {
-  const [dados, setDados] = useState<Review[]>(() =>
-    reviews.filter((review) => review.plataforma !== 'Backloggd'),
-  )
+  const [dados, setDados] = useState<Review[]>([])
+  const [carregando, setCarregando] = useState(true)
+  const [falhou, setFalhou] = useState(false)
   const [tag, setTag] = useState<string | null>(null)
   const [ordem, setOrdem] = useState<Ordem>('data')
 
   useEffect(() => {
     buscarReviewsBackloggd()
-      .then((backloggd) => setDados([...reviews.filter((review) => review.plataforma !== 'Backloggd'), ...backloggd]))
-      .catch(() => undefined)
+      .then(setDados)
+      .catch(() => setFalhou(true))
+      .finally(() => setCarregando(false))
   }, [])
 
   const tags = useMemo(() => {
@@ -67,10 +76,13 @@ export default function ReviewGrid() {
     )
   }, [dados, tag, ordem])
 
-  if (dados.length === 0)
+  if (carregando)
+    return <p className="vazio">Importando jogos do Backloggd...</p>
+
+  if (falhou || dados.length === 0)
     return (
       <p className="vazio">
-        Nenhuma review ainda. Crie um arquivo em src/content/reviews/ para publicar a primeira.
+        Não foi possível importar jogos do Backloggd agora. Tente novamente em alguns minutos.
       </p>
     )
 
@@ -132,7 +144,7 @@ export default function ReviewGrid() {
               className="review-card"
               style={{ '--atraso': `${i * 70}ms` } as React.CSSProperties}
             >
-              <Capa url={capaVertical(r)} titulo={r.titulo} />
+              <Capa url={capaVertical(r)} titulo={r.titulo} remota={r.plataforma === 'Backloggd'} />
               <span className="review-nota-bolha">{r.nota.toFixed(1)}</span>
               <span className="review-card-corpo">
                 <span className="review-card-titulo">{r.titulo}</span>
@@ -150,7 +162,7 @@ export default function ReviewGrid() {
               className="review-card"
               style={{ '--atraso': `${i * 70}ms` } as React.CSSProperties}
             >
-              <Capa url={capaVertical(r)} titulo={r.titulo} />
+              <Capa url={capaVertical(r)} titulo={r.titulo} remota={r.plataforma === 'Backloggd'} />
               <span className="review-nota-bolha">{r.nota.toFixed(1)}</span>
               <span className="review-card-corpo">
                 <span className="review-card-titulo">{r.titulo}</span>

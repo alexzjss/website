@@ -1,6 +1,6 @@
 import type { Review } from '../content/types'
 
-const CACHE_KEY = 'backloggd-reviews-v1'
+const CACHE_KEY = 'backloggd-reviews-v3'
 
 export async function buscarReviewsBackloggd(): Promise<Review[]> {
   try {
