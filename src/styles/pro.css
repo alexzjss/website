@@ -100,7 +100,13 @@
 .hero {
   position: relative;
   padding: clamp(3.5rem, 11vh, 8rem) 0 clamp(2rem, 6vw, 4rem);
-  text-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.95fr);
+  grid-template-rows: 1fr auto;
+  column-gap: clamp(2rem, 7vw, 7rem);
+  align-items: center;
+  min-height: min(48rem, calc(100dvh - 4.5rem));
+  text-align: left;
 }
 
 .hero-aura {
@@ -130,6 +136,8 @@
 .hero-texto {
   position: relative;
   z-index: 2;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .hero-eyebrow {
@@ -144,7 +152,7 @@
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.035em;
-  margin: 0 auto 1.25rem;
+  margin: 0 0 1.25rem;
   max-width: 16ch;
   background: linear-gradient(180deg, var(--grafite) 40%, #43434a);
   -webkit-background-clip: text;
@@ -175,7 +183,7 @@
 .hero-sub {
   font-size: clamp(1rem, 2.2vw, 1.35rem);
   color: var(--cinza);
-  margin: 0 auto 2rem;
+  margin: 0 0 2rem;
   max-width: 44ch;
   line-height: 1.5;
 }
@@ -184,7 +192,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .hero-acoes-conectadas {
@@ -268,8 +276,10 @@
 .hero-foto {
   position: relative;
   z-index: 2;
-  width: min(30rem, 78vw);
-  margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+  grid-column: 2;
+  grid-row: 1;
+  width: min(30rem, 100%);
+  margin: 0 auto;
   border-radius: 28px;
   overflow: hidden;
   background: var(--claro);
@@ -309,10 +319,13 @@
 }
 
 .hero-rolagem {
+  grid-column: 1 / -1;
+  grid-row: 2;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  margin: 2.5rem 0 0;
+  justify-self: center;
+  margin: clamp(2rem, 5vh, 3.5rem) 0 0;
   font-family: var(--mono);
   font-size: 0.72rem;
   color: var(--cinza);
@@ -955,6 +968,37 @@
 }
 
 @media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    row-gap: 2.5rem;
+    min-height: 0;
+    text-align: center;
+  }
+  .hero-texto,
+  .hero-foto,
+  .hero-rolagem {
+    grid-column: 1;
+  }
+  .hero-texto {
+    grid-row: 1;
+  }
+  .hero-foto {
+    grid-row: 2;
+    width: min(30rem, 78vw);
+  }
+  .hero-rolagem {
+    grid-row: 3;
+    margin-top: 0;
+  }
+  .hero-titulo,
+  .hero-sub {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-acoes {
+    justify-content: center;
+  }
   .faixa-metricas,
   .destaque {
     grid-template-columns: minmax(0, 1fr);

@@ -5,7 +5,7 @@ export const profile: Profile = {
   apelido: 'Alex',
   titulo: 'Sistemas de Informação — USP | Dados e Inteligência Artificial | Engenharia de Software',
   subtitulo: 'Sistemas de Informação — USP',
-  manchete: 'Dados, inteligência artificial e engenharia de software com impacto real.',
+  manchete: 'Construo software que sai do papel e chega em produção.',
   resumo: [
     'Estudante de Sistemas de Informação na USP atuando em Ciência de Dados, Inteligência Artificial e Engenharia de Software com Python, Java, JavaScript e SQL.',
     'Tenho histórico de liderança e trabalho em equipe na coordenação de projetos multidisciplinares em sete organizações estudantis, com resultados inovadores reconhecidos. Procuro estágio em Tecnologia da Informação com foco em Dados e IA e desenvolvimento de software.',

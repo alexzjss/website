@@ -155,7 +155,7 @@ export default function Pro() {
                 <h3>Currículo completo</h3>
                 <p>
                   Formação, sete experiências, projetos, competências técnicas, certificações e
-                  reconhecimentos — na versão que vai para processos seletivos.
+                  prêmios — na versão que vai para processos seletivos.
                 </p>
               </div>
               <div className="cartao-cv-acoes">
