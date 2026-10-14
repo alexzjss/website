@@ -2,16 +2,16 @@
    Tokens dos dois mundos + tela inicial dividida.
    --------------------------------------------------------------- */
 :root {
-  /* lado profissional (paleta clara, inspirada em sites de produto) */
-  --branco: #fbfbfd;
-  --claro: #f5f5f7;
-  --grafite: #1d1d1f;
-  --cinza: #6e6e73;
-  --linha: #d2d2d7;
-  --azul: #0a84ff;
-  --violeta: #5e5ce6;
-  --orquidea: #bf5af2;
-  --gradiente: linear-gradient(115deg, var(--azul), var(--violeta) 52%, var(--orquidea));
+  /* lado profissional (paleta clara, inspirada em sites de produto e em Claude/Anthropic) */
+  --branco: #f9f5f0;
+  --claro: #f1e9e1;
+  --grafite: #1d1a17;
+  --cinza: #615b56;
+  --linha: #dccfc2;
+  --azul: #c76839;
+  --violeta: #9a5638;
+  --orquidea: #e4b291;
+  --gradiente: linear-gradient(135deg, #d77b4f 0%, #c9683f 40%, #9a5638 100%);
 
   /* lado arcade */
   --noite: #070511;
@@ -862,12 +862,12 @@ a {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 18% 22%, rgba(255, 255, 255, 0.7), transparent 44%),
-    radial-gradient(ellipse at 84% 78%, rgba(159, 119, 67, 0.08), transparent 48%),
-    repeating-linear-gradient(7deg, rgba(109, 78, 43, 0.025) 0 1px, transparent 1px 5px),
-    repeating-linear-gradient(93deg, rgba(255, 255, 255, 0.16) 0 2px, transparent 2px 9px),
-    #eee5d0;
-  opacity: 0.94;
+    radial-gradient(ellipse at 18% 22%, rgba(255, 255, 255, 0.9), transparent 38%),
+    radial-gradient(ellipse at 62% 78%, rgba(186, 116, 79, 0.12), transparent 45%),
+    repeating-linear-gradient(7deg, rgba(92, 69, 58, 0.025) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(93deg, rgba(255, 255, 255, 0.22) 0 2px, transparent 2px 9px),
+    #f3ede5;
+  opacity: 0.98;
 }
 
 .split-inner {
@@ -949,8 +949,8 @@ a {
   aspect-ratio: 4 / 5;
   object-fit: cover;
   filter: grayscale(0.15) contrast(1.04);
-  border: 1px solid rgba(29, 29, 31, 0.3);
-  box-shadow: 1rem 1rem 0 rgba(94, 92, 230, 0.12);
+  border: 1px solid rgba(29, 26, 23, 0.2);
+  box-shadow: 0.9rem 0.9rem 0 rgba(154, 86, 56, 0.12);
 }
 
 .split-photo-arcade {
@@ -1052,7 +1052,7 @@ a {
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  box-shadow: 0 0.8rem 2rem rgba(94, 92, 230, 0.2);
+  box-shadow: 0 0.8rem 2rem rgba(154, 86, 56, 0.14);
 }
 
 .arcade-cta {

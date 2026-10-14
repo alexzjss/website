@@ -3,6 +3,16 @@ import type { Education, Experience } from './types'
 /** Ordem: mais recente primeiro. */
 export const experiencias: Experience[] = [
   {
+    cargo: 'Claude Campus Ambassador',
+    organizacao: 'Claude',
+    inicio: 'Out 2026',
+    fim: 'Atual',
+    local: 'São Paulo, SP',
+    descricao:
+      'Representação da comunidade acadêmica e divulgação do ecossistema Claude em ambiente universitário, com atuação junto a estudantes e iniciativas de tecnologia e IA.',
+    tags: ['Campus Ambassador', 'IA', 'Comunidade'],
+  },
+  {
     cargo: 'Trainee de Backend e Vendas B2B Consultivas',
     organizacao: 'Síntese Jr',
     inicio: 'Set 2026',

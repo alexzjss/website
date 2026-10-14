@@ -2,7 +2,9 @@
    Lado profissional — claro, espaçado, com gradiente azul/violeta.
    --------------------------------------------------------------- */
 .pro {
-  background: var(--branco);
+  background:
+    radial-gradient(circle at top, rgba(216, 153, 107, 0.14), transparent 35%),
+    linear-gradient(180deg, #f8f4ef 0%, #f4efe9 100%);
   color: var(--grafite);
   min-height: 100dvh;
   overflow-x: hidden;
@@ -28,7 +30,7 @@
   gap: 1.5rem;
   padding: 0.8rem clamp(1.25rem, 5vw, 4rem);
   padding-top: calc(0.8rem + env(safe-area-inset-top, 0px));
-  background: rgba(251, 251, 253, 0.8);
+  background: rgba(249, 245, 240, 0.8);
   backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--linha);
   font-size: 0.85rem;
@@ -38,6 +40,7 @@
   font-family: var(--serif);
   font-size: 1.15rem;
   text-decoration: none;
+  color: var(--grafite);
 }
 
 .pro-bar-nav {
@@ -77,17 +80,17 @@
 .pro-bar-switch {
   text-decoration: none;
   color: #fff;
-  background: var(--grafite);
-  border-radius: 980px;
+  background: linear-gradient(135deg, #1f1a17, #3c2d26);
+  border-radius: 999px;
   padding: 0.35rem 0.85rem;
   transition:
     transform 0.2s ease,
-    background 0.2s ease;
+    filter 0.2s ease;
 }
 
 .pro-bar-switch:hover {
   transform: translateY(-1px);
-  background: var(--violeta);
+  filter: brightness(1.05);
 }
 
 .pro main {
@@ -117,8 +120,8 @@
   height: 34rem;
   transform: translateX(-50%);
   background:
-    radial-gradient(45% 50% at 50% 40%, rgba(94, 92, 230, 0.18), transparent 72%),
-    radial-gradient(35% 40% at 70% 20%, rgba(191, 90, 242, 0.14), transparent 70%);
+    radial-gradient(45% 50% at 50% 40%, rgba(199, 104, 57, 0.14), transparent 72%),
+    radial-gradient(35% 40% at 70% 20%, rgba(228, 178, 145, 0.2), transparent 70%);
   filter: blur(6px);
   pointer-events: none;
   animation: aura 14s ease-in-out infinite alternate;
@@ -154,7 +157,7 @@
   letter-spacing: -0.035em;
   margin: 0 0 1.25rem;
   max-width: 16ch;
-  background: linear-gradient(180deg, var(--grafite) 40%, #43434a);
+  background: linear-gradient(180deg, var(--grafite) 25%, #534b45 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -233,12 +236,12 @@
 .botao-primario {
   background: var(--gradiente);
   color: #fff;
-  box-shadow: 0 10px 28px rgba(94, 92, 230, 0.3);
+  box-shadow: 0 12px 28px rgba(142, 79, 43, 0.18);
 }
 
 .botao-primario:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 38px rgba(94, 92, 230, 0.38);
+  box-shadow: 0 14px 32px rgba(142, 79, 43, 0.2);
 }
 
 .botao-secundario {
@@ -283,7 +286,8 @@
   border-radius: 28px;
   overflow: hidden;
   background: var(--claro);
-  box-shadow: 0 30px 70px rgba(29, 29, 31, 0.18);
+  box-shadow: 0 28px 60px rgba(36, 24, 18, 0.14);
+  border: 1px solid rgba(92, 71, 58, 0.08);
   transform-origin: center top;
   will-change: transform;
 }
@@ -427,7 +431,7 @@
   padding: clamp(1.75rem, 4vw, 2.75rem);
   border-radius: 24px;
   color: #fff;
-  background: linear-gradient(135deg, #1d1d1f, #2b2b6b 55%, #5e5ce6);
+  background: linear-gradient(135deg, #1d1a17 0%, #2f261f 46%, #6a4533 100%);
   position: relative;
   overflow: hidden;
 }
@@ -510,7 +514,7 @@
   height: 5.5rem;
   margin: 0 -1.5rem 0;
   border-radius: 24px 24px 0 0;
-  background: linear-gradient(110deg, #0a66c2, #5e5ce6);
+  background: linear-gradient(110deg, #b76a40, #8c533b);
 }
 
 .linkedin-foto {
@@ -564,7 +568,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #0a66c2;
+  background: var(--violeta);
 }
 
 /* --------------------------- linha do tempo --------------------------- */
@@ -582,7 +586,7 @@
   top: 0.5rem;
   bottom: 0.5rem;
   width: 2px;
-  background: linear-gradient(to bottom, var(--azul), var(--violeta), transparent);
+  background: linear-gradient(to bottom, var(--azul), var(--violeta), rgba(154, 86, 56, 0.1));
 }
 
 .linha-tempo > li {
@@ -693,7 +697,8 @@
 
 .projeto {
   border-radius: 22px;
-  background: var(--claro);
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(92, 71, 58, 0.08);
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
@@ -763,7 +768,7 @@
 
 .projeto-links a {
   font-size: 0.88rem;
-  color: var(--azul);
+  color: var(--violeta);
   text-decoration: none;
 }
 
