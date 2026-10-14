@@ -9,44 +9,44 @@ export const projetos: Project[] = [
   {
     slug: 'dasiboard',
     nome: 'DaSIboard',
-    resumo: 'Dashboard acadêmico completo para o curso de Sistemas de Informação da USP.',
+    resumo: 'Dashboard acadêmico voltado para o curso de Sistemas de Informação da USP.',
     descricao:
-      'Arquitetei um dashboard acadêmico com autenticação, módulo social, PostgreSQL e Docker, com API REST em Python e frontend em TypeScript. Usado por mais de 700 alunos de Sistemas de Informação.',
+      'Plataforma acadêmica criada por Alex para apoiar alunos de SI com tarefas, notas, frequência, calendário de eventos, salas de estudo colaborativas, perfil com conquistas e fluxograma curricular. O projeto foi pensado para um público-alvo de ~700 alunos do curso.',
     periodo: 'Mar 2026 — Atual',
     status: 'em produção',
-    stack: ['Python', 'TypeScript', 'PostgreSQL', 'Docker', 'API REST'],
-    destaque: '700+ alunos',
+    stack: ['TypeScript', 'Python', 'PostgreSQL', 'Docker'],
+    destaque: '~700 alunos',
     emoji: '🎓',
     links: [
       { rotulo: 'Repositório', url: 'https://github.com/alexzjss/dasiboard-omg' },
       { rotulo: 'dasiboard.online', url: 'https://dasiboard.online' },
     ],
     numeros: [
-      { valor: '700+', rotulo: 'alunos do curso atendidos' },
-      { valor: '4', rotulo: 'serviços em Docker' },
-      { valor: '2026', rotulo: 'em produção desde' },
+      { valor: '~700', rotulo: 'alunos de SI no público-alvo' },
+      { valor: '4', rotulo: 'módulos principais da plataforma' },
+      { valor: '2026', rotulo: 'lançamento inicial' },
     ],
     papel: [
-      'Arquitetura da aplicação, do banco ao frontend',
-      'API REST em Python com autenticação e módulo social',
-      'Modelagem e manutenção do PostgreSQL',
-      'Empacotamento e deploy com Docker',
+      'Concepção e arquitetura da plataforma',
+      'Definição da experiência de uso para comunidade acadêmica',
+      'Estrutura de backend, banco de dados e infraestrutura',
+      'Acompanhamento de entrega com foco em uso real da comunidade',
     ],
     detalhes: [
       {
         titulo: 'O problema',
         texto:
-          'As informações do curso de Sistemas de Informação ficavam espalhadas entre grupos de mensagem, planilhas e avisos soltos. Nada era pesquisável e quase nada sobrevivia ao fim do semestre.',
+          'A comunicação e a organização acadêmica do curso estavam fragmentadas entre grupos, planilhas e canais informais. A informação era dispersa e pouco acessível para a rotina de alunos e professores.',
       },
       {
         titulo: 'A solução',
         texto:
-          'Um workspace único com autenticação, materiais organizados por disciplina e um módulo social para o que antes vivia nos grupos. O backend em Python expõe uma API REST consumida por um frontend em TypeScript, com PostgreSQL por trás e tudo rodando em Docker.',
+          'Criei uma plataforma centralizada para tarefas, calendário, frequência, salas de estudo, perfil de conquistas e fluxograma curricular, com uma stack em TypeScript, Python, PostgreSQL e Docker. O foco era simplificar a rotina e melhorar a experiência do curso.',
       },
       {
-        titulo: 'O que eu aprendi',
+        titulo: 'Aprendizados',
         texto:
-          'Colocar software na mão de gente de verdade muda as prioridades: performance de query e recuperação de erro passaram a importar mais do que qualquer refinamento de interface.',
+          'O projeto reforçou a importância de pensar em produto e uso real desde o início: organização, clareza de informação e manutenção técnica importam tanto quanto a interface.',
       },
     ],
     tipo: 'profissional',
@@ -54,13 +54,13 @@ export const projetos: Project[] = [
   {
     slug: 'modaloop',
     nome: 'ModaLoop',
-    resumo: 'Aplicação web de sustentabilidade têxtil com geolocalização em tempo real.',
+    resumo: 'Aplicação web de descarte têxtil consciente, com indicação de pontos de coleta próximos.',
     descricao:
-      'Idealizei e desenvolvi, em equipe, uma aplicação web de sustentabilidade têxtil em React/TypeScript, com geolocalização em tempo real usando a Geolocation API e a fórmula de Haversine. Deploy via GitHub Pages.',
+      'Aplicação web de sustentabilidade têxtil em React/TypeScript, com geolocalização em tempo real usando a Geolocation API e cálculo de distância por Haversine. O projeto conecta usuários a pontos de coleta de roupas usadas e informa sobre o impacto ambiental.',
     periodo: 'Mai 2026 — Jul 2026',
     status: 'concluído',
     stack: ['React', 'TypeScript', 'Geolocation API', 'GitHub Pages'],
-    destaque: 'Haversine em tempo real',
+    destaque: 'Geolocalização em tempo real',
     emoji: '♻️',
     links: [{ rotulo: 'Repositório', url: 'https://github.com/alexzjss/modaloop' }],
     numeros: [
@@ -69,25 +69,25 @@ export const projetos: Project[] = [
     ],
     papel: [
       'Idealização do produto junto com a equipe',
-      'Frontend em React com TypeScript',
-      'Geolocalização em tempo real com a Geolocation API',
-      'Deploy contínuo no GitHub Pages',
+      'Desenvolvimento do frontend em React/TypeScript',
+      'Implementação de geolocalização com Geolocation API',
+      'Deploy no GitHub Pages',
     ],
     detalhes: [
       {
         titulo: 'A ideia',
         texto:
-          'Aproximar quem quer desapegar de roupa de quem procura peça de segunda mão por perto, reduzindo descarte têxtil sem depender de logística de entrega.',
+          'Aproximar quem deseja doar ou descartar roupas usadas de quem busca pontos de coleta próximos, contribuindo para reduzir o descarte têxtil sem depender de logística de entrega.',
       },
       {
         titulo: 'A parte técnica',
         texto:
-          'A posição do usuário vem da Geolocation API do navegador e a distância até cada peça é calculada com a fórmula de Haversine, direto no cliente — sem servidor de mapas e sem custo de API.',
+          'A localização do usuário vem da Geolocation API do navegador, e a distância até cada ponto é calculada diretamente no cliente com a fórmula de Haversine.',
       },
       {
         titulo: 'Encerramento',
         texto:
-          'O projeto foi concluído em julho de 2026, com o código aberto no GitHub para quem quiser continuar.',
+          'O projeto foi concluído em julho de 2026 e publicado no GitHub para continuidade e referências futuras.',
       },
     ],
     tipo: 'profissional',
@@ -151,14 +151,14 @@ export const projetos: Project[] = [
   },
   {
     slug: 'trendsurfer',
-    nome: 'TrendSurfer Bot',
-    resumo: 'Estratégia quantitativa long/short de momentum no IBOV.',
+    nome: 'Vórtex — Desafio Quant AI',
+    resumo: 'Robô quantitativo long/short de momentum sobre o universo point-in-time do IBOV.',
     descricao:
-      'Construído para o Desafio Quant AI da Itaú Asset Management: pipeline de dados de mercado, sinal de momentum, construção de carteira long/short e backtest com métricas de risco.',
-    periodo: '2026',
+      'Estratégia desenvolvida em equipe para o Desafio Quant AI da Itaú Asset Management, com engenharia de features, backtest em 252 pregões entre 03/02/2025 e 03/11/2025 e avaliação de risco. Resultado líquido: +6,26% contra +19,44% do IBOV, Sharpe de 0,37 e MDD de -22,35%, com ganho concentrado no lado long. O backtest de 2019–2023 foi descartado por falta de dados históricos viáveis.',
+    periodo: 'Jul 2026 — Ago 2026',
     status: 'concluído',
     stack: ['Python', 'pandas', 'NumPy', 'Backtesting'],
-    destaque: 'Desafio Quant AI — Itaú Asset',
+    destaque: 'Backtest 252 pregões',
     emoji: '📈',
     tipo: 'pessoal',
   },
