@@ -1,28 +1,39 @@
-# Alex Santana — personal portfolio
+# Alex Santana — portfolio
 
-This is a static, bilingual portfolio built with React, TypeScript and Vite. It has no backend, CMS or runtime translation: Portuguese and English content live together in typed data structures.
+A static, bilingual portfolio built with React, TypeScript, and Vite. Content is maintained in the source tree; there is no backend, CMS, or runtime translation. Portuguese and English copy are authored separately.
 
 ## Run locally
 
-```bash
+```sh
 npm install
 npm run dev
 npm run build
 npm run lint
 ```
 
-The production build is in `dist/` and can be deployed to Vercel using the default Vite settings (`npm run build`, output `dist`).
+Vite serves the site locally. The production output is written to `dist/`.
 
-## Content maintenance
+## Update content
 
-The page content currently lives in `src/App.tsx` in the `experiences`, `projects`, `labels` and `categoryLabels` records. Every `Copy` value must contain both `pt` and `en` strings. Add an experience to `experiences` with a stable `id`; the timeline renders it automatically. Keep the six university organizations inside the single `university` collective item and add internal entries to its `tags` array.
+The page data is split between `src/content.ts` and `src/App.tsx`:
 
-Add projects to `projects` with one or more `categories` (`software`, `data`, `research`, or `creative`). The filter buttons are generated from these categories. Add an optional `repo` only when a verified destination exists.
+- `src/App.tsx` holds bilingual interface text in `pt-BR` and `en`. Add or update both values together.
+- `highlights` in `src/content.ts` contains the three separately expandable entries: Síntese Jr., PET-SI, and Claude Campus Ambassador.
+- `organizations` contains the six independent expanders nested inside one university timeline entry. Keep them in this array so they remain one outer timeline block.
+- `projects` is the project catalog. Each project has bilingual copy, categories, stack labels, and a verified repository URL. The project category type also lives in this file.
 
-The hero currently uses a restrained initials placeholder because the supplied working tree has no image assets. To use the verified portrait, place it at `public/images/alex.jpg` and replace the `.portrait-placeholder` markup in `src/App.tsx` with an `<img>` that has localized alt text. Do not add an image that does not document Alex.
+Each content item has a stable `id` (experiences) or `name` (projects). Experience details are revealed inline. Dates and roles currently say “to be confirmed” because no CV or first-party career document was present in the supplied project materials. Replace them only after checking a reliable source. Keep both language versions current.
 
-Language selection is persisted in `localStorage` as `alex-lang`, updates `document.documentElement.lang`, and changes the document title without reloading. Theme selection is persisted as `alex-theme`. Update both language versions whenever adding visible copy, including labels and accessible names.
+## Images, CV, and public links
 
-## Deployment
+No personal photo or CV was included in the project. The hero uses an abstract monogram composition, not a generated portrait. If Alex supplies a photograph, put it under `public/images/` and use a localized alternative text. Add a CV link only after placing a confirmed, current document in `public/`.
 
-Push changes to GitHub and import the repository in Vercel. Vercel detects Vite automatically; each push to the configured production branch triggers a new deployment. No deployment or external service connection is included in this repository.
+The public GitHub and LinkedIn URLs are in `src/App.tsx`. The verified projects currently linked are DaSIboard and ModaLoop. Other project leads mentioned in the brief should be inspected and documented before being added. The research section records only the broad topic given in the brief and explicitly flags the details awaiting confirmation.
+
+## Language and theme
+
+The language selector changes all authored UI copy without reloading, updates the document `lang`, title, description, and saves the preference in local storage. Theme selection is also saved; first visit follows the operating system color preference. The shared design tokens live in `src/styles/tokens.css`; responsive layout and reduced-motion rules are in `src/styles/pro.css`.
+
+## Publish with GitHub and Vercel
+
+Connect this repository to a Vercel project. Vercel detects Vite automatically; use `npm run build` as the build command and `dist` as the output directory. Pushing updates to the configured production branch triggers a deployment. A canonical URL is intentionally omitted until the final domain is known.
