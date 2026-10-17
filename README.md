@@ -1,6 +1,6 @@
 # Alex Santana — portfolio
 
-A static, bilingual portfolio built with React, TypeScript, and Vite. Content is maintained in the source tree; there is no backend, CMS, or runtime translation. Portuguese and English copy are authored separately.
+A static, bilingual portfolio built with React, TypeScript, and Vite. Portuguese and English copy are authored separately. There is no backend, CMS, or runtime translation.
 
 ## Run locally
 
@@ -11,29 +11,34 @@ npm run build
 npm run lint
 ```
 
-Vite serves the site locally. The production output is written to `dist/`.
+The production site is written to `dist/`. Vercel is configured by `vercel.json` to build with Vite, serve `dist`, and route SPA paths to `index.html`.
 
-## Update content
+## Content files
 
-The page data is split between `src/content.ts` and `src/App.tsx`:
+- `src/App.tsx` contains the interface translations, layout, and interactions. Keep labels, button text, accessibility text, and metadata in both `pt-BR` and `en`.
+- `src/content.ts` contains experiences, organizations, project records, research information, skills, awards, and certificates. Content records with `Copy` values must include both languages.
+- `src/styles/tokens.css` contains the shared light and dark design tokens. Responsive styles and media presentation are in `src/styles/pro.css`.
 
-- `src/App.tsx` holds bilingual interface text in `pt-BR` and `en`. Add or update both values together.
-- `highlights` in `src/content.ts` contains the three separately expandable entries: Síntese Jr., PET-SI, and Claude Campus Ambassador.
-- `organizations` contains the six independent expanders nested inside one university timeline entry. Keep them in this array so they remain one outer timeline block.
-- `projects` is the project catalog. Each project has bilingual copy, categories, stack labels, and a verified repository URL. The project category type also lives in this file.
+### Experiences and timeline
 
-Each content item has a stable `id` (experiences) or `name` (projects). Experience details are revealed inline. Dates and roles currently say “to be confirmed” because no CV or first-party career document was present in the supplied project materials. Replace them only after checking a reliable source. Keep both language versions current.
+`highlights` stores the three outer entries for Claude Campus Ambassador, Síntese Jr., and PET-SI. Each record has `sortKey` as `YYYYMM`, bilingual role, period, summary, details, and optional `logo` and `photo` paths. Keep this list in descending `sortKey` order.
 
-## Images, CV, and public links
+The six university organizations live in `organizations` and appear inside exactly one outer timeline block. Each organization can expand independently. The interface sorts the inner list by each record’s start month. Add new photos and logos to `public/images/experiences/` or `public/images/organizations/`, then set the explicit `/images/...` path in the record. `photo.alt` also needs Portuguese and English text. Logos are separate from photos; keep logo alt text empty where the adjacent organization name already identifies it.
 
-No personal photo or CV was included in the project. The hero uses an abstract monogram composition, not a generated portrait. If Alex supplies a photograph, put it under `public/images/` and use a localized alternative text. Add a CV link only after placing a confirmed, current document in `public/`.
+To add an organization, append an `Entry` to `organizations`; do not add another outer timeline entry. For roles that changed over time within the same organization, keep the full date range and describe both roles in the role and details fields.
 
-The public GitHub and LinkedIn URLs are in `src/App.tsx`. The verified projects currently linked are DaSIboard and ModaLoop. Other project leads mentioned in the brief should be inspected and documented before being added. The research section records only the broad topic given in the brief and explicitly flags the details awaiting confirmation.
+### Projects and research
 
-## Language and theme
+Add projects to `projects` with a stable name, Portuguese and English descriptions, categories, technologies, and a verified repository URL. Filters derive from the category type; if adding a category, update the filter labels in `App.tsx` in both languages.
 
-The language selector changes all authored UI copy without reloading, updates the document `lang`, title, description, and saves the preference in local storage. Theme selection is also saved; first visit follows the operating system color preference. The shared design tokens live in `src/styles/tokens.css`; responsive layout and reduced-motion rules are in `src/styles/pro.css`.
+The `research` record contains the project title, date, group, advisor, summary, method, tools, and status. Update each bilingual field when the source information changes. Do not add unpublished results as findings.
+
+### Profile media and résumé
+
+The hero portrait is `public/images/profile/alex-santana.jpg`. Replace it with an authorized portrait and preserve its explicit path. Experience photos and organization logos are in their respective `public/images/` folders. The résumé download is `public/documents/CV.pdf`; replace it with a current copy when needed. The current PDF is in English, so the website labels it accordingly. The PDF is publicly accessible with the site.
+
+Public profile links and email are in `src/App.tsx`. The phone number is not displayed as website text.
 
 ## Publish with GitHub and Vercel
 
-Connect this repository to a Vercel project. Vercel detects Vite automatically; use `npm run build` as the build command and `dist` as the output directory. Pushing updates to the configured production branch triggers a deployment. A canonical URL is intentionally omitted until the final domain is known.
+Connect this repository to a Vercel project and use the repository root as the project root. `vercel.json` sets the Vite framework, `npm run build`, and `dist` as the output directory. Pushes to the configured production branch trigger deployments. Confirm that the Vercel project's Root Directory points to the repository root if a deployment does not use this configuration.
