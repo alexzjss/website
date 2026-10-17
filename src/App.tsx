@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { awards, certifications, collective, highlights, organizations, projects, research, skillGroups, tx, type Category, type Entry } from './content'
 import './styles.css'
 
@@ -6,7 +6,7 @@ type Lang = 'pt-BR' | 'en'
 
 const ui = {
   'pt-BR': {
-    nav: ['Experiência', 'Projetos', 'Pesquisa', 'Sobre', 'Contato'],
+    nav: ['Início', 'Experiência', 'Projetos', 'Pesquisa', 'Sobre', 'Contato'],
     intro: 'Sou estudante de Sistemas de Informação na USP e desenvolvo software, participo de pesquisa em teste de software e de projetos universitários nas áreas de dados, IA e tecnologia.',
     scroll: 'Role para explorar', projects: 'Projetos', all: 'Todos', experience: 'Experiência', research: 'Pesquisa', about: 'Sobre', contact: 'Contato',
     experienceLead: 'Desenvolvimento, pesquisa e colaboração na universidade.', projectLead: 'Sistemas e ferramentas para necessidades reais.',
@@ -14,11 +14,11 @@ const ui = {
     aboutTitle: 'Engenharia de software, dados e pesquisa.', aboutText: 'Sou estudante de Sistemas de Informação na Universidade de São Paulo (USP), com previsão de conclusão em 2029. Minha experiência combina desenvolvimento de software, pesquisa acadêmica e projetos de tecnologia. Tenho interesse em engenharia de software e back-end, engenharia de dados, machine learning e inteligência artificial.',
     skills: 'Competências técnicas', awards: 'Conquistas', certifications: 'Certificações e cursos', languages: 'Idiomas', education: 'Formação', educationValue: 'Bacharelado em Sistemas de Informação · USP · 2026–2029',
     contactTitle: 'Vamos conversar?', contactText: 'Encontre meus projetos e entre em contato pelos meus perfis profissionais.', github: 'GitHub', linkedin: 'LinkedIn', email: 'E-mail', cv: 'Abrir currículo (PDF em inglês)', details: 'Ver detalhes', close: 'Fechar detalhes', orgs: 'Organizações universitárias',
-    filters: { software: 'Software', research: 'Pesquisa e ferramentas', creative: 'Criativos' }, themeLight: 'Ativar tema claro', themeDark: 'Ativar tema escuro', language: 'Mudar idioma para inglês',
+    filters: { software: 'Software', research: 'Pesquisa e ferramentas', creative: 'Criativos' }, themeLight: 'Ativar tema claro', themeDark: 'Ativar tema escuro', language: 'Mudar idioma para inglês', navLabel: 'Navegação por seções', menu: 'Abrir navegação', closeMenu: 'Fechar navegação', progress: 'Progresso de leitura',
     collectiveRole: 'Seis organizações · uma frente de atuação', photoHero: 'Retrato de Alex Santana',
   },
   en: {
-    nav: ['Experience', 'Projects', 'Research', 'About', 'Contact'],
+    nav: ['Home', 'Experience', 'Projects', 'Research', 'About', 'Contact'],
     intro: 'I study Information Systems at USP, work on software testing research, and take part in university technology projects across data, AI, and software development.',
     scroll: 'Scroll to explore', projects: 'Projects', all: 'All', experience: 'Experience', research: 'Research', about: 'About', contact: 'Contact',
     experienceLead: 'Software development, research, and collaboration at university.', projectLead: 'Systems and tools built around practical needs.',
@@ -26,7 +26,7 @@ const ui = {
     aboutTitle: 'Software engineering, data, and research.', aboutText: 'I study Information Systems at the University of São Paulo (USP), with an expected graduation in 2029. My experience combines software development, academic research, and technology projects. My interests include software and backend engineering, data engineering, machine learning, and artificial intelligence.',
     skills: 'Technical skills', awards: 'Awards', certifications: 'Certificates and courses', languages: 'Languages', education: 'Education', educationValue: 'BSc in Information Systems · USP · 2026–2029',
     contactTitle: 'Let’s talk.', contactText: 'Explore my projects and get in touch through my professional profiles.', github: 'GitHub', linkedin: 'LinkedIn', email: 'Email', cv: 'Open résumé (PDF in English)', details: 'View details', close: 'Close details', orgs: 'University organizations',
-    filters: { software: 'Software', research: 'Research & tools', creative: 'Creative' }, themeLight: 'Switch to light theme', themeDark: 'Switch to dark theme', language: 'Mudar idioma para português',
+    filters: { software: 'Software', research: 'Research & tools', creative: 'Creative' }, themeLight: 'Switch to light theme', themeDark: 'Switch to dark theme', language: 'Mudar idioma para português', navLabel: 'Section navigation', menu: 'Open navigation', closeMenu: 'Close navigation', progress: 'Reading progress',
     collectiveRole: 'Six organizations · one area of involvement', photoHero: 'Portrait of Alex Santana',
   },
 } as const
@@ -38,8 +38,13 @@ function readPreference<T extends string>(key: string, allowed: T[], fallback: T
 function App() {
   const [lang, setLang] = useState<Lang>(() => readPreference('alex-lang', ['pt-BR', 'en'], 'pt-BR'))
   const [theme, setTheme] = useState<'light' | 'dark'>(() => readPreference('alex-theme', ['light', 'dark'], window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+  const [themeManual, setThemeManual] = useState(() => { try { return localStorage.getItem('alex-theme') !== null } catch { return false } })
   const [filter, setFilter] = useState<Category | 'all'>('all')
   const [open, setOpen] = useState<string[]>([])
+  const [activeSection, setActiveSection] = useState('home')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const progressRef = useRef<HTMLSpanElement>(null)
+  const portraitRef = useRef<HTMLDivElement>(null)
   const text = ui[lang]
   const visibleProjects = useMemo(() => filter === 'all' ? projects : projects.filter((project) => project.categories.includes(filter)), [filter])
   const sortedOrganizations = useMemo(() => [...organizations].sort((a, b) => b.sortKey - a.sortKey), [])
@@ -55,8 +60,47 @@ function App() {
     document.querySelector('meta[property="og:image"]')?.setAttribute('content', lang === 'pt-BR' ? '/social-card.svg' : '/social-card-en.svg')
     document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', lang === 'pt-BR' ? 'Portfólio de Alex Santana' : 'Alex Santana portfolio')
     document.querySelector('meta[property="og:locale"]')?.setAttribute('content', lang === 'pt-BR' ? 'pt_BR' : 'en_US')
-    try { localStorage.setItem('alex-lang', lang); localStorage.setItem('alex-theme', theme) } catch { /* storage can be unavailable */ }
-  }, [lang, theme])
+    try { localStorage.setItem('alex-lang', lang); if (themeManual) localStorage.setItem('alex-theme', theme) } catch { /* storage can be unavailable */ }
+  }, [lang, theme, themeManual])
+
+  useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('main section[id]'))
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((item) => item.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+      if (visible) setActiveSection(visible.target.id)
+    }, { rootMargin: '-18% 0px -62% 0px', threshold: [0, .15, .4, .65] })
+    sections.forEach((section) => observer.observe(section))
+    const revealObserver = new IntersectionObserver((entries, current) => entries.forEach((item) => {
+      if (item.isIntersecting) { item.target.classList.add('is-visible'); current.unobserve(item.target) }
+    }), { threshold: .08 })
+    const revealTargets = document.querySelectorAll('.section-heading, .timeline-entry, .project-row, .about-content, .about-resume, .research-copy, .contact-content')
+    revealTargets.forEach((element) => { element.classList.add('reveal'); revealObserver.observe(element) })
+    const updateProgress = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight
+      const progress = total > 0 ? window.scrollY / total : 0
+      progressRef.current?.style.setProperty('transform', `scaleX(${progress})`)
+      progressRef.current?.parentElement?.setAttribute('aria-valuenow', String(Math.round(progress * 100)))
+    }
+    updateProgress()
+    window.addEventListener('scroll', updateProgress, { passive: true })
+    window.addEventListener('resize', updateProgress)
+    return () => { observer.disconnect(); revealObserver.disconnect(); window.removeEventListener('scroll', updateProgress); window.removeEventListener('resize', updateProgress) }
+  }, [])
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const sync = (event: MediaQueryListEvent) => {
+      if (!themeManual) setTheme(event.matches ? 'dark' : 'light')
+    }
+    media.addEventListener('change', sync)
+    return () => media.removeEventListener('change', sync)
+  }, [themeManual])
+
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setMenuOpen(false) }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [])
 
   const toggle = (id: string) => setOpen((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])
   const entry = (item: Entry, nested = false) => {
@@ -67,14 +111,30 @@ function App() {
       <p>{tx(item.summary, lang)}</p>
       {item.photo && <img className="entry-photo" src={item.photo.src} alt={tx(item.photo.alt, lang)} loading="lazy"/>}
       <button className="disclosure" aria-expanded={expanded} aria-controls={`detail-${item.id}`} onClick={() => toggle(item.id)}>{expanded ? text.close : text.details}<span aria-hidden="true">{expanded ? '−' : '+'}</span></button>
-      {expanded && <div className="entry-details" id={`detail-${item.id}`}><p>{tx(item.details, lang)}</p></div>}
+      <div className="entry-details" id={`detail-${item.id}`} hidden={!expanded}><p>{tx(item.details, lang)}</p></div>
     </article>
   }
 
+  const sections = ['home', 'experience', 'projects', 'research', 'about', 'contact']
+  const tiltPortrait = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'mouse' || window.matchMedia('(pointer: coarse), (prefers-reduced-motion: reduce)').matches) return
+    const box = event.currentTarget.getBoundingClientRect()
+    const x = (event.clientX - box.left) / box.width - .5
+    const y = (event.clientY - box.top) / box.height - .5
+    event.currentTarget.style.setProperty('--tilt-x', `${-y * 4}deg`)
+    event.currentTarget.style.setProperty('--tilt-y', `${x * 4}deg`)
+  }
+  const resetPortrait = (event: React.PointerEvent<HTMLDivElement>) => { event.currentTarget.style.setProperty('--tilt-x', '0deg'); event.currentTarget.style.setProperty('--tilt-y', '0deg') }
+
   return <div className="page-shell">
-    <header className="site-header"><a className="brand" href="#home" aria-label={lang === 'pt-BR' ? 'Alex Santana — início' : 'Alex Santana — home'}>AS<span>.</span></a><nav aria-label={lang === 'pt-BR' ? 'Navegação principal' : 'Main navigation'}>{['experience', 'projects', 'research', 'about', 'contact'].map((key, index) => <a key={key} href={`#${key}`}>{text.nav[index]}</a>)}</nav><div className="header-tools"><button className="tool-button" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label={theme === 'light' ? text.themeDark : text.themeLight}>{theme === 'light' ? '◐' : '☼'}</button><button className="language-button" onClick={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} aria-label={text.language}>{lang === 'pt-BR' ? 'EN' : 'PT'}</button></div></header>
+    <div className="reading-progress" role="progressbar" aria-label={text.progress} aria-valuemin={0} aria-valuemax={100}><span ref={progressRef}/></div>
+    <div className="corner-controls"><button className="language-button" onClick={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} aria-label={text.language}>{lang === 'pt-BR' ? 'PT' : 'EN'}<span aria-hidden="true">⌄</span></button><button className="tool-button" onClick={() => { setTheme(theme === 'light' ? 'dark' : 'light'); setThemeManual(true) }} aria-label={theme === 'light' ? text.themeDark : text.themeLight} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾' : '☀'}</button></div>
+    <button className="mobile-nav-trigger" aria-label={menuOpen ? text.closeMenu : text.menu} aria-expanded={menuOpen} aria-controls="floating-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? '×' : '☰'}<span>{menuOpen ? text.closeMenu : text.menu}</span></button>
+    <nav className={`floating-nav${menuOpen ? ' menu-open' : ''}`} id="floating-navigation" aria-label={text.navLabel}>
+      {sections.map((id, index) => <a key={id} href={`#${id}`} className={activeSection === id ? 'active' : ''} aria-current={activeSection === id ? 'location' : undefined} onClick={() => setMenuOpen(false)}><span className="nav-icon" aria-hidden="true">{['⌂', '↗', '▤', '⌘', '◌', '↗'][index]}</span><span className="nav-label">{text.nav[index]}</span></a>)}
+    </nav>
     <main>
-      <section className="hero section-wrap" id="home"><div className="hero-copy"><p className="eyebrow">{lang === 'pt-BR' ? 'PORTFÓLIO' : 'PORTFOLIO'} · {new Date().getFullYear()}</p><h1 key={lang}><span>{lang === 'pt-BR' ? 'Oi, eu sou' : 'Hi, I’m'}</span><br />Alex<span className="accent">.</span></h1><p className="hero-intro">{text.intro}</p><div className="hero-links"><a href="https://github.com/alexzjss" target="_blank" rel="noreferrer">GitHub <span>↗</span></a><a href="https://www.linkedin.com/in/alex-jsz/" target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a><a className="cv-link" href="/documents/CV.pdf" target="_blank" rel="noreferrer">{text.cv}<span>↗</span></a></div></div><div className="hero-composition"><div className="portrait-frame"><img src="/images/profile/alex-santana.jpg" alt={text.photoHero} fetchPriority="high"/><span className="portrait-caption">USP<br/>SÃO PAULO</span></div><span className="orbit orbit-one"/><span className="orbit orbit-two"/><span className="orbit-dot"/><span className="cross-mark">+</span></div><a className="scroll-cue" href="#experience"><span className="scroll-line"/>{text.scroll}<span aria-hidden="true">↓</span></a></section>
+      <section className="hero section-wrap" id="home"><div className="hero-copy reveal"><p className="eyebrow">{lang === 'pt-BR' ? 'PORTFÓLIO' : 'PORTFOLIO'} · {new Date().getFullYear()}</p><h1 key={lang}><span>{lang === 'pt-BR' ? 'Oi, eu sou' : 'Hi, I’m'}</span><br />Alex<span className="accent">.</span></h1><p className="hero-intro">{text.intro}</p><div className="hero-links"><a href="https://github.com/alexzjss" target="_blank" rel="noreferrer">GitHub <span>↗</span></a><a href="https://www.linkedin.com/in/alex-jsz/" target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a><a className="cv-link" href="/documents/CV.pdf" target="_blank" rel="noreferrer">{text.cv}<span>↗</span></a></div></div><div className="hero-composition"><div className="portrait-frame" ref={portraitRef} onPointerMove={tiltPortrait} onPointerLeave={resetPortrait}><img src="/images/profile/alex-santana.jpg" alt={text.photoHero} fetchPriority="high"/><span className="portrait-caption">USP<br/>SÃO PAULO</span></div></div><a className="scroll-cue" href="#experience"><span className="scroll-line"/>{text.scroll}<span aria-hidden="true">↓</span></a></section>
       <section className="section-wrap section" id="experience"><SectionHeading number="01" label={text.experience} title={text.experienceLead}/><div className="timeline">{highlights.map((item) => entry(item))}<article className="timeline-entry collective-entry"><span className="timeline-dot" aria-hidden="true"/><p className="period">{tx(collective.period, lang)}</p><h3>{text.orgs}</h3><p className="role">{text.collectiveRole}</p><p>{tx(collective.summary, lang)}</p><div className="organization-list">{sortedOrganizations.map((item) => entry(item, true))}</div></article></div></section>
       <section className="section-wrap section" id="projects"><SectionHeading number="02" label={text.projects} title={text.projectLead}/><div className="filter-row" role="group" aria-label={lang === 'pt-BR' ? 'Filtrar projetos' : 'Filter projects'}>{(['all', 'software', 'research', 'creative'] as const).map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} aria-pressed={filter === item} onClick={() => setFilter(item)}>{item === 'all' ? text.all : text.filters[item]}</button>)}</div><div className="project-list">{visibleProjects.length ? visibleProjects.map((project, index) => <article className="project-row" key={project.name}><span className="project-index">0{index + 1}</span><div className="project-copy"><h3>{project.name}</h3><p>{tx(project.description, lang)}</p><div className="tags">{project.stack.map((tech) => <span key={tech}>{tech}</span>)}</div></div><a className="project-link" href={project.url} target="_blank" rel="noreferrer" aria-label={`${project.name} — GitHub`}>↗</a></article>) : <p className="empty-state">{lang === 'pt-BR' ? 'Nenhum projeto nesta categoria por enquanto.' : 'There are no projects in this category yet.'}</p>}</div></section>
       <section className="research-band" id="research"><div className="section-wrap research-inner"><SectionHeading number="03" label={text.research} title={text.researchTitle}/><div className="research-copy"><p className="period">{tx(research.period, lang)}</p><p className="research-affiliation">{research.institution}<br/>{research.advisor}</p><p>{tx(research.summary, lang)}</p><div className="research-method"><span className="eyebrow">{text.researchMethod}</span><p>{tx(research.method, lang)}</p></div><div className="research-tools"><span className="eyebrow">{text.researchTools}</span><div className="tags">{research.tools.map((tool) => <span key={tool}>{tool}</span>)}</div></div><div className="research-status"><span className="eyebrow">{text.researchStatus}</span><p>{tx(research.status, lang)}</p></div></div></div></section>
