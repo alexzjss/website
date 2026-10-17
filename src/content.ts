@@ -2,7 +2,7 @@ export type Copy = { 'pt-BR': string; en: string }
 export type Category = 'software' | 'research' | 'creative'
 export type Project = { name: string; description: Copy; categories: Category[]; stack: string[]; url: string }
 export type Media = { src: string; alt: Copy }
-export type Entry = { id: string; name: string; role: Copy; period: Copy; sortKey: number; summary: Copy; details: Copy; logo?: string; photo?: Media }
+export type Entry = { id: string; name: string; role: Copy; period: Copy; sortKey: number; summary: Copy; details: Copy; logo?: string; photo?: Media; photos?: Media[] }
 export const c = (pt: string, en: string): Copy => ({ 'pt-BR': pt, en })
 export const tx = (value: Copy, lang: 'pt-BR' | 'en') => value[lang]
 
@@ -27,6 +27,7 @@ export const highlights: Entry[] = [
     summary: c('Bolsista do PET-SI, com participação nos três eixos do programa: ensino, pesquisa e extensão.', 'Scholar in PET-SI, participating in the program’s three pillars: teaching, research, and outreach.'),
     details: c('Contribui com pesquisa aplicada e produção acadêmica em Sistemas de Informação, apoia atividades de ensino e mentoria entre estudantes e desenvolve projetos de extensão universitária.', 'Contributes to applied research and academic work in Information Systems, supports teaching and peer mentoring, and develops university outreach projects.'),
     logo: '/images/organizations/pet-si.jpg', photo: { src: '/images/experiences/pet-si.jpg', alt: c('Alex ao lado do painel do podcast Fala, Coruja! do PET-SI', 'Alex beside the PET-SI Fala, Coruja! podcast display') },
+    photos: [{ src: '/images/experiences/pet-si-mascot.jpg', alt: c('Alex com o mascote do PET-SI', 'Alex with the PET-SI mascot') }],
   },
 ]
 
@@ -65,6 +66,11 @@ export const organizations: Entry[] = [
     summary: c('Organização do evento acadêmico anual do curso de Sistemas de Informação da USP.', 'Organizes the annual academic event for USP’s Information Systems program.'),
     details: c('Prospecta patrocínios, administra o orçamento do evento, desenvolve identidade visual e estratégias de marketing e mantém comunicação com parceiros e patrocinadores.', 'Prospects sponsors, manages the event budget, develops visual identity and marketing strategies, and communicates with partners and sponsors.'),
     logo: '/images/organizations/semana-si.jpg', photo: { src: '/images/experiences/semana-si-presenter.jpg', alt: c('Alex apresentando durante a Semana de Sistemas de Informação', 'Alex presenting during Information Systems Week') },
+    photos: [
+      { src: '/images/experiences/semana-si-portrait.jpg', alt: c('Alex durante a Semana de Sistemas de Informação', 'Alex during Information Systems Week') },
+      { src: '/images/experiences/semana-si-stage.jpg', alt: c('Alex no palco durante a Semana de Sistemas de Informação', 'Alex on stage during Information Systems Week') },
+      { src: '/images/experiences/semana-si-etec.jpg', alt: c('Integrantes da Semana SI em atividade na Etec São Mateus', 'Information Systems Week members at an event at Etec São Mateus') },
+    ],
   },
   {
     id: 'dasi', name: 'DASI USP', sortKey: 202603,
@@ -72,6 +78,10 @@ export const organizations: Entry[] = [
     summary: c('Coordena projetos de TI e também atua como membro acadêmico do Diretório Acadêmico de Sistemas de Informação.', 'Coordinates IT projects and also serves as an academic member of the Information Systems Student Council.'),
     details: c('Desenvolve e mantém sistemas internos, faz a ligação entre docentes e estudantes para melhorias pedagógicas e resolução de questões acadêmicas e administra a infraestrutura de tecnologia da organização.', 'Develops and maintains internal systems, connects faculty and students to improve teaching and resolve academic issues, and manages the organization’s technology infrastructure.'),
     logo: '/images/organizations/dasi.jpg', photo: { src: '/images/experiences/dasi-visit-pg.jpg', alt: c('Alex em visita à P&G com o DASI', 'Alex on a DASI visit to P&G') },
+    photos: [
+      { src: '/images/experiences/dasi-build-with-ai.jpg', alt: c('Auditório do evento Build with AI, com marcas do DASI USP Leste e GDG Cloud SP', 'Build with AI event auditorium featuring DASI USP Leste and GDG Cloud SP branding') },
+      { src: '/images/experiences/dasi-b3-visit.jpg', alt: c('Alex em visita à sede da B3', 'Alex visiting B3 headquarters') },
+    ],
   },
 ]
 
@@ -99,6 +109,11 @@ export const projects: Project[] = [
   { name: 'Eco Fruta', description: c('Feira virtual de orgânicos que aproxima consumidores de pequenos produtores. Reúne catálogo pesquisável, filtros de produtos, carrinho e contato direto com produtores pelo WhatsApp.', 'A virtual organic market connecting consumers with small producers. It includes a searchable catalog, product filters, a shopping cart, and direct contact with producers through WhatsApp.'), categories: ['software'], stack: ['Next.js', 'React', 'TypeScript', 'Zustand'], url: 'https://github.com/alexzjss/eco-fruta' },
   { name: 'ICNDY', description: c('Aplicativo Android offline-first para acompanhar treinos Cindy, com sessões Classic e Beginner configuráveis, cronômetro, registro de rounds, histórico local, métricas de progresso, lembretes opcionais e backup em JSON.', 'An offline-first Android app for tracking Cindy workouts, with configurable Classic and Beginner sessions, a workout timer, round tracking, local history, progress metrics, optional reminders, and JSON backup.'), categories: ['software'], stack: ['React Native', 'Expo', 'TypeScript', 'SQLite'], url: 'https://github.com/alexzjss/ICNDY' },
   { name: 'SampaNav', description: c('Planejador local de rotas para um cenário de sobrevivência. Representa setores como um grafo e compara o caminho mais curto com rotas que reduzem a exposição a terreno hostil, zonas de perigo e sonares.', 'A local route planner for a survival scenario. It models sectors as a graph and compares the shortest path with routes that reduce exposure to hostile terrain, danger zones, and sonar.'), categories: ['software'], stack: ['Node.js', 'JavaScript', 'Dijkstra', 'SVG'], url: 'https://github.com/alexzjss/SampaNav' },
+]
+
+export const educationPhotos = [
+  { src: '/images/education/usp-career-fair.jpg', alt: c('Alex na Feira de Profissões da USP, em frente ao estande da EACH', 'Alex at the USP Career Fair in front of the EACH booth'), caption: c('Feira de Profissões da USP', 'USP Career Fair') },
+  { src: '/images/education/usp-clock-square.jpg', alt: c('Alex na Praça do Relógio da Cidade Universitária da USP', 'Alex at Clock Square on USP’s University City campus'), caption: c('Cidade Universitária · USP', 'University City · USP') },
 ]
 
 export const skillGroups = [
