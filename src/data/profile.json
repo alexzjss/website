@@ -6,11 +6,91 @@
         "en": "Languages"
       },
       "items": [
-        "Python",
-        "Java",
-        "TypeScript",
-        "JavaScript",
-        "SQL"
+        {
+          "name": "Python",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "sampanav"
+            },
+            {
+              "kind": "project",
+              "id": "jflp"
+            },
+            {
+              "kind": "project",
+              "id": "engrama"
+            },
+            {
+              "kind": "project",
+              "id": "algoricmos"
+            }
+          ]
+        },
+        {
+          "name": "Java",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "jflp"
+            },
+            {
+              "kind": "entry",
+              "id": "saeg"
+            }
+          ]
+        },
+        {
+          "name": "TypeScript",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "dasiboard"
+            },
+            {
+              "kind": "project",
+              "id": "vttrpg"
+            },
+            {
+              "kind": "project",
+              "id": "modaloop"
+            },
+            {
+              "kind": "project",
+              "id": "ecofruta"
+            },
+            {
+              "kind": "project",
+              "id": "icndy"
+            }
+          ]
+        },
+        {
+          "name": "JavaScript",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "nakano"
+            },
+            {
+              "kind": "project",
+              "id": "sampanav"
+            }
+          ]
+        },
+        {
+          "name": "SQL",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "dasiboard"
+            },
+            {
+              "kind": "project",
+              "id": "vttrpg"
+            }
+          ]
+        }
       ]
     },
     {
@@ -19,9 +99,36 @@
         "en": "Backend & APIs"
       },
       "items": [
-        "FastAPI",
-        "Node.js",
-        "REST APIs"
+        {
+          "name": "FastAPI",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "sampanav"
+            },
+            {
+              "kind": "project",
+              "id": "jflp"
+            }
+          ]
+        },
+        {
+          "name": "Node.js",
+          "evidence": []
+        },
+        {
+          "name": "REST APIs",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "sampanav"
+            },
+            {
+              "kind": "project",
+              "id": "dasiboard"
+            }
+          ]
+        }
       ]
     },
     {
@@ -30,12 +137,58 @@
         "en": "Data & Databases"
       },
       "items": [
-        "PostgreSQL",
-        "MySQL",
-        "Machine Learning",
-        "Data Science",
-        "Data Analysis",
-        "Matplotlib"
+        {
+          "name": "PostgreSQL",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "dasiboard"
+            },
+            {
+              "kind": "project",
+              "id": "vttrpg"
+            }
+          ]
+        },
+        {
+          "name": "MySQL",
+          "evidence": []
+        },
+        {
+          "name": "Machine Learning",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "engrama"
+            },
+            {
+              "kind": "entry",
+              "id": "hype"
+            }
+          ]
+        },
+        {
+          "name": "Data Science",
+          "evidence": [
+            {
+              "kind": "entry",
+              "id": "hype"
+            }
+          ]
+        },
+        {
+          "name": "Data Analysis",
+          "evidence": [
+            {
+              "kind": "entry",
+              "id": "saeg"
+            }
+          ]
+        },
+        {
+          "name": "Matplotlib",
+          "evidence": []
+        }
       ]
     },
     {
@@ -44,11 +197,36 @@
         "en": "Infrastructure & Tools"
       },
       "items": [
-        "Docker",
-        "Git",
-        "GitHub",
-        "Linux",
-        "Unix"
+        {
+          "name": "Docker",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "vttrpg"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "evidence": []
+        },
+        {
+          "name": "GitHub",
+          "evidence": []
+        },
+        {
+          "name": "Linux",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "engrama"
+            }
+          ]
+        },
+        {
+          "name": "Unix",
+          "evidence": []
+        }
       ]
     },
     {
@@ -57,8 +235,32 @@
         "en": "Generative AI"
       },
       "items": [
-        "Generative AI",
-        "Claude Cowork"
+        {
+          "name": "Generative AI",
+          "evidence": [
+            {
+              "kind": "project",
+              "id": "gems"
+            },
+            {
+              "kind": "project",
+              "id": "engrama"
+            },
+            {
+              "kind": "entry",
+              "id": "claude"
+            }
+          ]
+        },
+        {
+          "name": "Claude Cowork",
+          "evidence": [
+            {
+              "kind": "entry",
+              "id": "claude"
+            }
+          ]
+        }
       ]
     }
   ],

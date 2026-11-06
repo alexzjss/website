@@ -20,5 +20,26 @@ const cv = inject(template, render('/cv'))
 await mkdir('dist/cv', { recursive: true })
 await writeFile('dist/cv/index.html', cv)
 
+// One static page per project case study.
+const projects = JSON.parse(await readFile('src/data/projects.json', 'utf8'))
+const details = JSON.parse(await readFile('src/data/details.json', 'utf8'))
+const origin = 'https://alexjsz.vercel.app'
+for (const id of Object.keys(details)) {
+  const project = projects.find((item) => item.id === id)
+  const title = `${project.name} — Alex Santana`
+  const tagline = project.tagline['pt-BR']
+  const html = inject(template, render(`/projetos/${id}`))
+    .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+    .replace(`<link rel="canonical" href="${origin}/" />`, `<link rel="canonical" href="${origin}/projetos/${id}" />`)
+    .replace(`<meta property="og:url" content="${origin}/" />`, `<meta property="og:url" content="${origin}/projetos/${id}" />`)
+    .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${title}$2`)
+    .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${title}$2`)
+    .replace(/(<meta name="description" content=")[^"]*(")/, `$1${tagline}$2`)
+    .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${tagline}$2`)
+    .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${tagline}$2`)
+  await mkdir(`dist/projetos/${id}`, { recursive: true })
+  await writeFile(`dist/projetos/${id}/index.html`, html)
+}
+
 await rm(ssrDir, { recursive: true, force: true })
-console.log('prerendered dist/index.html and dist/cv/index.html')
+console.log(`prerendered index, cv and ${Object.keys(details).length} project pages`)

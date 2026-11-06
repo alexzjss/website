@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { awards, certifications, collective, gallery, highlights, inTrail, organizations, projects, research, site, skillGroups, tx, type Area, type Entry, type Lang, type Project, type Trail, type TrailFilter } from './content'
+import { flushSync } from 'react-dom'
+import { awards, certifications, collective, gallery, hasDetail, highlights, inTrail, organizations, projectHref, projects, research, site, skillGroups, tx, type Area, type Entry, type Lang, type Project, type Trail, type TrailFilter } from './content'
 import { ui, type UI } from './ui'
 import CvPage from './CvPage'
+import ProjectPage from './ProjectPage'
 import './styles.css'
 
 const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
@@ -40,15 +42,20 @@ function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
 }
 
 function ProjectLinks({ project, text }: { project: Project; text: UI }) {
+  const study = hasDetail(project.id)
   return <div className="project-links">
-    {project.demo && <a className="pill primary" href={project.demo} target="_blank" rel="noreferrer" aria-label={`${text.demo}: ${project.name} (${text.open})`}>{text.demo} <span aria-hidden="true">↗</span></a>}
+    {study && <a className="pill primary" href={`/projetos/${project.id}`} aria-label={`${text.viewStudy}: ${project.name}`}>{text.viewStudy} <span aria-hidden="true">→</span></a>}
+    {project.demo && <a className={`pill${study ? '' : ' primary'}`} href={project.demo} target="_blank" rel="noreferrer" aria-label={`${text.demo}: ${project.name} (${text.open})`}>{text.demo} <span aria-hidden="true">↗</span></a>}
     <a className="pill" href={project.url} target="_blank" rel="noreferrer" aria-label={`${text.code}: ${project.name} — GitHub (${text.open})`}>{text.code} <span aria-hidden="true">↗</span></a>
   </div>
 }
 
 function App({ path }: { path?: string }) {
   const currentPath = path ?? (hasWindow ? window.location.pathname : '/')
-  if (currentPath.replace(/\/+$/, '') === '/cv') return <CvPage />
+  const clean = currentPath.replace(/\/+$/, '')
+  if (clean === '/cv') return <CvPage />
+  const match = clean.match(/^\/projetos\/([\w-]+)$/)
+  if (match) return <ProjectPage id={match[1]} />
   return <Portfolio />
 }
 
@@ -72,6 +79,9 @@ function Portfolio() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [copyState, setCopyState] = useState('')
   const [lightbox, setLightbox] = useState<number | null>(null)
+  const [skill, setSkill] = useState<string | null>(null)
+  const [scrolled, setScrolled] = useState(false)
+  const heroRef = useRef<HTMLElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -116,7 +126,11 @@ function Portfolio() {
       if (item.isIntersecting) { item.target.classList.add('is-visible'); current.unobserve(item.target) }
     }), { threshold: .06 })
     const revealTargets = document.querySelectorAll('.section-heading, .timeline-entry, .case-study, .pcard, .award, .photo, .about-content, .about-resume, .research-copy, .contact-card')
-    revealTargets.forEach((element) => { if (!element.classList.contains('is-visible')) { element.classList.add('reveal'); revealObserver.observe(element) } })
+    revealTargets.forEach((element) => {
+      if (element.classList.contains('is-visible')) return
+      if (element.getBoundingClientRect().top < window.innerHeight * .92) { element.classList.add('is-visible'); return }
+      element.classList.add('reveal'); revealObserver.observe(element)
+    })
     return () => { observer.disconnect(); revealObserver.disconnect() }
   }, [trail, area, lang])
 
@@ -126,6 +140,8 @@ function Portfolio() {
       const progress = total > 0 ? window.scrollY / total : 0
       progressRef.current?.style.setProperty('transform', `scaleX(${progress})`)
       progressRef.current?.parentElement?.setAttribute('aria-valuenow', String(Math.round(progress * 100)))
+      setScrolled(window.scrollY > 40)
+      if (heroRef.current && !reducedMotion()) heroRef.current.style.setProperty('--hero', String(Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * .8)))))
       const timeline = timelineRef.current
       if (timeline) {
         const box = timeline.getBoundingClientRect()
@@ -175,7 +191,12 @@ function Portfolio() {
   }, [lightbox])
 
   const toggle = (id: string) => setOpen((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])
-  const chooseTrail = (next: TrailFilter) => { setTrail(next); setArea('all') }
+  const chooseTrail = (next: TrailFilter) => {
+    const apply = () => { setTrail(next); setArea('all') }
+    const start = (document as Document & { startViewTransition?: (callback: () => void) => unknown }).startViewTransition
+    if (!start || reducedMotion()) { apply(); return }
+    start.call(document, () => flushSync(apply))
+  }
   const copyEmail = async () => {
     try { await navigator.clipboard.writeText(site.email); setCopyState(text.copied) } catch { setCopyState(text.copyFail) }
     window.setTimeout(() => setCopyState(''), 2600)
@@ -184,7 +205,7 @@ function Portfolio() {
 
   const entry = (item: Entry, nested = false) => {
     const expanded = open.includes(item.id)
-    return <article className={nested ? 'organization' : 'timeline-entry'} key={item.id}>
+    return <article className={nested ? 'organization' : 'timeline-entry'} key={item.id} style={{ viewTransitionName: `e-${item.id}` }}>
       {!nested && <span className="timeline-dot" aria-hidden="true" />}
       <div className="entry-heading">{item.logo && <img className="org-logo" src={item.logo} alt="" width="46" height="46" loading="lazy" decoding="async"/>}<div><p className="period">{tx(item.period, lang)}{item.kind && <span className={`kind kind-${item.kind}`}>{text.kinds[item.kind]}</span>}</p><h3>{item.name}</h3><p className="role">{tx(item.role, lang)}</p></div></div>
       <p className="summary">{tx(item.summary, lang)}</p>
@@ -195,20 +216,44 @@ function Portfolio() {
 
   const tiltPortrait = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== 'mouse' || reducedMotion()) return
-    const box = event.currentTarget.getBoundingClientRect()
-    event.currentTarget.style.setProperty('--tilt-x', `${-((event.clientY - box.top) / box.height - .5) * 12}deg`)
-    event.currentTarget.style.setProperty('--tilt-y', `${((event.clientX - box.left) / box.width - .5) * 12}deg`)
+    const stage = event.currentTarget
+    const box = stage.getBoundingClientRect()
+    const x = (event.clientX - box.left) / box.width - .5
+    const y = (event.clientY - box.top) / box.height - .5
+    stage.style.transition = 'transform 160ms ease-out'
+    stage.style.setProperty('--tilt-x', `${-y * 30}deg`)
+    stage.style.setProperty('--tilt-y', `${x * 34}deg`)
+    stage.style.setProperty('--px', String(x * 2))
+    stage.style.setProperty('--py', String(y * 2))
+    stage.style.setProperty('--gx', `${(x + .5) * 100}%`)
+    stage.style.setProperty('--gy', `${(y + .5) * 100}%`)
+    stage.style.setProperty('--glare', '1')
   }
-  const resetPortrait = (event: React.PointerEvent<HTMLDivElement>) => { event.currentTarget.style.setProperty('--tilt-x', '0deg'); event.currentTarget.style.setProperty('--tilt-y', '0deg') }
+  const resetPortrait = (event: React.PointerEvent<HTMLDivElement>) => {
+    const stage = event.currentTarget
+    stage.style.transition = 'transform 800ms cubic-bezier(.2,.9,.3,1.25)'
+    for (const name of ['--tilt-x', '--tilt-y']) stage.style.setProperty(name, '0deg')
+    for (const name of ['--px', '--py']) stage.style.setProperty(name, '0')
+    stage.style.setProperty('--glare', '0')
+  }
 
   const photo = lightbox !== null ? photos[lightbox] : null
+  const activeSkill = useMemo(() => {
+    const found = skillGroups.flatMap((group) => group.items).find((item) => item.name === skill)
+    if (!found) return null
+    return { name: found.name, evidence: found.evidence.map((item) => {
+      if (item.kind === 'project') { const project = projects.find((candidate) => candidate.id === item.id); return project ? { label: project.name, href: projectHref(project) } : null }
+      const entryItem = [...highlights, ...organizations].find((candidate) => candidate.id === item.id)
+      return entryItem ? { label: entryItem.name, href: '#experience' } : null
+    }) }
+  }, [skill])
 
   return <div className="page-shell">
     <div className="blobs" aria-hidden="true"><i/><i/><i/></div>
     <a className="skip-link" href="#main">{text.skip}</a>
     <div className="reading-progress" role="progressbar" aria-label={text.progress} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}><span ref={progressRef}/></div>
 
-    <div className="topbar glass" role="group" aria-label={text.trailLabel}>
+    <div className={`topbar glass${scrolled ? ' scrolled' : ''}`} role="group" aria-label={text.trailLabel}>
       <div className="segment">{trailKeys.map((key) => <button key={key} className={trail === key ? 'on' : ''} aria-pressed={trail === key} aria-label={text.trails[key].name} onClick={() => chooseTrail(key)}><span className="full">{text.trails[key].name}</span><span className="short" aria-hidden="true">{text.trails[key].short}</span></button>)}</div>
       <span className="bar-sep" aria-hidden="true"/>
       <button className="bar-button" onClick={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} aria-label={text.language}>{lang === 'pt-BR' ? 'PT' : 'EN'}</button>
@@ -221,7 +266,7 @@ function Portfolio() {
     </nav>
 
     <main id="main" tabIndex={-1}>
-      <section className="hero section-wrap" id="home">
+      <section className="hero section-wrap" id="home" ref={heroRef}>
         <div className="hero-copy">
           <p className="status-chip glass"><span className="status-dot" aria-hidden="true"/><img src="/images/organizations/banco-safra.jpg" alt="" width="20" height="20"/>{text.statusChip}</p>
           <p className="eyebrow">{text.portfolio} · 2026</p>
@@ -235,7 +280,7 @@ function Portfolio() {
             <a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
           </div>
         </div>
-        <div className="hero-composition"><div className="portrait-frame glass" onPointerMove={tiltPortrait} onPointerLeave={resetPortrait}><img src="/images/profile/alex-santana.jpg" alt={text.photoHero} width="709" height="1064" {...{ fetchpriority: 'high' }}/></div></div>
+        <div className="hero-composition"><div className="portrait-stage" onPointerMove={tiltPortrait} onPointerLeave={resetPortrait}><div className="portrait-frame glass"><div className="portrait-photo"><img src="/images/profile/alex-santana.jpg" alt={text.photoHero} width="709" height="1064" {...{ fetchpriority: 'high' }}/><span className="portrait-glare" aria-hidden="true"/></div></div><span className="portrait-chip glass" aria-hidden="true">USP · SÃO PAULO</span></div></div>
       </section>
 
       <section className="stats section-wrap" aria-label={text.numbers}><dl>{stats.map((item, index) => <div className="stat glass" key={index}><dt>{text.stats[index]}</dt><dd><CountUp value={item.value} suffix={item.suffix}/></dd></div>)}</dl></section>
@@ -254,8 +299,8 @@ function Portfolio() {
       </section>
 
       <section className="section-wrap section" id="projects"><SectionHeading number={numberOf('projects')} label={text.projects} title={text.projectLead}/>
-        {featured.length > 0 && <div className="featured"><h3 className="subheading">{text.caseStudies}</h3>{featured.map((project) => <article className="case-study" key={project.id}>
-          {project.image && <a className="case-media" href={project.demo ?? project.url} target="_blank" rel="noreferrer" tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" loading="lazy" decoding="async"/></a>}
+        {featured.length > 0 && <div className="featured"><h3 className="subheading">{text.caseStudies}</h3>{featured.map((project) => <article className="case-study" key={project.id} style={{ viewTransitionName: `c-${project.id}` }}>
+          {project.image && <a className="case-media" href={projectHref(project)} {...(hasDetail(project.id) ? {} : { target: '_blank', rel: 'noreferrer' })} tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" style={hasDetail(project.id) ? { viewTransitionName: `img-${project.id}` } : undefined} loading="lazy" decoding="async"/></a>}
           <div className="case-body"><p className="eyebrow">{text.caseLabel} · {text.areas[project.area]}</p><h3>{project.name}</h3><p className="case-lead">{tx(project.description, lang)}</p>
             {project.caseStudy && <dl className="case-facts"><div><dt>{text.problem}</dt><dd>{tx(project.caseStudy.problem, lang)}</dd></div><div><dt>{text.solution}</dt><dd>{tx(project.caseStudy.solution, lang)}</dd></div><div><dt>{text.result}</dt><dd>{tx(project.caseStudy.result, lang)}</dd></div></dl>}
             <div className="tags">{project.stack.map((tech) => <span key={tech}>{tech}</span>)}</div><ProjectLinks project={project} text={text}/></div>
@@ -265,8 +310,8 @@ function Portfolio() {
           <button className={`chip glass${area === 'all' ? ' on' : ''}`} aria-pressed={area === 'all'} onClick={() => setArea('all')}>{text.areaAll} <small>{others.length}</small></button>
           {areaKeys.filter((key) => areaCounts[key] > 0).map((key) => <button key={key} className={`chip glass${area === key ? ' on' : ''}`} aria-pressed={area === key} onClick={() => setArea(key)}>{text.areas[key]} <small>{areaCounts[key]}</small></button>)}
         </div>
-        <div className="project-grid">{visibleProjects.length ? visibleProjects.map((project) => <article className={`pcard${project.size === 'wide' ? ' wide' : ''}${project.image ? ' has-image' : ''}`} key={project.id}>
-          {project.image && <a className={`pcard-media${project.fit === 'contain' ? ' contain' : ''}`} href={project.demo ?? project.url} target="_blank" rel="noreferrer" tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" style={{ objectPosition: project.position }} loading="lazy" decoding="async"/></a>}
+        <div className="project-grid">{visibleProjects.length ? visibleProjects.map((project) => <article className={`pcard${project.size === 'wide' ? ' wide' : ''}${project.image ? ' has-image' : ''}`} key={project.id} style={{ viewTransitionName: `p-${project.id}` }}>
+          {project.image && <a className={`pcard-media${project.fit === 'contain' ? ' contain' : ''}`} href={projectHref(project)} {...(hasDetail(project.id) ? {} : { target: '_blank', rel: 'noreferrer' })} tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" style={{ objectPosition: project.position, ...(hasDetail(project.id) ? { viewTransitionName: `img-${project.id}` } : {}) }} loading="lazy" decoding="async"/></a>}
           <div className="pcard-body"><p className="eyebrow"><span className={`area-dot area-${project.area}`} aria-hidden="true"/>{text.areas[project.area]} · {text.status[project.status]}</p><h3>{project.name}</h3><p className="tagline">{tx(project.tagline, lang)}</p><p className="desc">{tx(project.description, lang)}</p><div className="tags">{project.stack.slice(0, 5).map((tech) => <span key={tech}>{tech}</span>)}</div><ProjectLinks project={project} text={text}/></div>
         </article>) : <p className="empty-state">{text.empty}</p>}</div>
       </section>
@@ -275,17 +320,18 @@ function Portfolio() {
 
       <section className="section-wrap section" id="awards"><SectionHeading number={numberOf('awards')} label={text.nav.awards} title={text.awardsTitle}/>
         <p className="section-lead">{text.awardsLead}</p>
-        <ol className="awards">{awards.map((award) => <li className="award glass" key={award.id}><span className="award-dot" aria-hidden="true"/><p className="period">{award.year ?? '—'}</p><h3>{tx(award.title, lang)}</h3><p>{tx(award.context, lang)}</p>{award.image && <img src={award.image.src} alt={tx(award.image.alt, lang)} width="798" height="1064" loading="lazy" decoding="async"/>}</li>)}</ol>
+        <ol className="awards">{awards.map((award) => <li className="award glass" key={award.id} style={{ viewTransitionName: `a-${award.id}` }}><span className="award-dot" aria-hidden="true"/><p className="period">{award.year ?? '—'}</p><h3>{tx(award.title, lang)}</h3><p>{tx(award.context, lang)}</p>{award.image && <img src={award.image.src} alt={tx(award.image.alt, lang)} width="798" height="1064" loading="lazy" decoding="async"/>}</li>)}</ol>
       </section>
 
       {photos.length > 0 && <section className="section-wrap section" id="gallery"><SectionHeading number={numberOf('gallery')} label={text.nav.gallery} title={text.galleryTitle}/>
         <p className="section-lead">{text.galleryLead}</p>
-        <div className="gallery">{photos.map((item, index) => <button className="photo" key={item.id} onClick={() => setLightbox(index)} aria-label={`${text.openPhoto}: ${tx(item.caption, lang)}`}><img src={item.src} alt={tx(item.alt, lang)} width={item.width} height={item.height} loading="lazy" decoding="async"/><span className="photo-caption glass">{tx(item.caption, lang)}</span></button>)}</div>
+        <div className="gallery">{photos.map((item, index) => <button className="photo" key={item.id} style={{ viewTransitionName: `ph-${item.id}` }} onClick={() => setLightbox(index)} aria-label={`${text.openPhoto}: ${tx(item.caption, lang)}`}><img src={item.src} alt={tx(item.alt, lang)} width={item.width} height={item.height} loading="lazy" decoding="async"/><span className="photo-caption glass">{tx(item.caption, lang)}</span></button>)}</div>
       </section>}
 
       <section className="section-wrap section about-section" id="about"><SectionHeading number={numberOf('about')} label={text.about} title={text.aboutTitle}/>
         <div className="about-content"><p>{text.aboutText}</p><div className="education-card glass"><span className="eyebrow">{text.education}</span><h3>{text.educationProgram}</h3><p>{text.educationInstitution}</p><span className="education-period">{text.educationStatus}</span><span className="eyebrow languages-label">{text.languages}</span><p>{text.languagesLine}</p></div></div>
-        <div className="about-resume"><div className="skill-groups"><h3>{text.skills}</h3>{skillGroups.map((group) => <div className="skill-group" key={group.title.en}><span>{tx(group.title, lang)}</span><div className="tags">{group.items.map((skill) => <span key={skill}>{skill}</span>)}</div></div>)}</div><div className="honors-group"><h3>{text.certifications}</h3><ul>{certifications.map((item) => <li key={item.en}>{tx(item, lang)}</li>)}</ul></div></div>
+        <div className="about-resume"><div className="skill-groups"><h3>{text.skills}</h3>{skillGroups.map((group) => <div className="skill-group" key={group.title.en}><span>{tx(group.title, lang)}</span><div className="tags skill-tags">{group.items.map((item) => item.evidence.length ? <button key={item.name} className={`skill${skill === item.name ? ' on' : ''}`} aria-pressed={skill === item.name} onClick={() => setSkill(skill === item.name ? null : item.name)}>{item.name}</button> : <span key={item.name}>{item.name}</span>)}</div></div>)}
+          <div className="skill-panel glass" aria-live="polite">{activeSkill ? <><p className="eyebrow">{text.usedIn} · {activeSkill.name}</p><ul>{activeSkill.evidence.map((link) => link && <li key={link.label}><a href={link.href}>{link.label} <span aria-hidden="true">→</span></a></li>)}</ul></> : <p>{text.skillsHint}</p>}</div></div><div className="honors-group"><h3>{text.certifications}</h3><ul>{certifications.map((item) => <li key={item.en}>{tx(item, lang)}</li>)}</ul></div></div>
       </section>
 
       <section className="contact-section" id="contact"><div className="section-wrap"><div className="contact-card glass"><SectionHeading number={numberOf('contact')} label={text.contact} title={text.contactTitle}/><div className="contact-content"><p>{text.contactText}</p><div className="contact-links"><a className="btn glass primary" href={`mailto:${site.email}`}>{text.sendEmail} <span aria-hidden="true">↗</span></a><button className="btn glass" onClick={copyEmail}>{text.copyEmail} <span aria-hidden="true">⧉</span></button><a className="btn glass" href={site.github} target="_blank" rel="noreferrer">{text.github} <span aria-hidden="true">↗</span></a><a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer">{text.linkedin} <span aria-hidden="true">↗</span></a><a className="btn glass" href="/cv">{text.cvPage}</a></div><p className="copy-status" role="status" aria-live="polite">{copyState}</p></div></div></div></section>

@@ -5,6 +5,7 @@
     "stack": [
       "Python",
       "FastAPI",
+      "igraph",
       "MapLibre GL",
       "H3",
       "OpenStreetMap",
@@ -54,6 +55,7 @@
       "React",
       "TypeScript",
       "Vite",
+      "Express",
       "Supabase",
       "PostgreSQL",
       "Vitest"
@@ -100,9 +102,11 @@
     "name": "JFLP Studio",
     "stack": [
       "Python",
+      "FastAPI",
       "Java",
-      "Jaguar 2",
       "Maven",
+      "Jaguar 2",
+      "SQLite",
       "Defects4J",
       "Bugs.jar"
     ],
@@ -133,9 +137,10 @@
     "name": "Engrama",
     "stack": [
       "Python",
+      "pygame",
       "Ollama",
-      "Reinforcement Learning",
-      "Local LLM"
+      "SQLite",
+      "Reinforcement Learning"
     ],
     "description": {
       "pt-BR": "Criatura digital que vive no desktop, estilo tamagotchi: nasce de um ovo, evolui por ramos conforme o cuidado, envelhece e renasce. A mente é uma simulação (necessidades, afeto, aprendizado por reforço) e o LLM local via Ollama só dá a voz. Tudo roda offline, no Windows e no Linux.",
