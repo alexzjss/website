@@ -1,0 +1,209 @@
+[
+  {
+    "id": "hackfools",
+    "src": "/images/experiences/codelab-hackfools.jpg",
+    "width": 798,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex com o troféu do Hackfools 2026",
+      "en": "Alex with the Hackfools 2026 trophy"
+    },
+    "caption": {
+      "pt-BR": "Hackfools 2026 · USPCodeLab Leste",
+      "en": "Hackfools 2026 · USPCodeLab Leste"
+    },
+    "trails": [
+      "rec",
+      "com"
+    ]
+  },
+  {
+    "id": "dasi-pg",
+    "src": "/images/experiences/dasi-visit-pg.jpg",
+    "width": 1661,
+    "height": 935,
+    "alt": {
+      "pt-BR": "Alex em visita à P&G com o DASI",
+      "en": "Alex on a DASI visit to P&G"
+    },
+    "caption": {
+      "pt-BR": "DASI em visita à P&G",
+      "en": "DASI visiting P&G"
+    },
+    "trails": [
+      "com",
+      "rec"
+    ]
+  },
+  {
+    "id": "semana-1",
+    "src": "/images/experiences/semana-si-presenter.jpg",
+    "width": 1596,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex apresentando durante a Semana de Sistemas de Informação",
+      "en": "Alex presenting during Information Systems Week"
+    },
+    "caption": {
+      "pt-BR": "Semana de SI · apresentação",
+      "en": "Information Systems Week · talk"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "pet-podcast",
+    "src": "/images/experiences/pet-si.jpg",
+    "width": 599,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex ao lado do painel do podcast Fala, Coruja! do PET-SI",
+      "en": "Alex beside the PET-SI Fala, Coruja! podcast display"
+    },
+    "caption": {
+      "pt-BR": "PET-SI · podcast Fala, Coruja!",
+      "en": "PET-SI · Fala, Coruja! podcast"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "build-ai",
+    "src": "/images/experiences/dasi-build-with-ai.jpg",
+    "width": 1661,
+    "height": 935,
+    "alt": {
+      "pt-BR": "Auditório do evento Build with AI, com marcas do DASI USP Leste e GDG Cloud SP",
+      "en": "Build with AI event auditorium featuring DASI USP Leste and GDG Cloud SP branding"
+    },
+    "caption": {
+      "pt-BR": "Build with AI · DASI USP Leste e GDG Cloud SP",
+      "en": "Build with AI · DASI USP Leste and GDG Cloud SP"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "semana-2",
+    "src": "/images/experiences/semana-si-stage.jpg",
+    "width": 798,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex no palco durante a Semana de Sistemas de Informação",
+      "en": "Alex on stage during Information Systems Week"
+    },
+    "caption": {
+      "pt-BR": "Semana de SI · no palco",
+      "en": "Information Systems Week · on stage"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "b3",
+    "src": "/images/experiences/dasi-b3-visit.jpg",
+    "width": 798,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex em visita à sede da B3",
+      "en": "Alex visiting B3 headquarters"
+    },
+    "caption": {
+      "pt-BR": "Visita à B3",
+      "en": "Visit to B3"
+    },
+    "trails": [
+      "com",
+      "rec"
+    ]
+  },
+  {
+    "id": "usp-fair",
+    "src": "/images/education/usp-career-fair.jpg",
+    "width": 599,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex na Feira de Profissões da USP, em frente ao estande da EACH",
+      "en": "Alex at the USP Career Fair in front of the EACH booth"
+    },
+    "caption": {
+      "pt-BR": "Feira de Profissões da USP",
+      "en": "USP Career Fair"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "semana-etec",
+    "src": "/images/experiences/semana-si-etec.jpg",
+    "width": 1419,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Integrantes da Semana SI em atividade na Etec São Mateus",
+      "en": "Information Systems Week members at an event at Etec São Mateus"
+    },
+    "caption": {
+      "pt-BR": "Semana de SI · Etec São Mateus",
+      "en": "Information Systems Week · Etec São Mateus"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "pet-mascot",
+    "src": "/images/experiences/pet-si-mascot.jpg",
+    "width": 599,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex com o mascote do PET-SI",
+      "en": "Alex with the PET-SI mascot"
+    },
+    "caption": {
+      "pt-BR": "Com o mascote do PET-SI",
+      "en": "With the PET-SI mascot"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "semana-3",
+    "src": "/images/experiences/semana-si-portrait.jpg",
+    "width": 709,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex durante a Semana de Sistemas de Informação",
+      "en": "Alex during Information Systems Week"
+    },
+    "caption": {
+      "pt-BR": "Semana de SI",
+      "en": "Information Systems Week"
+    },
+    "trails": [
+      "com"
+    ]
+  },
+  {
+    "id": "usp-clock",
+    "src": "/images/education/usp-clock-square.jpg",
+    "width": 599,
+    "height": 1064,
+    "alt": {
+      "pt-BR": "Alex na Praça do Relógio da Cidade Universitária da USP",
+      "en": "Alex at Clock Square on USP’s University City campus"
+    },
+    "caption": {
+      "pt-BR": "Cidade Universitária · USP",
+      "en": "University City · USP"
+    },
+    "trails": [
+      "com"
+    ]
+  }
+]

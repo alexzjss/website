@@ -1,0 +1,30 @@
+{
+  "title": {
+    "pt-BR": "Geração de dados para experimentação em teste e depuração de software",
+    "en": "Data Generation for Software Testing and Debugging Experimentation"
+  },
+  "period": {
+    "pt-BR": "Jul 2026 — Atual",
+    "en": "Jul 2026 — Present"
+  },
+  "institution": "Universidade de São Paulo · SAEG · PUB-USP",
+  "advisor": "Prof. Dr. Marcos Lordello Chaim",
+  "summary": {
+    "pt-BR": "Iniciação científica no Programa Unificado de Bolsas da USP, no grupo SAEG (Software Analysis and Experimentation Group). A pesquisa investiga técnicas de teste e depuração com programas Java do benchmark Defects4J.",
+    "en": "Undergraduate research through USP’s Unified Scholarship Program with SAEG (Software Analysis and Experimentation Group). The work investigates testing and debugging techniques using Java programs from the Defects4J benchmark."
+  },
+  "method": {
+    "pt-BR": "Com Jaguar 2, coleta dados de cobertura de fluxo de controle (cobertura de linhas) durante a execução de testes. O currículo informa o uso de 875 versões defeituosas reais de 17 projetos open source e execução em larga escala com Java e Apache Maven.",
+    "en": "Uses Jaguar 2 to collect control-flow coverage data (line coverage) while running tests. The résumé reports 875 real buggy versions across 17 open-source projects and large-scale execution with Java and Apache Maven."
+  },
+  "status": {
+    "pt-BR": "O currículo indica como objetivo apresentar o trabalho em eventos científicos, como o SICUSP; não informa resultados publicados.",
+    "en": "The résumé lists presentation at scientific events such as SICUSP as an aim; it does not report published results."
+  },
+  "tools": [
+    "Java",
+    "Apache Maven",
+    "Jaguar 2",
+    "Defects4J"
+  ]
+}

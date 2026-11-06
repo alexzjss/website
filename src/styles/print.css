@@ -1,0 +1,27 @@
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--ink:#111;--muted:#3d3d3d;--line:#d4d4d4;--card:#fff;color-scheme:light}
+  html{font-size:10pt}
+  body{font-size:9.5pt;line-height:1.45;background:#fff}
+  .blobs,.reading-progress,.topbar,.mobile-nav-trigger,.floating-nav,.skip-link,.status-chip,.hero-composition,.hero-links,.area-filter,.trails,.stats,.disclosure,.project-links,.site-footer,.case-media,.pcard-media,.gallery,#gallery,.award img,.contact-links,.copy-status,.timeline::after,.timeline-dot,.entry-link,.lightbox{display:none!important}
+  .glass{background:#fff;box-shadow:none;border:1px solid var(--line);backdrop-filter:none}
+  .glass::before,.glass::after{display:none}
+  .entry-details[hidden]{display:block!important}
+  .reveal{opacity:1!important;transform:none!important}
+  .section-wrap{width:100%}
+  .hero{min-height:0;padding:0 0 6mm;display:block}
+  .hero h1{font-size:34pt;margin:0 0 4pt}
+  .section{padding:6mm 0;border-top:1px solid var(--line)}
+  .section-heading{margin-bottom:4mm;grid-template-columns:30px 1fr}
+  .section-heading h2{font-size:17pt}
+  .timeline,.project-grid,.featured .case-study,.about-content,.about-resume,.awards,.subheading,.section-lead{margin-left:0}
+  .timeline{padding-left:0;border:0}
+  .timeline-entry{padding:0 0 3mm;margin:0 0 3mm;break-inside:avoid}
+  .organization-list{grid-template-columns:1fr 1fr;gap:0 8mm}
+  .project-grid{display:block}
+  .pcard,.case-study{display:block;padding:3mm 0;border:0;box-shadow:none;break-inside:avoid;background:#fff}
+  .case-facts{display:none}
+  .awards{display:block}.award{padding:2mm 0;border:0}.award-dot{display:none}
+  .research-band{background:#fff;margin-top:0}.research-inner{display:block;padding:6mm 0}
+  .contact-section{padding:6mm 0}.contact-card{display:block;padding:0;border:0}
+  a[href^="http"]:after{content:" (" attr(href) ")";font-size:7.5pt;color:#555;word-break:break-all}
+}

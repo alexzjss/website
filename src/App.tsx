@@ -1,64 +1,58 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { awards, certifications, collective, educationPhotos, highlights, organizations, projects, research, site, skillGroups, tx, type Category, type Entry, type Kind, type Project } from './content'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { awards, certifications, collective, gallery, highlights, inTrail, organizations, projects, research, site, skillGroups, tx, type Area, type Entry, type Lang, type Project, type Trail, type TrailFilter } from './content'
+import { ui, type UI } from './ui'
+import CvPage from './CvPage'
 import './styles.css'
 
-type Lang = 'pt-BR' | 'en'
-
-const ui = {
-  'pt-BR': {
-    nav: ['Início', 'Experiência', 'Projetos', 'Pesquisa', 'Sobre', 'Formação', 'Contato'],
-    intro: 'Sou estudante de Sistemas de Informação na USP e desenvolvo software, participo de pesquisa em teste de software e de projetos universitários nas áreas de dados, IA e tecnologia.',
-    scroll: 'Role para explorar', projects: 'Projetos', all: 'Todos', experience: 'Experiência', research: 'Pesquisa', about: 'Sobre', contact: 'Contato',
-    experienceLead: 'Dados, desenvolvimento e pesquisa, do mercado à universidade.', projectLead: 'Sistemas e ferramentas para necessidades reais.',
-    researchTitle: 'Geração de dados para teste e depuração de software', researchMethod: 'Método', researchTools: 'Ferramentas', researchStatus: 'Andamento',
-    aboutTitle: 'Engenharia de software, dados e pesquisa.', aboutText: 'Sou estudante de Sistemas de Informação na Universidade de São Paulo (USP), com previsão de conclusão em 2029. Minha experiência combina desenvolvimento de software, pesquisa acadêmica e projetos de tecnologia. Tenho interesse em engenharia de software e back-end, engenharia de dados, machine learning e inteligência artificial.',
-    skills: 'Competências técnicas', awards: 'Conquistas', certifications: 'Certificações e cursos', languages: 'Idiomas', education: 'Formação', educationTitle: 'Sistemas de Informação na USP', educationProgram: 'Bacharelado em Sistemas de Informação', educationInstitution: 'Universidade de São Paulo · Escola de Artes, Ciências e Humanidades (EACH-USP)', educationStatus: '2026 — 2029 · Em andamento',
-    contactTitle: 'Vamos conversar?', contactText: 'Encontre meus projetos e entre em contato pelos meus perfis profissionais.', github: 'GitHub', linkedin: 'LinkedIn', email: 'E-mail', cv: 'Currículo', cvPt: 'PT: baixar currículo em português', cvEn: 'EN: baixar currículo em inglês', details: 'Ver detalhes', close: 'Fechar detalhes', orgs: 'Organizações universitárias',
-    filters: { software: 'Software', research: 'Pesquisa e ferramentas', creative: 'Criativos e jogos' }, themeLight: 'Ativar tema claro', themeDark: 'Ativar tema escuro', language: 'Mudar idioma para inglês', navLabel: 'Navegação por seções', menu: 'Abrir navegação', closeMenu: 'Fechar navegação', progress: 'Progresso de leitura',
-    collectiveRole: 'Seis organizações · uma frente de atuação', photoHero: 'Retrato de Alex Santana', skip: 'Pular para o conteúdo',
-    kinds: { work: 'Profissional', research: 'Pesquisa', academic: 'Universidade', program: 'Programa' } as Record<Kind, string>,
-    stats: [{ value: '700+', label: 'alunos usam o DaSIboard' }, { value: '875', label: 'versões defeituosas reais na pesquisa' }, { value: '', label: 'prêmios e títulos' }, { value: '', label: 'projetos publicados' }],
-    caseStudies: 'Estudos de caso', problem: 'Problema', solution: 'Solução', result: 'Resultado', demo: 'Ver demo', code: 'Código', moreProjects: 'Outros projetos', caseLabel: 'Estudo de caso',
-    copyEmail: 'Copiar e-mail', copied: 'E-mail copiado', copyFail: 'Não consegui copiar, use o botão de e-mail', sendEmail: 'Enviar e-mail', open: 'abre em nova aba',
-    filterProjects: 'Filtrar projetos', empty: 'Nenhum projeto nesta categoria por enquanto.', hello: 'Oi, eu sou', portfolio: 'PORTFÓLIO', back: 'Voltar ao topo ↑',
-    languagesLine: 'Português — nativo ou bilíngue · Inglês — profissional', title: 'Alex Santana — Sistemas, software e pesquisa', description: 'Portfólio de Alex Santana, estudante de Sistemas de Informação na USP: dados, back-end e pesquisa em teste de software.',
-  },
-  en: {
-    nav: ['Home', 'Experience', 'Projects', 'Research', 'About', 'Education', 'Contact'],
-    intro: 'I study Information Systems at USP, work on software testing research, and take part in university technology projects across data, AI, and software development.',
-    scroll: 'Scroll to explore', projects: 'Projects', all: 'All', experience: 'Experience', research: 'Research', about: 'About', contact: 'Contact',
-    experienceLead: 'Data, software development, and research, from industry to university.', projectLead: 'Systems and tools built around practical needs.',
-    researchTitle: 'Data generation for software testing and debugging', researchMethod: 'Method', researchTools: 'Tools', researchStatus: 'Status',
-    aboutTitle: 'Software engineering, data, and research.', aboutText: 'I study Information Systems at the University of São Paulo (USP), with an expected graduation in 2029. My experience combines software development, academic research, and technology projects. My interests include software and backend engineering, data engineering, machine learning, and artificial intelligence.',
-    skills: 'Technical skills', awards: 'Awards', certifications: 'Certificates and courses', languages: 'Languages', education: 'Education', educationTitle: 'Information Systems at USP', educationProgram: 'BSc in Information Systems', educationInstitution: 'University of São Paulo · School of Arts, Sciences and Humanities (EACH-USP)', educationStatus: '2026 — 2029 · In progress',
-    contactTitle: 'Let’s talk.', contactText: 'Explore my projects and get in touch through my professional profiles.', github: 'GitHub', linkedin: 'LinkedIn', email: 'Email', cv: 'Résumé', cvPt: 'PT: download résumé in Portuguese', cvEn: 'EN: download résumé in English', details: 'View details', close: 'Close details', orgs: 'University organizations',
-    filters: { software: 'Software', research: 'Research & tools', creative: 'Creative & games' }, themeLight: 'Switch to light theme', themeDark: 'Switch to dark theme', language: 'Mudar idioma para português', navLabel: 'Section navigation', menu: 'Open navigation', closeMenu: 'Close navigation', progress: 'Reading progress',
-    collectiveRole: 'Six organizations · one area of involvement', photoHero: 'Portrait of Alex Santana', skip: 'Skip to content',
-    kinds: { work: 'Professional', research: 'Research', academic: 'University', program: 'Program' } as Record<Kind, string>,
-    stats: [{ value: '700+', label: 'students use DaSIboard' }, { value: '875', label: 'real buggy versions in the research' }, { value: '', label: 'awards and titles' }, { value: '', label: 'published projects' }],
-    caseStudies: 'Case studies', problem: 'Problem', solution: 'Solution', result: 'Result', demo: 'View demo', code: 'Code', moreProjects: 'More projects', caseLabel: 'Case study',
-    copyEmail: 'Copy email', copied: 'Email copied', copyFail: 'Could not copy, use the email button', sendEmail: 'Send email', open: 'opens in a new tab',
-    filterProjects: 'Filter projects', empty: 'There are no projects in this category yet.', hello: 'Hi, I’m', portfolio: 'PORTFOLIO', back: 'Back to top ↑',
-    languagesLine: 'Portuguese — native or bilingual · English — professional working proficiency', title: 'Alex Santana — Systems, software, and research', description: 'Portfolio of Alex Santana, Information Systems student at USP: data, backend, and software testing research.',
-  },
-} as const
-
+const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 const hasWindow = typeof window !== 'undefined'
+const trailKeys: TrailFilter[] = ['all', 'rec', 'pes', 'com']
+const areaKeys: Area[] = ['data', 'research', 'web', 'creative']
 
-function readPreference<T extends string>(key: string, allowed: T[], fallback: T): T {
+function readPreference<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
   try { const value = localStorage.getItem(key) as T | null; return value && allowed.includes(value) ? value : fallback } catch { return fallback }
 }
 function readParam(name: string) { try { return new URLSearchParams(window.location.search).get(name) } catch { return null } }
 function systemPrefersDark() { return hasWindow && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches }
+const reducedMotion = () => hasWindow && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-function ProjectLinks({ project, text }: { project: Project; text: (typeof ui)[Lang] }) {
+function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLElement>(null)
+  const [shown, setShown] = useState(value)
+  useIsoLayoutEffect(() => {
+    if (reducedMotion() || !ref.current) return
+    setShown(0)
+    const observer = new IntersectionObserver(([item]) => {
+      if (!item.isIntersecting) return
+      observer.disconnect()
+      const start = performance.now()
+      const tick = (now: number) => {
+        const progress = Math.min(1, (now - start) / 1300)
+        setShown(Math.round(value * (1 - Math.pow(1 - progress, 3))))
+        if (progress < 1) requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    }, { threshold: .4 })
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [value])
+  return <b ref={ref}>{shown}{shown === value ? suffix : ''}</b>
+}
+
+function ProjectLinks({ project, text }: { project: Project; text: UI }) {
   return <div className="project-links">
     {project.demo && <a className="pill primary" href={project.demo} target="_blank" rel="noreferrer" aria-label={`${text.demo}: ${project.name} (${text.open})`}>{text.demo} <span aria-hidden="true">↗</span></a>}
     <a className="pill" href={project.url} target="_blank" rel="noreferrer" aria-label={`${text.code}: ${project.name} — GitHub (${text.open})`}>{text.code} <span aria-hidden="true">↗</span></a>
   </div>
 }
 
-function App() {
+function App({ path }: { path?: string }) {
+  const currentPath = path ?? (hasWindow ? window.location.pathname : '/')
+  if (currentPath.replace(/\/+$/, '') === '/cv') return <CvPage />
+  return <Portfolio />
+}
+
+function Portfolio() {
   const [lang, setLang] = useState<Lang>(() => {
     const param = readParam('lang')
     return param === 'en' ? 'en' : param === 'pt' ? 'pt-BR' : readPreference('alex-lang', ['pt-BR', 'en'], 'pt-BR')
@@ -68,21 +62,31 @@ function App() {
     return param === 'light' || param === 'dark' ? param : readPreference('alex-theme', ['light', 'dark'], systemPrefersDark() ? 'dark' : 'light')
   })
   const [themeManual, setThemeManual] = useState(() => { try { return localStorage.getItem('alex-theme') !== null } catch { return false } })
-  const [filter, setFilter] = useState<Category | 'all'>('all')
+  const [trail, setTrail] = useState<TrailFilter>(() => {
+    const param = readParam('trilha') as TrailFilter | null
+    return param && trailKeys.includes(param) ? param : readPreference('alex-trail', trailKeys, 'all')
+  })
+  const [area, setArea] = useState<Area | 'all'>('all')
   const [open, setOpen] = useState<string[]>([])
   const [activeSection, setActiveSection] = useState('home')
   const [menuOpen, setMenuOpen] = useState(false)
   const [copyState, setCopyState] = useState('')
+  const [lightbox, setLightbox] = useState<number | null>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
-  const portraitRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const text = ui[lang]
-  const featured = useMemo(() => projects.filter((project) => project.caseStudy), [])
-  const others = useMemo(() => projects.filter((project) => !project.caseStudy), [])
-  const visibleProjects = useMemo(() => filter === 'all' ? others : others.filter((project) => project.categories.includes(filter)), [filter, others])
-  const sortedHighlights = useMemo(() => [...highlights].sort((a, b) => b.sortKey - a.sortKey), [])
-  const sortedOrganizations = useMemo(() => [...organizations].sort((a, b) => b.sortKey - a.sortKey), [])
-  const stats = [text.stats[0], text.stats[1], { ...text.stats[2], value: String(awards.length) }, { ...text.stats[3], value: String(projects.length) }]
+
+  const visibleHighlights = useMemo(() => highlights.filter((item) => inTrail(item.trails, trail)).sort((a, b) => b.sortKey - a.sortKey), [trail])
+  const visibleOrganizations = useMemo(() => organizations.filter((item) => inTrail(item.trails, trail)).sort((a, b) => b.sortKey - a.sortKey), [trail])
+  const featured = useMemo(() => projects.filter((project) => project.caseStudy && inTrail(project.trails, trail)), [trail])
+  const others = useMemo(() => projects.filter((project) => !project.caseStudy && inTrail(project.trails, trail)), [trail])
+  const visibleProjects = useMemo(() => area === 'all' ? others : others.filter((project) => project.area === area), [area, others])
+  const areaCounts = useMemo(() => Object.fromEntries(areaKeys.map((key) => [key, others.filter((project) => project.area === key).length])) as Record<Area, number>, [others])
+  const photos = useMemo(() => gallery.filter((photo) => inTrail(photo.trails, trail)), [trail])
+  const sectionIds = useMemo(() => ['home', 'experience', 'projects', ...(trail === 'all' || trail === 'pes' ? ['research'] : []), 'awards', ...(photos.length ? ['gallery'] : []), 'about', 'contact'], [trail, photos.length])
+  const numberOf = (id: string) => String(sectionIds.indexOf(id)).padStart(2, '0')
+  const stats = [{ value: 700, suffix: '+' }, { value: 875, suffix: '' }, { value: awards.length, suffix: '' }, { value: projects.length, suffix: '' }]
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -98,8 +102,8 @@ function App() {
     document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', card)
     document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', lang === 'pt-BR' ? 'Portfólio de Alex Santana' : 'Alex Santana portfolio')
     document.querySelector('meta[property="og:locale"]')?.setAttribute('content', lang === 'pt-BR' ? 'pt_BR' : 'en_US')
-    try { localStorage.setItem('alex-lang', lang); if (themeManual) localStorage.setItem('alex-theme', theme) } catch { /* storage can be unavailable */ }
-  }, [lang, theme, themeManual, text])
+    try { localStorage.setItem('alex-lang', lang); localStorage.setItem('alex-trail', trail); if (themeManual) localStorage.setItem('alex-theme', theme) } catch { /* storage can be unavailable */ }
+  }, [lang, theme, themeManual, trail, text])
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>('main section[id]'))
@@ -110,9 +114,13 @@ function App() {
     sections.forEach((section) => observer.observe(section))
     const revealObserver = new IntersectionObserver((entries, current) => entries.forEach((item) => {
       if (item.isIntersecting) { item.target.classList.add('is-visible'); current.unobserve(item.target) }
-    }), { threshold: .08 })
-    const revealTargets = document.querySelectorAll('.section-heading, .timeline-entry, .project-row, .case-study, .stats-band, .about-content, .about-resume, .education-overview, .research-copy, .contact-content')
-    revealTargets.forEach((element) => { element.classList.add('reveal'); revealObserver.observe(element) })
+    }), { threshold: .06 })
+    const revealTargets = document.querySelectorAll('.section-heading, .timeline-entry, .case-study, .pcard, .award, .photo, .about-content, .about-resume, .research-copy, .contact-card')
+    revealTargets.forEach((element) => { if (!element.classList.contains('is-visible')) { element.classList.add('reveal'); revealObserver.observe(element) } })
+    return () => { observer.disconnect(); revealObserver.disconnect() }
+  }, [trail, area, lang])
+
+  useEffect(() => {
     const updateProgress = () => {
       const total = document.documentElement.scrollHeight - window.innerHeight
       const progress = total > 0 ? window.scrollY / total : 0
@@ -129,14 +137,12 @@ function App() {
     updateProgress()
     window.addEventListener('scroll', updateProgress, { passive: true })
     window.addEventListener('resize', updateProgress)
-    return () => { observer.disconnect(); revealObserver.disconnect(); window.removeEventListener('scroll', updateProgress); window.removeEventListener('resize', updateProgress) }
-  }, [])
+    return () => { window.removeEventListener('scroll', updateProgress); window.removeEventListener('resize', updateProgress) }
+  }, [trail])
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const sync = (event: MediaQueryListEvent) => {
-      if (!themeManual) setTheme(event.matches ? 'dark' : 'light')
-    }
+    const sync = (event: MediaQueryListEvent) => { if (!themeManual) setTheme(event.matches ? 'dark' : 'light') }
     media.addEventListener('change', sync)
     return () => media.removeEventListener('change', sync)
   }, [themeManual])
@@ -147,61 +153,150 @@ function App() {
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [])
 
+  useEffect(() => {
+    // The liquid-glass sheen follows the pointer on any glass surface.
+    if (reducedMotion()) return
+    const move = (event: PointerEvent) => {
+      const glass = (event.target as Element | null)?.closest?.<HTMLElement>('.glass')
+      if (!glass) return
+      const box = glass.getBoundingClientRect()
+      glass.style.setProperty('--mx', `${event.clientX - box.left}px`)
+      glass.style.setProperty('--my', `${event.clientY - box.top}px`)
+    }
+    document.addEventListener('pointermove', move, { passive: true })
+    return () => document.removeEventListener('pointermove', move)
+  }, [])
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+    if (lightbox !== null && !dialog.open) dialog.showModal()
+    if (lightbox === null && dialog.open) dialog.close()
+  }, [lightbox])
+
   const toggle = (id: string) => setOpen((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])
+  const chooseTrail = (next: TrailFilter) => { setTrail(next); setArea('all') }
   const copyEmail = async () => {
     try { await navigator.clipboard.writeText(site.email); setCopyState(text.copied) } catch { setCopyState(text.copyFail) }
     window.setTimeout(() => setCopyState(''), 2600)
   }
+  const stepPhoto = (delta: number) => setLightbox((current) => current === null ? null : (current + delta + photos.length) % photos.length)
+
   const entry = (item: Entry, nested = false) => {
     const expanded = open.includes(item.id)
     return <article className={nested ? 'organization' : 'timeline-entry'} key={item.id}>
       {!nested && <span className="timeline-dot" aria-hidden="true" />}
-      <div className="entry-head"><div className="entry-heading">{item.logo && <img className="org-logo" src={item.logo} alt="" width="46" height="46" loading="lazy" decoding="async"/>}<div><p className="period">{tx(item.period, lang)}{item.kind && <span className={`kind kind-${item.kind}`}>{text.kinds[item.kind]}</span>}</p><h3>{item.name}</h3><p className="role">{tx(item.role, lang)}</p></div></div></div>
-      <p>{tx(item.summary, lang)}</p>
-      {(item.photo || item.photos?.length) && <div className="entry-gallery">{[...(item.photo ? [item.photo] : []), ...(item.photos ?? [])].map((photo) => <img className="entry-photo" key={photo.src} src={photo.src} alt={tx(photo.alt, lang)} loading="lazy" decoding="async"/>)}</div>}
+      <div className="entry-heading">{item.logo && <img className="org-logo" src={item.logo} alt="" width="46" height="46" loading="lazy" decoding="async"/>}<div><p className="period">{tx(item.period, lang)}{item.kind && <span className={`kind kind-${item.kind}`}>{text.kinds[item.kind]}</span>}</p><h3>{item.name}</h3><p className="role">{tx(item.role, lang)}</p></div></div>
+      <p className="summary">{tx(item.summary, lang)}</p>
       <button className="disclosure" aria-expanded={expanded} aria-controls={`detail-${item.id}`} onClick={() => toggle(item.id)}>{expanded ? text.close : text.details}<span aria-hidden="true">{expanded ? '−' : '+'}</span></button>
       <div className="entry-details" id={`detail-${item.id}`} hidden={!expanded}><p>{tx(item.details, lang)}</p>{item.link && <a className="entry-link" href={item.link.href}>{tx(item.link.label, lang)} <span aria-hidden="true">→</span></a>}</div>
     </article>
   }
 
-  const sections = ['home', 'experience', 'projects', 'research', 'about', 'education', 'contact']
   const tiltPortrait = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== 'mouse' || window.matchMedia('(pointer: coarse), (prefers-reduced-motion: reduce)').matches) return
+    if (event.pointerType !== 'mouse' || reducedMotion()) return
     const box = event.currentTarget.getBoundingClientRect()
-    const x = (event.clientX - box.left) / box.width - .5
-    const y = (event.clientY - box.top) / box.height - .5
-    event.currentTarget.style.setProperty('--tilt-x', `${-y * 16}deg`)
-    event.currentTarget.style.setProperty('--tilt-y', `${x * 16}deg`)
+    event.currentTarget.style.setProperty('--tilt-x', `${-((event.clientY - box.top) / box.height - .5) * 12}deg`)
+    event.currentTarget.style.setProperty('--tilt-y', `${((event.clientX - box.left) / box.width - .5) * 12}deg`)
   }
   const resetPortrait = (event: React.PointerEvent<HTMLDivElement>) => { event.currentTarget.style.setProperty('--tilt-x', '0deg'); event.currentTarget.style.setProperty('--tilt-y', '0deg') }
 
+  const photo = lightbox !== null ? photos[lightbox] : null
+
   return <div className="page-shell">
+    <div className="blobs" aria-hidden="true"><i/><i/><i/></div>
     <a className="skip-link" href="#main">{text.skip}</a>
     <div className="reading-progress" role="progressbar" aria-label={text.progress} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}><span ref={progressRef}/></div>
-    <div className="corner-controls"><button className="language-button" onClick={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} aria-label={text.language}>{lang === 'pt-BR' ? 'PT' : 'EN'}<span aria-hidden="true">⌄</span></button><button className="tool-button" onClick={() => { setTheme(theme === 'light' ? 'dark' : 'light'); setThemeManual(true) }} aria-label={theme === 'light' ? text.themeDark : text.themeLight} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾' : '☀'}</button></div>
-    <button className="mobile-nav-trigger" aria-label={menuOpen ? text.closeMenu : text.menu} aria-expanded={menuOpen} aria-controls="floating-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? '×' : '☰'}<span>{menuOpen ? text.closeMenu : text.menu}</span></button>
-    <nav className={`floating-nav${menuOpen ? ' menu-open' : ''}`} id="floating-navigation" aria-label={text.navLabel}>
-      {sections.map((id, index) => <a key={id} href={`#${id}`} className={activeSection === id ? 'active' : ''} aria-current={activeSection === id ? 'location' : undefined} onClick={() => setMenuOpen(false)}><span className="nav-icon" aria-hidden="true"><NavIcon name={id}/></span><span className="nav-label">{text.nav[index]}</span></a>)}
+
+    <div className="topbar glass" role="group" aria-label={text.trailLabel}>
+      <div className="segment">{trailKeys.map((key) => <button key={key} className={trail === key ? 'on' : ''} aria-pressed={trail === key} aria-label={text.trails[key].name} onClick={() => chooseTrail(key)}><span className="full">{text.trails[key].name}</span><span className="short" aria-hidden="true">{text.trails[key].short}</span></button>)}</div>
+      <span className="bar-sep" aria-hidden="true"/>
+      <button className="bar-button" onClick={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} aria-label={text.language}>{lang === 'pt-BR' ? 'PT' : 'EN'}</button>
+      <button className="bar-button" onClick={() => { setTheme(theme === 'light' ? 'dark' : 'light'); setThemeManual(true) }} aria-label={theme === 'light' ? text.themeDark : text.themeLight} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾' : '☀'}</button>
+    </div>
+
+    <button className="mobile-nav-trigger glass" aria-label={menuOpen ? text.closeMenu : text.menu} aria-expanded={menuOpen} aria-controls="floating-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? '×' : '☰'}<span>{menuOpen ? text.closeMenu : text.menu}</span></button>
+    <nav className={`floating-nav glass${menuOpen ? ' menu-open' : ''}`} id="floating-navigation" aria-label={text.navLabel}>
+      {sectionIds.map((id) => <a key={id} href={`#${id}`} className={activeSection === id ? 'active' : ''} aria-current={activeSection === id ? 'location' : undefined} onClick={() => setMenuOpen(false)}><span className="nav-icon" aria-hidden="true"><NavIcon name={id}/></span><span className="nav-label">{(text.nav as Record<string, string>)[id]}</span></a>)}
     </nav>
+
     <main id="main" tabIndex={-1}>
-      <section className="hero section-wrap" id="home"><div className="hero-copy"><p className="eyebrow">{text.portfolio} · 2026</p><h1 key={lang}><span>{text.hello}</span><br />Alex<span className="accent">.</span></h1><p className="hero-intro">{text.intro}</p><div className="hero-links"><a href={site.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a><a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a><span className="cv-link">{text.cv}<a className="cv-option" href="/documents/CV-pt.pdf" download="Alex-Santana-CV-pt.pdf" aria-label={text.cvPt}>PT</a><a className="cv-option" href="/documents/CV.pdf" download="Alex-Santana-CV-en.pdf" aria-label={text.cvEn}>EN</a></span></div></div><div className="hero-composition"><div className="portrait-frame" ref={portraitRef} onPointerMove={tiltPortrait} onPointerLeave={resetPortrait}><img src="/images/profile/alex-santana.jpg" alt={text.photoHero} width="709" height="1064" {...{ fetchpriority: "high" }}/><span className="portrait-caption">USP<br/>SÃO PAULO</span></div></div><a className="scroll-cue" href="#experience"><span className="scroll-line"/>{text.scroll}<span aria-hidden="true">↓</span></a></section>
-      <section className="stats-band section-wrap" aria-label={lang === 'pt-BR' ? 'Números' : 'By the numbers'}><dl>{stats.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></section>
-      <section className="section-wrap section" id="experience"><SectionHeading number="01" label={text.experience} title={text.experienceLead}/><div className="timeline" ref={timelineRef}>{sortedHighlights.map((item) => entry(item))}<article className="timeline-entry collective-entry"><span className="timeline-dot" aria-hidden="true"/><p className="period">{tx(collective.period, lang)}<span className="kind kind-academic">{text.kinds.academic}</span></p><h3>{text.orgs}</h3><p className="role">{text.collectiveRole}</p><p>{tx(collective.summary, lang)}</p><div className="organization-list">{sortedOrganizations.map((item) => entry(item, true))}</div></article></div></section>
-      <section className="section-wrap section" id="projects"><SectionHeading number="02" label={text.projects} title={text.projectLead}/>
-        <div className="featured"><h3 className="subheading">{text.caseStudies}</h3>{featured.map((project) => <article className="case-study" key={project.id}>
+      <section className="hero section-wrap" id="home">
+        <div className="hero-copy">
+          <p className="status-chip glass"><span className="status-dot" aria-hidden="true"/><img src="/images/organizations/banco-safra.jpg" alt="" width="20" height="20"/>{text.statusChip}</p>
+          <p className="eyebrow">{text.portfolio} · 2026</p>
+          <h1 key={lang}><span>{text.hello}</span><br />Alex<span className="accent">.</span></h1>
+          <p className="hero-intro" key={trail}>{text.trails[trail].lead}</p>
+          <div className="hero-links">
+            <a className="btn glass primary" href="#projects">{text.viewProjects} →</a>
+            <a className="btn glass" href="/documents/CV-pt.pdf" download="Alex-Santana-CV-pt.pdf" aria-label={text.cvPt}>CV · PT</a>
+            <a className="btn glass" href="/documents/CV-en.pdf" download="Alex-Santana-CV-en.pdf" aria-label={text.cvEn}>CV · EN</a>
+            <a className="btn glass" href={site.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+            <a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div className="hero-composition"><div className="portrait-frame glass" onPointerMove={tiltPortrait} onPointerLeave={resetPortrait}><img src="/images/profile/alex-santana.jpg" alt={text.photoHero} width="709" height="1064" {...{ fetchpriority: 'high' }}/></div></div>
+      </section>
+
+      <section className="stats section-wrap" aria-label={text.numbers}><dl>{stats.map((item, index) => <div className="stat glass" key={index}><dt>{text.stats[index]}</dt><dd><CountUp value={item.value} suffix={item.suffix}/></dd></div>)}</dl></section>
+
+      <section className="section-wrap trails" aria-labelledby="trails-title">
+        <h2 id="trails-title" className="sr-only">{text.trailTitle}</h2>
+        <div className="trail-grid">{trailKeys.filter((key): key is Trail => key !== 'all').map((key) => <button key={key} className={`trail-card glass${trail === key ? ' on' : ''}`} aria-pressed={trail === key} onClick={() => chooseTrail(trail === key ? 'all' : key)}><b>{text.trails[key].name}</b><span>{text.trails[key].blurb}</span><em>{trail === key ? `${text.trailShowing} ✓` : `${text.openTrail} →`}</em></button>)}</div>
+        {trail !== 'all' && <p className="trail-status">{text.trailShowing}: <strong>{text.trails[trail].name}</strong> · <button onClick={() => chooseTrail('all')}>{text.trailAll}</button></p>}
+      </section>
+
+      <section className="section-wrap section" id="experience"><SectionHeading number={numberOf('experience')} label={text.experience} title={text.experienceLead}/>
+        <div className="timeline" ref={timelineRef}>
+          {visibleHighlights.map((item) => entry(item))}
+          {visibleOrganizations.length > 0 && <article className="timeline-entry collective-entry"><span className="timeline-dot" aria-hidden="true"/><p className="period">{tx(collective.period, lang)}<span className="kind kind-academic">{text.kinds.academic}</span></p><h3>{text.orgs}</h3><p className="role">{text.collectiveRole}</p><p className="summary">{tx(collective.summary, lang)}</p><div className="organization-list">{visibleOrganizations.map((item) => entry(item, true))}</div></article>}
+        </div>
+      </section>
+
+      <section className="section-wrap section" id="projects"><SectionHeading number={numberOf('projects')} label={text.projects} title={text.projectLead}/>
+        {featured.length > 0 && <div className="featured"><h3 className="subheading">{text.caseStudies}</h3>{featured.map((project) => <article className="case-study" key={project.id}>
           {project.image && <a className="case-media" href={project.demo ?? project.url} target="_blank" rel="noreferrer" tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" loading="lazy" decoding="async"/></a>}
-          <div className="case-body"><p className="eyebrow">{text.caseLabel}</p><h3>{project.name}</h3><p className="case-lead">{tx(project.description, lang)}</p>
+          <div className="case-body"><p className="eyebrow">{text.caseLabel} · {text.areas[project.area]}</p><h3>{project.name}</h3><p className="case-lead">{tx(project.description, lang)}</p>
             {project.caseStudy && <dl className="case-facts"><div><dt>{text.problem}</dt><dd>{tx(project.caseStudy.problem, lang)}</dd></div><div><dt>{text.solution}</dt><dd>{tx(project.caseStudy.solution, lang)}</dd></div><div><dt>{text.result}</dt><dd>{tx(project.caseStudy.result, lang)}</dd></div></dl>}
             <div className="tags">{project.stack.map((tech) => <span key={tech}>{tech}</span>)}</div><ProjectLinks project={project} text={text}/></div>
-        </article>)}</div>
-        <h3 className="subheading list-heading">{text.moreProjects}</h3>
-        <div className="filter-row" role="group" aria-label={text.filterProjects}>{(['all', 'software', 'research', 'creative'] as const).map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} aria-pressed={filter === item} onClick={() => setFilter(item)}>{item === 'all' ? text.all : text.filters[item]}</button>)}</div>
-        <div className="project-list">{visibleProjects.length ? visibleProjects.map((project, index) => <article className="project-row" key={project.id}><span className="project-index">{String(index + 1).padStart(2, '0')}</span><div className={`project-copy${project.image ? ' has-media' : ''}`}><div className="project-text"><h3>{project.name}</h3><p>{tx(project.description, lang)}</p><div className="tags">{project.stack.map((tech) => <span key={tech}>{tech}</span>)}</div><ProjectLinks project={project} text={text}/></div>{project.image && <a className={`project-media${project.fit === 'contain' ? ' contain' : ''}`} href={project.demo ?? project.url} target="_blank" rel="noreferrer" tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" style={{ objectPosition: project.position }} loading="lazy" decoding="async"/></a>}</div></article>) : <p className="empty-state">{text.empty}</p>}</div></section>
-      <section className="research-band" id="research"><div className="section-wrap research-inner"><SectionHeading number="03" label={text.research} title={text.researchTitle}/><div className="research-copy"><p className="period">{tx(research.period, lang)}</p><p className="research-affiliation">{research.institution}<br/>{research.advisor}</p><p>{tx(research.summary, lang)}</p><div className="research-method"><span className="eyebrow">{text.researchMethod}</span><p>{tx(research.method, lang)}</p></div><div className="research-tools"><span className="eyebrow">{text.researchTools}</span><div className="tags">{research.tools.map((tool) => <span key={tool}>{tool}</span>)}</div></div><div className="research-status"><span className="eyebrow">{text.researchStatus}</span><p>{tx(research.status, lang)}</p></div></div></div></section>
-      <section className="section-wrap section about-section" id="about"><SectionHeading number="04" label={text.about} title={text.aboutTitle}/><div className="about-content"><p>{text.aboutText}</p><div className="interest-block"><span className="eyebrow">{text.languages}</span><p className="education-copy">{text.languagesLine}</p></div></div><div className="about-resume"><div className="skill-groups"><h3>{text.skills}</h3>{skillGroups.map((group) => <div className="skill-group" key={group.title.en}><span>{tx(group.title, lang)}</span><div className="tags">{group.items.map((skill) => <span key={skill}>{skill}</span>)}</div></div>)}</div><div className="honors-group"><h3>{text.awards}</h3><ul>{awards.map((award) => <li key={award.en}>{tx(award, lang)}</li>)}</ul><h3>{text.certifications}</h3><ul>{certifications.map((item) => <li key={item.en}>{tx(item, lang)}</li>)}</ul></div></div></section>
-      <section className="section-wrap section education-section" id="education"><SectionHeading number="05" label={text.education} title={text.educationTitle}/><div className="education-overview"><div><h3>{text.educationProgram}</h3><p>{text.educationInstitution}</p><span className="education-period">{text.educationStatus}</span></div><div className="education-gallery">{educationPhotos.map((photo) => <figure key={photo.src}><img src={photo.src} alt={tx(photo.alt, lang)} loading="lazy" decoding="async"/><figcaption>{tx(photo.caption, lang)}</figcaption></figure>)}</div></div></section>
-      <section className="contact-section" id="contact"><div className="section-wrap contact-inner"><SectionHeading number="06" label={text.contact} title={text.contactTitle}/><div className="contact-content"><p>{text.contactText}</p><div className="contact-links"><a href={site.github} target="_blank" rel="noreferrer">{text.github}<span aria-hidden="true">↗</span></a><a href={site.linkedin} target="_blank" rel="noreferrer">{text.linkedin}<span aria-hidden="true">↗</span></a><a href={`mailto:${site.email}`}>{text.sendEmail}<span aria-hidden="true">↗</span></a><button className="copy-email" onClick={copyEmail}>{text.copyEmail}<span aria-hidden="true">⧉</span></button></div><p className="copy-status" role="status" aria-live="polite">{copyState}</p></div></div></section>
-    </main><footer className="site-footer"><span>© {new Date().getFullYear()} Alex Santana</span><a href="#home">{text.back}</a></footer>
+        </article>)}</div>}
+        <h3 className="subheading more">{text.moreProjects}</h3>
+        <div className="area-filter" role="group" aria-label={text.areaFilter}>
+          <button className={`chip glass${area === 'all' ? ' on' : ''}`} aria-pressed={area === 'all'} onClick={() => setArea('all')}>{text.areaAll} <small>{others.length}</small></button>
+          {areaKeys.filter((key) => areaCounts[key] > 0).map((key) => <button key={key} className={`chip glass${area === key ? ' on' : ''}`} aria-pressed={area === key} onClick={() => setArea(key)}>{text.areas[key]} <small>{areaCounts[key]}</small></button>)}
+        </div>
+        <div className="project-grid">{visibleProjects.length ? visibleProjects.map((project) => <article className={`pcard${project.size === 'wide' ? ' wide' : ''}${project.image ? ' has-image' : ''}`} key={project.id}>
+          {project.image && <a className={`pcard-media${project.fit === 'contain' ? ' contain' : ''}`} href={project.demo ?? project.url} target="_blank" rel="noreferrer" tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" style={{ objectPosition: project.position }} loading="lazy" decoding="async"/></a>}
+          <div className="pcard-body"><p className="eyebrow"><span className={`area-dot area-${project.area}`} aria-hidden="true"/>{text.areas[project.area]} · {text.status[project.status]}</p><h3>{project.name}</h3><p className="tagline">{tx(project.tagline, lang)}</p><p className="desc">{tx(project.description, lang)}</p><div className="tags">{project.stack.slice(0, 5).map((tech) => <span key={tech}>{tech}</span>)}</div><ProjectLinks project={project} text={text}/></div>
+        </article>) : <p className="empty-state">{text.empty}</p>}</div>
+      </section>
+
+      {(trail === 'all' || trail === 'pes') && <section className="research-band" id="research"><div className="section-wrap research-inner"><SectionHeading number={numberOf('research')} label={text.research} title={text.researchTitle}/><div className="research-copy"><p className="period">{tx(research.period, lang)}</p><p className="research-affiliation">{research.institution}<br/>{research.advisor}</p><p>{tx(research.summary, lang)}</p><div className="research-block"><span className="eyebrow">{text.researchMethod}</span><p>{tx(research.method, lang)}</p></div><div className="research-block"><span className="eyebrow">{text.researchTools}</span><div className="tags">{research.tools.map((tool) => <span key={tool}>{tool}</span>)}</div></div><div className="research-block"><span className="eyebrow">{text.researchStatus}</span><p>{tx(research.status, lang)}</p></div></div></div></section>}
+
+      <section className="section-wrap section" id="awards"><SectionHeading number={numberOf('awards')} label={text.nav.awards} title={text.awardsTitle}/>
+        <p className="section-lead">{text.awardsLead}</p>
+        <ol className="awards">{awards.map((award) => <li className="award glass" key={award.id}><span className="award-dot" aria-hidden="true"/><p className="period">{award.year ?? '—'}</p><h3>{tx(award.title, lang)}</h3><p>{tx(award.context, lang)}</p>{award.image && <img src={award.image.src} alt={tx(award.image.alt, lang)} width="798" height="1064" loading="lazy" decoding="async"/>}</li>)}</ol>
+      </section>
+
+      {photos.length > 0 && <section className="section-wrap section" id="gallery"><SectionHeading number={numberOf('gallery')} label={text.nav.gallery} title={text.galleryTitle}/>
+        <p className="section-lead">{text.galleryLead}</p>
+        <div className="gallery">{photos.map((item, index) => <button className="photo" key={item.id} onClick={() => setLightbox(index)} aria-label={`${text.openPhoto}: ${tx(item.caption, lang)}`}><img src={item.src} alt={tx(item.alt, lang)} width={item.width} height={item.height} loading="lazy" decoding="async"/><span className="photo-caption glass">{tx(item.caption, lang)}</span></button>)}</div>
+      </section>}
+
+      <section className="section-wrap section about-section" id="about"><SectionHeading number={numberOf('about')} label={text.about} title={text.aboutTitle}/>
+        <div className="about-content"><p>{text.aboutText}</p><div className="education-card glass"><span className="eyebrow">{text.education}</span><h3>{text.educationProgram}</h3><p>{text.educationInstitution}</p><span className="education-period">{text.educationStatus}</span><span className="eyebrow languages-label">{text.languages}</span><p>{text.languagesLine}</p></div></div>
+        <div className="about-resume"><div className="skill-groups"><h3>{text.skills}</h3>{skillGroups.map((group) => <div className="skill-group" key={group.title.en}><span>{tx(group.title, lang)}</span><div className="tags">{group.items.map((skill) => <span key={skill}>{skill}</span>)}</div></div>)}</div><div className="honors-group"><h3>{text.certifications}</h3><ul>{certifications.map((item) => <li key={item.en}>{tx(item, lang)}</li>)}</ul></div></div>
+      </section>
+
+      <section className="contact-section" id="contact"><div className="section-wrap"><div className="contact-card glass"><SectionHeading number={numberOf('contact')} label={text.contact} title={text.contactTitle}/><div className="contact-content"><p>{text.contactText}</p><div className="contact-links"><a className="btn glass primary" href={`mailto:${site.email}`}>{text.sendEmail} <span aria-hidden="true">↗</span></a><button className="btn glass" onClick={copyEmail}>{text.copyEmail} <span aria-hidden="true">⧉</span></button><a className="btn glass" href={site.github} target="_blank" rel="noreferrer">{text.github} <span aria-hidden="true">↗</span></a><a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer">{text.linkedin} <span aria-hidden="true">↗</span></a><a className="btn glass" href="/cv">{text.cvPage}</a></div><p className="copy-status" role="status" aria-live="polite">{copyState}</p></div></div></div></section>
+    </main>
+    <footer className="site-footer"><span>© {new Date().getFullYear()} Alex Santana</span><a href="#home">{text.back}</a></footer>
+
+    <dialog ref={dialogRef} className="lightbox" onClose={() => setLightbox(null)} onClick={(event) => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={(event) => { if (event.key === 'ArrowRight') stepPhoto(1); if (event.key === 'ArrowLeft') stepPhoto(-1) }} aria-label={photo ? tx(photo.caption, lang) : text.openPhoto}>
+      {photo && <figure><img src={photo.src} alt={tx(photo.alt, lang)}/><figcaption className="glass">{tx(photo.caption, lang)}</figcaption></figure>}
+      <button className="lb-close glass" onClick={() => setLightbox(null)} aria-label={text.closePhoto}>×</button>
+      {photos.length > 1 && <><button className="lb-nav prev glass" onClick={() => stepPhoto(-1)} aria-label={text.prevPhoto}>‹</button><button className="lb-nav next glass" onClick={() => stepPhoto(1)} aria-label={text.nextPhoto}>›</button></>}
+    </dialog>
   </div>
 }
 
@@ -212,8 +307,9 @@ function NavIcon({ name }: { name: string }) {
     experience: <><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></>,
     projects: <><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></>,
     research: <><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3M8 15h8"/></>,
+    awards: <><path d="M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H4v1a3 3 0 0 0 4 3M16 6h4v1a3 3 0 0 1-4 3M12 13v4M8 21h8M10 17h4"/></>,
+    gallery: <><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></>,
     about: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
-    education: <><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 3 8.5 3 12 0v-5M22 9v6"/></>,
     contact: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></>,
   }
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" focusable="false">{paths[name]}</svg>

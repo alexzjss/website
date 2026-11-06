@@ -1,0 +1,368 @@
+[
+  {
+    "id": "sampanav",
+    "name": "SampaNav",
+    "stack": [
+      "Python",
+      "FastAPI",
+      "MapLibre GL",
+      "H3",
+      "OpenStreetMap",
+      "PWA"
+    ],
+    "description": {
+      "pt-BR": "Rotas a pé, de bicicleta ou de carro em São Paulo que equilibram tempo de deslocamento e exposição a ocorrências criminais registradas pela SSP-SP.",
+      "en": "Walking, cycling, and driving routes in São Paulo that balance travel time against exposure to crime incidents recorded by SSP-SP."
+    },
+    "url": "https://github.com/alexzjss/SampaNav",
+    "demo": "https://sampanav.vercel.app",
+    "image": "/images/projects/sampanav.jpg",
+    "imageAlt": {
+      "pt-BR": "Tela do SampaNav com três rotas a pé coloridas pelo risco de cada trecho",
+      "en": "SampaNav screen showing three walking routes colored by the risk of each segment"
+    },
+    "caseStudy": {
+      "problem": {
+        "pt-BR": "Apps de mapa otimizam só tempo e distância e ignoram o risco de cada trecho do caminho, algo que importa para quem anda a pé ou de bicicleta em uma cidade grande.",
+        "en": "Map apps optimize only time and distance and ignore the risk of each segment, which matters for people walking or cycling in a large city."
+      },
+      "solution": {
+        "pt-BR": "Um motor de rotas em FastAPI que modela a cidade como grafo sobre OpenStreetMap, agrega ocorrências da SSP-SP em células H3 e calcula até três perfis (mais rápida, equilibrada e mais segura) pesando risco contra tempo.",
+        "en": "A FastAPI routing engine that models the city as a graph on OpenStreetMap, aggregates SSP-SP incidents into H3 cells, and computes up to three profiles (fastest, balanced, safest) by weighing risk against time."
+      },
+      "result": {
+        "pt-BR": "Aplicativo web instalável (PWA) no ar, com mapa de calor por período do dia, modo de navegação e comparação de quanto cada rota reduz a exposição em troca de quanto tempo a mais. Alternativas que não reduzem o risco em pelo menos 5% são descartadas.",
+        "en": "An installable web app (PWA) in production, with a heat map by time of day, a navigation mode, and a comparison of how much each route reduces exposure for how much extra time. Alternatives that do not cut risk by at least 5% are discarded."
+      }
+    },
+    "area": "data",
+    "status": "live",
+    "trails": [
+      "rec",
+      "pes"
+    ],
+    "tagline": {
+      "pt-BR": "Rotas em SP que equilibram tempo e risco",
+      "en": "Routes in São Paulo balancing time and risk"
+    },
+    "size": "md"
+  },
+  {
+    "id": "dasiboard",
+    "name": "DaSIboard",
+    "stack": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Supabase",
+      "PostgreSQL",
+      "Vitest"
+    ],
+    "description": {
+      "pt-BR": "Plataforma dos alunos de Sistemas de Informação da EACH-USP: grade horária, currículo, comunidade, entidades e calendário colaborativo.",
+      "en": "Platform for EACH-USP Information Systems students: class schedule, curriculum, community, student organizations, and a collaborative calendar."
+    },
+    "url": "https://github.com/alexzjss/dasiboard-omg",
+    "demo": "https://dasiboard.vercel.app",
+    "image": "/images/projects/dasiboard.jpg",
+    "imageAlt": {
+      "pt-BR": "Tela inicial do DaSIboard com a linha do tempo do dia e a semana",
+      "en": "DaSIboard home screen with the day timeline and the week"
+    },
+    "caseStudy": {
+      "problem": {
+        "pt-BR": "Informações do curso ficavam espalhadas entre JupiterWeb, grupos de mensagem e planilhas, e os alunos não tinham um lugar único para planejar o semestre.",
+        "en": "Course information was scattered across JupiterWeb, chat groups, and spreadsheets, and students had no single place to plan the semester."
+      },
+      "solution": {
+        "pt-BR": "Um app full-stack que monta a grade a partir dos códigos das disciplinas, mostra o currículo com pré-requisitos (em lista ou constelação), reúne a comunidade e as entidades estudantis e permite propor eventos com fila de revisão e assinatura no Google Calendar.",
+        "en": "A full-stack app that builds the schedule from course codes, shows the curriculum with prerequisites (list or constellation view), brings together the community and student organizations, and lets students propose events through a review queue with Google Calendar subscription."
+      },
+      "result": {
+        "pt-BR": "Mais de 700 estudantes atendidos, segundo o currículo. Tema claro e escuro, interface responsiva e testes automatizados com Vitest.",
+        "en": "More than 700 students served, according to the résumé. Light and dark themes, a responsive interface, and automated tests with Vitest."
+      }
+    },
+    "area": "web",
+    "status": "live",
+    "trails": [
+      "rec",
+      "com"
+    ],
+    "tagline": {
+      "pt-BR": "Plataforma dos alunos de SI da EACH-USP",
+      "en": "Platform for EACH-USP IS students"
+    },
+    "size": "md"
+  },
+  {
+    "id": "jflp",
+    "name": "JFLP Studio",
+    "stack": [
+      "Python",
+      "Java",
+      "Jaguar 2",
+      "Maven",
+      "Defects4J",
+      "Bugs.jar"
+    ],
+    "description": {
+      "pt-BR": "Ferramenta local para rodar Maven, Jaguar 2 e Jaguar 1 sobre versões defeituosas de projetos Java, guardar os resultados brutos de cada execução e compará-los. Gera em escala dados de cobertura de linhas para pesquisa em localização de falhas.",
+      "en": "A local tool for running Maven, Jaguar 2, and Jaguar 1 on buggy versions of Java projects, storing the raw results of each run, and comparing them. It generates line-coverage data at scale for fault-localization research."
+    },
+    "url": "https://github.com/alexzjss/jflp",
+    "image": "/images/projects/jflp.jpg",
+    "imageAlt": {
+      "pt-BR": "Painel do JFLP Studio com execuções e resultados por bug",
+      "en": "JFLP Studio dashboard with runs and results per bug"
+    },
+    "position": "top",
+    "area": "research",
+    "status": "repo",
+    "trails": [
+      "pes"
+    ],
+    "tagline": {
+      "pt-BR": "Maven e Jaguar 2 em escala, com resultados comparáveis",
+      "en": "Maven and Jaguar 2 at scale, with comparable results"
+    },
+    "size": "wide"
+  },
+  {
+    "id": "engrama",
+    "name": "Engrama",
+    "stack": [
+      "Python",
+      "Ollama",
+      "Reinforcement Learning",
+      "Local LLM"
+    ],
+    "description": {
+      "pt-BR": "Criatura digital que vive no desktop, estilo tamagotchi: nasce de um ovo, evolui por ramos conforme o cuidado, envelhece e renasce. A mente é uma simulação (necessidades, afeto, aprendizado por reforço) e o LLM local via Ollama só dá a voz. Tudo roda offline, no Windows e no Linux.",
+      "en": "A desktop digital creature in the tamagotchi tradition: it hatches from an egg, evolves along branches depending on care, ages, and is reborn. Its mind is a simulation (needs, affect, reinforcement learning) and a local LLM through Ollama only provides the voice. Everything runs offline, on Windows and Linux."
+    },
+    "url": "https://github.com/alexzjss/engrama",
+    "image": "/images/projects/engrama.jpg",
+    "imageAlt": {
+      "pt-BR": "Seis linhagens de criaturas do Engrama, do ovo à forma final",
+      "en": "Six Engrama creature lineages, from egg to final form"
+    },
+    "fit": "contain",
+    "area": "creative",
+    "status": "repo",
+    "trails": [
+      "rec",
+      "pes"
+    ],
+    "tagline": {
+      "pt-BR": "Pet digital com mente simulada e LLM local",
+      "en": "Digital pet with a simulated mind and a local LLM"
+    },
+    "size": "wide"
+  },
+  {
+    "id": "vttrpg",
+    "name": "VTT RPG",
+    "stack": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Supabase",
+      "Monorepo"
+    ],
+    "description": {
+      "pt-BR": "Mesa virtual para RPG de mesa: o mestre organiza a campanha e os jogadores acompanham em tempo real. Funciona offline no navegador e tem modo online para campanhas compartilhadas. Reconstruído como monorepo, com o domínio em um pacote separado e testado.",
+      "en": "A virtual tabletop for RPGs: the game master runs the campaign and players follow along in real time. It works offline in the browser and has an online mode for shared campaigns. Rebuilt as a monorepo with the domain model in a separate, tested package."
+    },
+    "url": "https://github.com/alexzjss/vttrpg",
+    "area": "web",
+    "status": "repo",
+    "trails": [
+      "rec"
+    ],
+    "tagline": {
+      "pt-BR": "Mesa virtual de RPG, offline e online",
+      "en": "Virtual RPG tabletop, offline and online"
+    },
+    "size": "md"
+  },
+  {
+    "id": "algoricmos",
+    "name": "algoriCmos",
+    "stack": [
+      "Python",
+      "CLI"
+    ],
+    "description": {
+      "pt-BR": "Gerador de exercícios aleatórios, em português, para estudar programação em C, análise de algoritmos e estruturas de dados. Roda no terminal, sem dependências externas, com filtros por tópico e dificuldade.",
+      "en": "A random exercise generator in Portuguese for studying C programming, algorithm analysis, and data structures. It runs in the terminal with no external dependencies and filters by topic and difficulty."
+    },
+    "url": "https://github.com/alexzjss/algoriCmos",
+    "area": "data",
+    "status": "repo",
+    "trails": [
+      "rec"
+    ],
+    "tagline": {
+      "pt-BR": "Exercícios de C, algoritmos e estruturas no terminal",
+      "en": "C, algorithm and data-structure exercises in the terminal"
+    },
+    "size": "md"
+  },
+  {
+    "id": "modaloop",
+    "name": "ModaLoop",
+    "stack": [
+      "React",
+      "TypeScript",
+      "Vite"
+    ],
+    "description": {
+      "pt-BR": "Plataforma de economia circular que conecta pessoas a pontos de coleta, doação e reciclagem de roupas e resíduos têxteis, com geolocalização e informações ambientais.",
+      "en": "A circular-economy platform connecting people with clothing and textile collection, donation, and recycling points, with geolocation and environmental information."
+    },
+    "url": "https://github.com/alexzjss/modaloop",
+    "image": "/images/projects/modaloop.jpg",
+    "imageAlt": {
+      "pt-BR": "Página inicial do ModaLoop com o texto \"Sua roupa merece outro rolê\"",
+      "en": "ModaLoop landing page reading “Sua roupa merece outro rolê”"
+    },
+    "area": "web",
+    "status": "repo",
+    "trails": [
+      "rec"
+    ],
+    "tagline": {
+      "pt-BR": "Pontos de coleta para descarte têxtil consciente",
+      "en": "Collection points for conscious textile disposal"
+    },
+    "size": "md"
+  },
+  {
+    "id": "ecofruta",
+    "name": "Eco Fruta",
+    "stack": [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Zustand"
+    ],
+    "description": {
+      "pt-BR": "Feira virtual de orgânicos que aproxima consumidores de pequenos produtores. Reúne catálogo pesquisável, filtros de produtos, carrinho e contato direto com produtores pelo WhatsApp.",
+      "en": "A virtual organic market connecting consumers with small producers. It includes a searchable catalog, product filters, a shopping cart, and direct contact with producers through WhatsApp."
+    },
+    "url": "https://github.com/alexzjss/eco-fruta",
+    "demo": "https://eco-fruta.vercel.app",
+    "area": "web",
+    "status": "live",
+    "trails": [
+      "rec"
+    ],
+    "tagline": {
+      "pt-BR": "Feira virtual de orgânicos",
+      "en": "Virtual organic market"
+    },
+    "size": "md"
+  },
+  {
+    "id": "icndy",
+    "name": "ICNDY",
+    "stack": [
+      "React Native",
+      "Expo",
+      "TypeScript",
+      "SQLite"
+    ],
+    "description": {
+      "pt-BR": "Aplicativo Android offline-first para acompanhar treinos Cindy, com sessões Classic e Beginner configuráveis, cronômetro, registro de rounds, histórico local, métricas de progresso, lembretes opcionais e backup em JSON.",
+      "en": "An offline-first Android app for tracking Cindy workouts, with configurable Classic and Beginner sessions, a workout timer, round tracking, local history, progress metrics, optional reminders, and JSON backup."
+    },
+    "url": "https://github.com/alexzjss/ICNDY",
+    "image": "/images/projects/icndy.jpg",
+    "imageAlt": {
+      "pt-BR": "Ícone do aplicativo ICNDY, uma letra C em verde sobre fundo preto",
+      "en": "ICNDY app icon, a green letter C on a black background"
+    },
+    "area": "web",
+    "status": "repo",
+    "trails": [
+      "rec"
+    ],
+    "tagline": {
+      "pt-BR": "Treinos Cindy offline no Android",
+      "en": "Offline Cindy workout tracker for Android"
+    },
+    "size": "md"
+  },
+  {
+    "id": "vat",
+    "name": "VAT",
+    "stack": [
+      "Godot 4",
+      "GDScript"
+    ],
+    "description": {
+      "pt-BR": "Protótipo de RPG com combate em tempo real por barra de ATB, feito em Godot 4 com GDScript tipado. Evoluiu por marcos: elementos, marcas e reações, estados, mapa-múndi, dungeons, save em três slots e editores visuais de conteúdo, até uma demo jogável de ponta a ponta.",
+      "en": "An RPG prototype with real-time ATB combat, built in Godot 4 with typed GDScript. It grew through milestones: elements, marks and reactions, status effects, a world map, dungeons, three-slot saves, and visual content editors, up to an end-to-end playable demo."
+    },
+    "url": "https://github.com/alexzjss/vat",
+    "area": "creative",
+    "status": "repo",
+    "trails": [
+      "rec",
+      "com"
+    ],
+    "tagline": {
+      "pt-BR": "RPG com combate ATB em Godot 4",
+      "en": "ATB-combat RPG in Godot 4"
+    },
+    "size": "md"
+  },
+  {
+    "id": "gems",
+    "name": "Gems Hype",
+    "stack": [
+      "HTML",
+      "Gemini Gems"
+    ],
+    "description": {
+      "pt-BR": "Projeto criado para o Hackathon do Hype USP usando Gems do Gemini.",
+      "en": "A project built for the Hype USP hackathon using Gemini Gems."
+    },
+    "url": "https://github.com/alexzjss/gems-hype",
+    "area": "creative",
+    "status": "repo",
+    "trails": [
+      "rec"
+    ],
+    "tagline": {
+      "pt-BR": "Projeto do hackathon do Hype com Gems do Gemini",
+      "en": "Hype hackathon project built with Gemini Gems"
+    },
+    "size": "md"
+  },
+  {
+    "id": "nakano",
+    "name": "Desafio Nakano",
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "description": {
+      "pt-BR": "Quiz interativo em homenagem ao Prof. Fábio Nakano, da EACH-USP, apresentado em aula. Mistura perguntas sobre a carreira do professor com questões de C para a turma, em um único arquivo HTML com partículas, confete e um modo caos na tela final.",
+      "en": "An interactive quiz honoring Prof. Fábio Nakano of EACH-USP, presented in class. It mixes questions about the professor’s career with C questions for the class, in a single HTML file with particles, confetti, and a chaos mode on the final screen."
+    },
+    "url": "https://github.com/alexzjss/quiz-nakano",
+    "area": "creative",
+    "status": "repo",
+    "trails": [
+      "com"
+    ],
+    "tagline": {
+      "pt-BR": "Quiz em homenagem ao Prof. Nakano",
+      "en": "Quiz honoring Prof. Nakano"
+    },
+    "size": "md"
+  }
+]
