@@ -1,0 +1,148 @@
+{
+  "sampanav": {
+    "metrics": [
+      { "value": "660 mil", "label": { "pt-BR": "ocorrências no modelo (set/2024 a ago/2026)", "en": "incidents in the model (Sep 2024 to Aug 2026)" } },
+      { "value": "60–300 ms", "label": { "pt-BR": "para calcular os 3 perfis de rota", "en": "to compute the 3 route profiles" } },
+      { "value": "3", "label": { "pt-BR": "modos: a pé, de carro e de bicicleta", "en": "modes: walking, driving, and cycling" } },
+      { "value": "136 + 65", "label": { "pt-BR": "testes no backend e no frontend", "en": "backend and frontend tests" } }
+    ],
+    "decisions": [
+      { "title": { "pt-BR": "Risco por movimento, não por contagem bruta", "en": "Risk per movement, not raw counts" }, "text": { "pt-BR": "O score é dividido por um proxy de fluxo de pessoas tirado do tipo de via (β = 0,5). Assim o Centro não parece perigoso só por receber muita gente.", "en": "The score is divided by a foot-traffic proxy derived from road type (β = 0.5), so downtown does not look dangerous just because more people pass through." } },
+      { "title": { "pt-BR": "Custo = tempo × (1 + α · risco)", "en": "Cost = time × (1 + α · risk)" }, "text": { "pt-BR": "Penalidades mais fortes (r² e r³) foram testadas e geravam rotas mais longas sem reduzir a exposição total, então ficou a forma linear. Alternativas que não reduzem a exposição em pelo menos 5% são descartadas.", "en": "Stronger penalties (r² and r³) were tested and produced longer routes without reducing total exposure, so the linear form stayed. Alternatives that do not cut exposure by at least 5% are discarded." } },
+      { "title": { "pt-BR": "Pipeline mensal offline", "en": "Offline monthly pipeline" }, "text": { "pt-BR": "Um workflow no GitHub Actions gera a grade H3 de risco e os grafos, valida e publica um release. A API só carrega grafos prontos, em cerca de 330 MB dos 512 MB do plano gratuito.", "en": "A GitHub Actions workflow builds the H3 risk grid and the graphs, validates them, and publishes a release. The API only loads ready-made graphs, using about 330 MB of the free plan’s 512 MB." } },
+      { "title": { "pt-BR": "Funciona enquanto a API acorda", "en": "Works while the API wakes up" }, "text": { "pt-BR": "No plano gratuito a API dorme. O app é um PWA que abre na hora e avisa que o servidor está acordando.", "en": "On the free plan the API sleeps. The app is a PWA that opens instantly and tells you the server is waking up." } }
+    ],
+    "limits": [
+      { "pt-BR": "Os dados refletem ocorrências registradas, não o risco real, e a subnotificação varia entre regiões.", "en": "The data reflects recorded incidents, not actual risk, and underreporting varies between regions." },
+      { "pt-BR": "A interface não rotula bairros como “perigosos”, e o aviso permanente é parte do produto.", "en": "The interface never labels neighborhoods as “dangerous”, and the permanent notice is part of the product." }
+    ],
+    "diagramCaption": { "pt-BR": "Dados públicos viram grade de risco e grafos em um pipeline mensal; a API só calcula rotas.", "en": "Public data becomes a risk grid and graphs in a monthly pipeline; the API only computes routes." },
+    "diagram": {
+      "layers": [
+        { "title": { "pt-BR": "Fontes", "en": "Sources" }, "nodes": [
+          { "id": "ssp", "label": { "pt-BR": "SSP-SP", "en": "SSP-SP" }, "sub": { "pt-BR": "ocorrências (.xlsx)", "en": "incidents (.xlsx)" } },
+          { "id": "osm", "label": { "pt-BR": "OpenStreetMap", "en": "OpenStreetMap" }, "sub": { "pt-BR": "ruas via OSMnx", "en": "streets via OSMnx" } },
+          { "id": "geo", "label": { "pt-BR": "GeoSampa", "en": "GeoSampa" }, "sub": { "pt-BR": "iluminação pública", "en": "street lighting" } }
+        ] },
+        { "title": { "pt-BR": "Pipeline mensal", "en": "Monthly pipeline" }, "nodes": [
+          { "id": "pipe", "label": { "pt-BR": "Risco H3 + grafos", "en": "H3 risk + graphs" }, "sub": { "pt-BR": "GitHub Actions", "en": "GitHub Actions" } },
+          { "id": "photon", "label": { "pt-BR": "Photon", "en": "Photon" }, "sub": { "pt-BR": "geocodificação", "en": "geocoding" } }
+        ] },
+        { "title": { "pt-BR": "API", "en": "API" }, "nodes": [
+          { "id": "api", "label": { "pt-BR": "FastAPI + igraph", "en": "FastAPI + igraph" }, "sub": { "pt-BR": "Dijkstra por perfil", "en": "Dijkstra per profile" } }
+        ] },
+        { "title": { "pt-BR": "App", "en": "App" }, "nodes": [
+          { "id": "app", "label": { "pt-BR": "PWA no navegador", "en": "Browser PWA" }, "sub": { "pt-BR": "MapLibre + h3-js", "en": "MapLibre + h3-js" } }
+        ] }
+      ],
+      "edges": [["ssp", "pipe"], ["osm", "pipe"], ["geo", "pipe"], ["pipe", "api"], ["photon", "api"], ["api", "app"]]
+    }
+  },
+  "dasiboard": {
+    "metrics": [
+      { "value": "700+", "label": { "pt-BR": "estudantes atendidos, segundo o currículo", "en": "students served, according to the résumé" } },
+      { "value": "8", "label": { "pt-BR": "entidades estudantis integradas", "en": "student organizations integrated" } },
+      { "value": "@usp.br", "label": { "pt-BR": "login com Google restrito à USP", "en": "Google sign-in restricted to USP" } }
+    ],
+    "decisions": [
+      { "title": { "pt-BR": "Grade pelo JupiterWeb sem pedir senha", "en": "Schedule from JupiterWeb without asking for a password" }, "text": { "pt-BR": "O aluno informa os códigos das disciplinas e escolhe as turmas; os horários vêm da consulta pública do JupiterWeb, sem número USP nem senha.", "en": "Students enter course codes and pick classes; times come from JupiterWeb’s public lookup, with no USP number or password." } },
+      { "title": { "pt-BR": "Banco acessado só pelo servidor", "en": "Database reached only through the server" }, "text": { "pt-BR": "Supabase (PostgreSQL) com RLS ligado e a chave de serviço guardada apenas no Express. O frontend nunca fala direto com o banco.", "en": "Supabase (PostgreSQL) with RLS on and the service key kept only in Express. The frontend never talks to the database directly." } },
+      { "title": { "pt-BR": "Sessão por cookie assinado", "en": "Signed-cookie session" }, "text": { "pt-BR": "Login com Google restrito a contas @usp.br, sessão em cookie assinado (JWT) com renovação automática.", "en": "Google sign-in restricted to @usp.br accounts, with a signed-cookie (JWT) session that renews automatically." } },
+      { "title": { "pt-BR": "Calendário colaborativo com revisão", "en": "Collaborative calendar with review" }, "text": { "pt-BR": "Qualquer aluno propõe eventos, que passam por uma fila de revisão. Há denúncias, feed .ics para o Google Calendar e push opcional.", "en": "Any student can propose events, which go through a review queue. There are reports, an .ics feed for Google Calendar, and optional push notifications." } },
+      { "title": { "pt-BR": "Convites guardados como hash", "en": "Invite codes stored as hashes" }, "text": { "pt-BR": "Os códigos de convite das entidades nunca ficam em texto puro no banco.", "en": "Organization invite codes are never stored in plain text." } }
+    ],
+    "diagramCaption": { "pt-BR": "Um frontend React fala com uma API Express serverless, que concentra banco, login e integrações.", "en": "A React frontend talks to a serverless Express API that concentrates the database, sign-in, and integrations." },
+    "diagram": {
+      "layers": [
+        { "title": { "pt-BR": "Navegador", "en": "Browser" }, "nodes": [
+          { "id": "fe", "label": { "pt-BR": "Aluno no app", "en": "Student in the app" }, "sub": { "pt-BR": "React 19 + Vite", "en": "React 19 + Vite" } }
+        ] },
+        { "title": { "pt-BR": "API", "en": "API" }, "nodes": [
+          { "id": "api", "label": { "pt-BR": "Express 5", "en": "Express 5" }, "sub": { "pt-BR": "função serverless", "en": "serverless function" } }
+        ] },
+        { "title": { "pt-BR": "Serviços", "en": "Services" }, "nodes": [
+          { "id": "db", "label": { "pt-BR": "Supabase", "en": "Supabase" }, "sub": { "pt-BR": "PostgreSQL + RLS", "en": "PostgreSQL + RLS" } },
+          { "id": "google", "label": { "pt-BR": "Google login", "en": "Google sign-in" }, "sub": { "pt-BR": "contas @usp.br", "en": "@usp.br accounts" } },
+          { "id": "jupiter", "label": { "pt-BR": "JupiterWeb", "en": "JupiterWeb" }, "sub": { "pt-BR": "consulta de turmas", "en": "class lookup" } }
+        ] }
+      ],
+      "edges": [["fe", "api"], ["api", "db"], ["api", "google"], ["api", "jupiter"]]
+    }
+  },
+  "jflp": {
+    "metrics": [
+      { "value": "3", "label": { "pt-BR": "ferramentas por bug: Maven, Jaguar 1 e Jaguar 2", "en": "tools per bug: Maven, Jaguar 1, and Jaguar 2" } },
+      { "value": "2", "label": { "pt-BR": "benchmarks: Defects4J e Bugs.jar", "en": "benchmarks: Defects4J and Bugs.jar" } },
+      { "value": "875", "label": { "pt-BR": "versões defeituosas na pesquisa associada (SAEG)", "en": "buggy versions in the associated research (SAEG)" } }
+    ],
+    "decisions": [
+      { "title": { "pt-BR": "Testes que falham são dados, não erros", "en": "Failing tests are data, not errors" }, "text": { "pt-BR": "O Jaguar 2 precisa justamente dos testes que falham. Nenhum teste é excluído ou “consertado”, e falha de infraestrutura é separada de falha de teste.", "en": "Jaguar 2 needs the failing tests. No test is excluded or “fixed”, and infrastructure failures are kept separate from test failures." } },
+      { "title": { "pt-BR": "O POM original nunca é alterado", "en": "The original POM is never modified" }, "text": { "pt-BR": "A ferramenta gera um jaguar2-pom.xml ao lado do original, injeta Jaguar 2, JaCoCo e o listener do Surefire e aplica correções conhecidas para projetos legados.", "en": "The tool generates a jaguar2-pom.xml next to the original, injects Jaguar 2, JaCoCo, and the Surefire listener, and applies known fixes for legacy projects." } },
+      { "title": { "pt-BR": "Execuções imutáveis e reprodutíveis", "en": "Immutable, reproducible runs" }, "text": { "pt-BR": "Cada execução é uma pasta nova e somente leitura com status, ambiente exato (JDK e Maven), comando e checkout. O índice SQLite pode ser reconstruído a partir delas.", "en": "Each run is a new read-only folder with status, exact environment (JDK and Maven), command, and checkout. The SQLite index can be rebuilt from them." } },
+      { "title": { "pt-BR": "Lotes em paralelo e retomáveis", "en": "Parallel, resumable batches" }, "text": { "pt-BR": "Uma fila SQLite com N workers roda os bugs em lote, nunca dois jobs do mesmo bug, com guarda de disco e envio dos resultados para uma planilha do Google.", "en": "A SQLite queue with N workers runs bugs in batches, never two jobs for the same bug, with a disk guard and results sent to a Google spreadsheet." } },
+      { "title": { "pt-BR": "Local e sem shell", "en": "Local and shell-free" }, "text": { "pt-BR": "O servidor escuta só em 127.0.0.1 e nenhum comando roda com shell. Downloads vêm de fontes fixas e pedem confirmação.", "en": "The server listens only on 127.0.0.1 and no command runs through a shell. Downloads come from fixed sources and ask for confirmation." } }
+    ],
+    "diagramCaption": { "pt-BR": "Cada bug passa por três ferramentas e vira uma pasta de resultados brutos que alimenta painel, dataset e planilha.", "en": "Each bug goes through three tools and becomes a raw-results folder that feeds the dashboard, dataset, and spreadsheet." },
+    "diagram": {
+      "layers": [
+        { "title": { "pt-BR": "Benchmarks", "en": "Benchmarks" }, "nodes": [
+          { "id": "d4j", "label": { "pt-BR": "Defects4J", "en": "Defects4J" } },
+          { "id": "bugsjar", "label": { "pt-BR": "Bugs.jar", "en": "Bugs.jar" } }
+        ] },
+        { "title": { "pt-BR": "Fila", "en": "Queue" }, "nodes": [
+          { "id": "queue", "label": { "pt-BR": "Fila + workers", "en": "Queue + workers" }, "sub": { "pt-BR": "SQLite, retomável", "en": "SQLite, resumable" } }
+        ] },
+        { "title": { "pt-BR": "Execução isolada", "en": "Isolated run" }, "nodes": [
+          { "id": "maven", "label": { "pt-BR": "Maven puro", "en": "Plain Maven" } },
+          { "id": "j1", "label": { "pt-BR": "Jaguar 1", "en": "Jaguar 1" } },
+          { "id": "j2", "label": { "pt-BR": "Jaguar 2", "en": "Jaguar 2" }, "sub": { "pt-BR": "principal", "en": "primary" } }
+        ] },
+        { "title": { "pt-BR": "Resultados", "en": "Results" }, "nodes": [
+          { "id": "runs", "label": { "pt-BR": "Pastas imutáveis", "en": "Immutable folders" }, "sub": { "pt-BR": "run.json, jaguar2.csv", "en": "run.json, jaguar2.csv" } }
+        ] },
+        { "title": { "pt-BR": "Saídas", "en": "Outputs" }, "nodes": [
+          { "id": "panel", "label": { "pt-BR": "Painel local", "en": "Local dashboard" }, "sub": { "pt-BR": "FastAPI + htmx", "en": "FastAPI + htmx" } },
+          { "id": "sheet", "label": { "pt-BR": "Planilha Google", "en": "Google Sheet" } }
+        ] }
+      ],
+      "edges": [["d4j", "queue"], ["bugsjar", "queue"], ["queue", "maven"], ["queue", "j1"], ["queue", "j2"], ["maven", "runs"], ["j1", "runs"], ["j2", "runs"], ["runs", "panel"], ["runs", "sheet"]]
+    }
+  },
+  "engrama": {
+    "metrics": [
+      { "value": "150 MB", "label": { "pt-BR": "orçamento de RAM, com 2% de CPU em regime estável", "en": "RAM budget, with 2% CPU at steady state" } },
+      { "value": "8 × 3", "label": { "pt-BR": "famílias de criaturas × planos, desenhadas por código", "en": "creature families × layers, drawn in code" } },
+      { "value": "15", "label": { "pt-BR": "marcos de desenvolvimento (M1 a M15)", "en": "development milestones (M1 to M15)" } },
+      { "value": "2", "label": { "pt-BR": "plataformas: Windows e Linux", "en": "platforms: Windows and Linux" } }
+    ],
+    "decisions": [
+      { "title": { "pt-BR": "O LLM só dá a voz", "en": "The LLM only provides the voice" }, "text": { "pt-BR": "Quem decide o que a criatura faz é uma simulação (necessidades, afeto, rede de disparos, Q-learning) com um árbitro softmax. O LLM transforma a intenção em frase e nunca escolhe ações. Sem Ollama ela balbucia e segue viva.", "en": "A simulation (needs, affect, spiking network, Q-learning) with a softmax arbiter decides what the creature does. The LLM turns intent into a sentence and never chooses actions. Without Ollama she babbles and stays alive." } },
+      { "title": { "pt-BR": "Offline e privado por padrão", "en": "Offline and private by default" }, "text": { "pt-BR": "Tudo roda local. A percepção do PC é opt-in por fonte e só categoria e tema curto são guardados.", "en": "Everything runs locally. PC perception is opt-in per source and only a category and a short topic are stored." } },
+      { "title": { "pt-BR": "Camadas com regras verificadas por teste", "en": "Layers with test-enforced rules" }, "text": { "pt-BR": "Corpo, mente, voz, memória e percepção são pacotes separados, e um teste de arquitetura garante quem pode importar quem. A CI roda lint e testes em Ubuntu e Windows.", "en": "Body, mind, voice, memory, and perception are separate packages, and an architecture test enforces who may import whom. CI runs lint and tests on Ubuntu and Windows." } },
+      { "title": { "pt-BR": "Resultados medidos, sem exagero", "en": "Measured results, no hype" }, "text": { "pt-BR": "Em um usuário simulado periódico, a rede de disparos prevê o próximo evento com Brier 4,0% a 5,1% menor que uma leitura só com viés. Os experimentos de ML não foram promovidos ao padrão.", "en": "On a periodic simulated user, the spiking network predicts the next event with a Brier score 4.0% to 5.1% lower than a bias-only baseline. The ML experiments were not promoted to the default." } },
+      { "title": { "pt-BR": "Arte procedural", "en": "Procedural art" }, "text": { "pt-BR": "Os sprites são gerados por código a partir da semente da criatura, com acessórios que se acumulam ao longo da vida.", "en": "Sprites are generated in code from the creature’s seed, with accessories that accumulate over its life." } }
+    ],
+    "diagramCaption": { "pt-BR": "A mente decide, o corpo executa e a voz (um LLM local) só traduz a intenção em fala.", "en": "The mind decides, the body acts, and the voice (a local LLM) only turns intent into speech." },
+    "diagram": {
+      "layers": [
+        { "title": { "pt-BR": "Percepção", "en": "Perception" }, "nodes": [
+          { "id": "perc", "label": { "pt-BR": "Percepção do PC", "en": "PC perception" }, "sub": { "pt-BR": "opt-in por fonte", "en": "opt-in per source" } }
+        ] },
+        { "title": { "pt-BR": "Mente", "en": "Mind" }, "nodes": [
+          { "id": "mind", "label": { "pt-BR": "Quadro-negro", "en": "Blackboard" }, "sub": { "pt-BR": "drives, SNN, afeto PAD", "en": "drives, SNN, PAD affect" } }
+        ] },
+        { "title": { "pt-BR": "Decisão", "en": "Decision" }, "nodes": [
+          { "id": "arb", "label": { "pt-BR": "Árbitro softmax", "en": "Softmax arbiter" }, "sub": { "pt-BR": "utilidade + Q-learning", "en": "utility + Q-learning" } }
+        ] },
+        { "title": { "pt-BR": "Execução", "en": "Execution" }, "nodes": [
+          { "id": "body", "label": { "pt-BR": "Corpo", "en": "Body" }, "sub": { "pt-BR": "determinístico", "en": "deterministic" } },
+          { "id": "voice", "label": { "pt-BR": "Voz", "en": "Voice" }, "sub": { "pt-BR": "Ollama + memória SQLite", "en": "Ollama + SQLite memory" } }
+        ] },
+        { "title": { "pt-BR": "Interface", "en": "Interface" }, "nodes": [
+          { "id": "app", "label": { "pt-BR": "App pygame", "en": "pygame app" }, "sub": { "pt-BR": "terrário e overlay", "en": "terrarium and overlay" } }
+        ] }
+      ],
+      "edges": [["perc", "mind"], ["mind", "arb"], ["arb", "body"], ["arb", "voice"], ["body", "app"], ["voice", "app"]]
+    }
+  }
+}
