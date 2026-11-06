@@ -1,0 +1,87 @@
+{
+  "skillGroups": [
+    {
+      "title": {
+        "pt-BR": "Linguagens",
+        "en": "Languages"
+      },
+      "items": [
+        "Python",
+        "Java",
+        "TypeScript",
+        "JavaScript",
+        "SQL"
+      ]
+    },
+    {
+      "title": {
+        "pt-BR": "Back-end e APIs",
+        "en": "Backend & APIs"
+      },
+      "items": [
+        "FastAPI",
+        "Node.js",
+        "REST APIs"
+      ]
+    },
+    {
+      "title": {
+        "pt-BR": "Dados e bancos de dados",
+        "en": "Data & Databases"
+      },
+      "items": [
+        "PostgreSQL",
+        "MySQL",
+        "Machine Learning",
+        "Data Science",
+        "Data Analysis",
+        "Matplotlib"
+      ]
+    },
+    {
+      "title": {
+        "pt-BR": "Infraestrutura e ferramentas",
+        "en": "Infrastructure & Tools"
+      },
+      "items": [
+        "Docker",
+        "Git",
+        "GitHub",
+        "Linux",
+        "Unix"
+      ]
+    },
+    {
+      "title": {
+        "pt-BR": "IA generativa",
+        "en": "Generative AI"
+      },
+      "items": [
+        "Generative AI",
+        "Claude Cowork"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "pt-BR": "Certificado de conclusão: Claude 101",
+      "en": "Certificate of Completion: Claude 101"
+    },
+    {
+      "pt-BR": "Introdução ao Linux",
+      "en": "Introduction to Linux"
+    },
+    {
+      "pt-BR": "AWS Educate: Introdução à IA Generativa",
+      "en": "AWS Educate: Introduction to Generative AI"
+    },
+    {
+      "pt-BR": "Ciência de Dados e Machine Learning",
+      "en": "Data Science and Machine Learning"
+    },
+    {
+      "pt-BR": "Conceitos de desenvolvimento de jogos",
+      "en": "Game Development Concepts"
+    }
+  ]
+}

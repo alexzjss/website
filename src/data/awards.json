@@ -1,0 +1,55 @@
+[
+  {
+    "id": "hackfools",
+    "year": "2026",
+    "title": {
+      "pt-BR": "Campeão · Hackfools 2026",
+      "en": "Champion · Hackfools 2026"
+    },
+    "context": {
+      "pt-BR": "Equipe do USPCodeLab Leste.",
+      "en": "USPCodeLab Leste team."
+    },
+    "image": {
+      "src": "/images/experiences/codelab-hackfools.jpg",
+      "alt": {
+        "pt-BR": "Alex com o troféu do Hackfools 2026",
+        "en": "Alex with the Hackfools 2026 trophy"
+      }
+    }
+  },
+  {
+    "id": "hype",
+    "year": "2026",
+    "title": {
+      "pt-BR": "1º lugar · Hackathon de Construção de Agentes de IA",
+      "en": "1st place · AI Agent Building Hackathon"
+    },
+    "context": {
+      "pt-BR": "Promovido pelo grupo Hype — Data & AI, da USP.",
+      "en": "Hosted by Hype — Data & AI, USP outreach group."
+    }
+  },
+  {
+    "id": "ctf",
+    "title": {
+      "pt-BR": "Campeão · Capture The Flag",
+      "en": "Champion · Capture The Flag"
+    },
+    "context": {
+      "pt-BR": "Competição de segurança ofensiva e defensiva.",
+      "en": "Offensive and defensive security competition."
+    }
+  },
+  {
+    "id": "obmep",
+    "title": {
+      "pt-BR": "Medalha de bronze · OBMEP",
+      "en": "Bronze medal · OBMEP"
+    },
+    "context": {
+      "pt-BR": "Olimpíada Brasileira de Matemática das Escolas Públicas.",
+      "en": "Brazilian Mathematics Olympiad for Public Schools."
+    }
+  }
+]

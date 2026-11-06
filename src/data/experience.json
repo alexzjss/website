@@ -1,0 +1,309 @@
+{
+  "highlights": [
+    {
+      "id": "safra",
+      "kind": "work",
+      "name": "Banco Safra",
+      "sortKey": 202701,
+      "role": {
+        "pt-BR": "Estagiário · Dados | Empréstimos Pessoa Física",
+        "en": "Intern · Data | Personal Loans"
+      },
+      "period": {
+        "pt-BR": "Jan 2027 — Fev 2027",
+        "en": "Jan 2027 — Feb 2027"
+      },
+      "summary": {
+        "pt-BR": "Estágio na área de dados, com foco em empréstimos para pessoa física.",
+        "en": "Internship in the data area, focused on personal loans."
+      },
+      "details": {
+        "pt-BR": "Atua com dados na área de empréstimos de pessoa física do Banco Safra, aplicando na prática a base em dados, Python e SQL construída na graduação e na pesquisa.",
+        "en": "Works with data in Banco Safra’s personal loans area, applying in practice the data, Python, and SQL foundation built through coursework and research."
+      },
+      "logo": "/images/organizations/banco-safra.jpg",
+      "trails": [
+        "rec"
+      ]
+    },
+    {
+      "id": "claude",
+      "kind": "program",
+      "name": "Claude Campus Ambassador",
+      "sortKey": 202610,
+      "role": {
+        "pt-BR": "Embaixador de campus",
+        "en": "Campus Ambassador"
+      },
+      "period": {
+        "pt-BR": "Out 2026 — Atual",
+        "en": "Oct 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Programa de embaixadores da Claude, conforme registrado no currículo.",
+        "en": "Claude ambassador program, as listed on the résumé."
+      },
+      "details": {
+        "pt-BR": "O currículo registra a participação desde outubro de 2026, sem detalhar as responsabilidades do programa.",
+        "en": "The résumé lists this role starting in October 2026 but does not detail the program responsibilities."
+      },
+      "logo": "/images/organizations/claude.jpg",
+      "trails": [
+        "rec",
+        "com"
+      ]
+    },
+    {
+      "id": "sintese",
+      "kind": "work",
+      "name": "Síntese Jr.",
+      "sortKey": 202609,
+      "role": {
+        "pt-BR": "Trainee de Desenvolvimento Back-end | Vendas Consultivas B2B",
+        "en": "Backend Development Trainee | B2B Consultative Sales"
+      },
+      "period": {
+        "pt-BR": "Set 2026 — Atual",
+        "en": "Sep 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Atuação em desenvolvimento back-end e vendas consultivas B2B em uma empresa júnior de consultoria de TI.",
+        "en": "Backend development and B2B consultative sales at a junior IT consulting firm."
+      },
+      "details": {
+        "pt-BR": "Desenvolve e mantém sistemas back-end para clientes, aplica boas práticas de programação e bancos de dados e participa de prospecção, levantamento de requisitos e negociação. Faz a ponte entre necessidades de negócio e soluções técnicas.",
+        "en": "Develops and maintains backend systems for clients, applies programming and database best practices, and takes part in prospecting, requirements gathering, and negotiation. Connects business needs with technical solutions."
+      },
+      "logo": "/images/organizations/sintese-jr.jpg",
+      "trails": [
+        "rec"
+      ]
+    },
+    {
+      "id": "pet",
+      "kind": "academic",
+      "name": "PET-SI · EACH-USP",
+      "sortKey": 202608,
+      "role": {
+        "pt-BR": "Bolsista do Programa de Educação Tutorial",
+        "en": "Tutorial Education Program Scholar"
+      },
+      "period": {
+        "pt-BR": "Ago 2026 — Atual",
+        "en": "Aug 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Bolsista do PET-SI, com participação nos três eixos do programa: ensino, pesquisa e extensão.",
+        "en": "Scholar in PET-SI, participating in the program’s three pillars: teaching, research, and outreach."
+      },
+      "details": {
+        "pt-BR": "Contribui com pesquisa aplicada e produção acadêmica em Sistemas de Informação, apoia atividades de ensino e mentoria entre estudantes e desenvolve projetos de extensão universitária.",
+        "en": "Contributes to applied research and academic work in Information Systems, supports teaching and peer mentoring, and develops university outreach projects."
+      },
+      "logo": "/images/organizations/pet-si.jpg",
+      "trails": [
+        "com",
+        "pes"
+      ]
+    },
+    {
+      "id": "saeg",
+      "kind": "research",
+      "name": "SAEG · USP",
+      "sortKey": 202607,
+      "role": {
+        "pt-BR": "Bolsista de Iniciação Científica (PUB-USP)",
+        "en": "Undergraduate Research Scholar (PUB-USP)"
+      },
+      "period": {
+        "pt-BR": "Jul 2026 — Atual",
+        "en": "Jul 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Pesquisa em teste e depuração de software no grupo SAEG, orientada pelo Prof. Dr. Marcos Lordello Chaim.",
+        "en": "Software testing and debugging research at the SAEG group, supervised by Prof. Dr. Marcos Lordello Chaim."
+      },
+      "details": {
+        "pt-BR": "Coleta dados de cobertura de linhas com o Jaguar 2 em programas Java do benchmark Defects4J: 875 versões defeituosas reais de 17 projetos open source, executadas em larga escala com Java e Apache Maven.",
+        "en": "Collects line-coverage data with Jaguar 2 on Java programs from the Defects4J benchmark: 875 real buggy versions across 17 open-source projects, executed at scale with Java and Apache Maven."
+      },
+      "link": {
+        "href": "#research",
+        "label": {
+          "pt-BR": "Ver a pesquisa completa",
+          "en": "See the full research"
+        }
+      },
+      "trails": [
+        "pes",
+        "rec"
+      ]
+    }
+  ],
+  "organizations": [
+    {
+      "id": "eits",
+      "name": "Each In The Shell (EITS)",
+      "sortKey": 202609,
+      "role": {
+        "pt-BR": "Pesquisador de Cibersegurança",
+        "en": "Cybersecurity Researcher"
+      },
+      "period": {
+        "pt-BR": "Set 2026 — Atual",
+        "en": "Sep 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Pesquisa em cibersegurança e segurança de redes.",
+        "en": "Research in cybersecurity and network security."
+      },
+      "details": {
+        "pt-BR": "Investiga vulnerabilidades em sistemas e redes, estuda técnicas ofensivas e defensivas (pentest e CTF) e produz conteúdo técnico sobre boas práticas de segurança da informação.",
+        "en": "Investigates system and network vulnerabilities, studies offensive and defensive techniques (pentesting and CTF), and produces technical content on information security practices."
+      },
+      "logo": "/images/organizations/each-in-the-shell.jpg",
+      "trails": [
+        "pes",
+        "com"
+      ]
+    },
+    {
+      "id": "conway",
+      "name": "Conway USP",
+      "sortKey": 202604,
+      "role": {
+        "pt-BR": "Líder de Design e Comunicação (ago–atual); organizador de projetos (abr–ago)",
+        "en": "Design & Communications Lead (Aug–present); Project Organizer (Apr–Aug)"
+      },
+      "period": {
+        "pt-BR": "Abr 2026 — Atual",
+        "en": "Apr 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Grupo de extensão universitária dedicado a desenvolvimento de jogos e computação gráfica.",
+        "en": "University outreach group focused on game development and computer graphics."
+      },
+      "details": {
+        "pt-BR": "Como organizador de projetos, coordenou cronogramas e escopo, facilitou a comunicação entre programação, arte e áudio, aplicou Scrum/Kanban e organizou documentação de design (GDD). Desde agosto, lidera design e comunicação, criando materiais e identidade visual e cuidando da comunicação institucional e redes sociais.",
+        "en": "As Project Organizer, coordinated schedules and scope, facilitated communication across programming, art, and audio teams, applied Scrum/Kanban, and organized game design documentation (GDD). Since August, leads design and communications, creating visual materials and identity and managing institutional communications and social media."
+      },
+      "logo": "/images/organizations/conway-usp.jpg",
+      "trails": [
+        "com"
+      ]
+    },
+    {
+      "id": "codelab",
+      "name": "USPCodeLab Leste",
+      "sortKey": 202606,
+      "role": {
+        "pt-BR": "Gerente de Projetos de Desenvolvimento Web",
+        "en": "Web Development Project Manager"
+      },
+      "period": {
+        "pt-BR": "Jun 2026 — Atual",
+        "en": "Jun 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Gerencia projetos de desenvolvimento web no laboratório de extensão tecnológica da EACH-USP.",
+        "en": "Manages web development projects at EACH-USP’s technology outreach lab."
+      },
+      "details": {
+        "pt-BR": "Planeja e acompanha cronogramas, coordena equipes multidisciplinares de desenvolvimento e aplica metodologias ágeis de gestão de projetos.",
+        "en": "Plans and tracks project timelines, coordinates cross-functional development teams, and applies agile project management methods."
+      },
+      "logo": "/images/organizations/usp-code-lab-leste.jpg",
+      "trails": [
+        "rec",
+        "com"
+      ]
+    },
+    {
+      "id": "hype",
+      "name": "Hype — Data & AI",
+      "sortKey": 202605,
+      "role": {
+        "pt-BR": "Pesquisador de Dados e IA",
+        "en": "Data & AI Researcher"
+      },
+      "period": {
+        "pt-BR": "Mai 2026 — Atual",
+        "en": "May 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Pesquisa acadêmica em ciência de dados e inteligência artificial no grupo de extensão da USP.",
+        "en": "Academic research in data science and artificial intelligence at USP’s outreach group."
+      },
+      "details": {
+        "pt-BR": "Participa de pesquisas e projetos internos de IA usando Python e bancos de dados. Conquistou o primeiro lugar no Hackathon de Construção de Agentes de IA do grupo.",
+        "en": "Takes part in research and internal AI projects using Python and databases. Won first place in the group’s AI Agent Building Hackathon."
+      },
+      "logo": "/images/organizations/hype-usp.jpg",
+      "trails": [
+        "pes",
+        "com"
+      ]
+    },
+    {
+      "id": "semana",
+      "name": "Semana de Sistemas de Informação",
+      "sortKey": 202603,
+      "role": {
+        "pt-BR": "Membro da comissão organizadora — Patrocínio/Financeiro e Criação/Comunicação",
+        "en": "Organizing Committee — Sponsorship/Finance and Creative/Communications"
+      },
+      "period": {
+        "pt-BR": "Mar 2026 — Atual",
+        "en": "Mar 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Organização do evento acadêmico anual do curso de Sistemas de Informação da USP.",
+        "en": "Organizes the annual academic event for USP’s Information Systems program."
+      },
+      "details": {
+        "pt-BR": "Prospecta patrocínios, administra o orçamento do evento, desenvolve identidade visual e estratégias de marketing e mantém comunicação com parceiros e patrocinadores.",
+        "en": "Prospects sponsors, manages the event budget, develops visual identity and marketing strategies, and communicates with partners and sponsors."
+      },
+      "logo": "/images/organizations/semana-si.jpg",
+      "trails": [
+        "com"
+      ]
+    },
+    {
+      "id": "dasi",
+      "name": "DASI USP",
+      "sortKey": 202603,
+      "role": {
+        "pt-BR": "Coordenador de Projetos de TI",
+        "en": "IT Project Coordinator"
+      },
+      "period": {
+        "pt-BR": "Mar 2026 — Atual",
+        "en": "Mar 2026 — Present"
+      },
+      "summary": {
+        "pt-BR": "Coordena projetos de TI e também atua como membro acadêmico do Diretório Acadêmico de Sistemas de Informação.",
+        "en": "Coordinates IT projects and also serves as an academic member of the Information Systems Student Council."
+      },
+      "details": {
+        "pt-BR": "Desenvolve e mantém sistemas internos, faz a ligação entre docentes e estudantes para melhorias pedagógicas e resolução de questões acadêmicas e administra a infraestrutura de tecnologia da organização.",
+        "en": "Develops and maintains internal systems, connects faculty and students to improve teaching and resolve academic issues, and manages the organization’s technology infrastructure."
+      },
+      "logo": "/images/organizations/dasi.jpg",
+      "trails": [
+        "rec",
+        "com"
+      ]
+    }
+  ],
+  "collective": {
+    "period": {
+      "pt-BR": "Mar 2026 — Atual",
+      "en": "Mar 2026 — Present"
+    },
+    "summary": {
+      "pt-BR": "Um único bloco reúne seis frentes de participação no ecossistema universitário.",
+      "en": "One collective entry brings together six roles in the university community."
+    }
+  }
+}
