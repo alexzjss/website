@@ -3,16 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#fbfaf8" />
-    <meta name="description" content="Portfólio de Alex Santana, estudante de Sistemas de Informação na USP." />
+    <meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#18191a" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Portfólio de Alex Santana, estudante de Sistemas de Informação na USP: dados, back-end e pesquisa em teste de software." />
+    <meta name="author" content="Alex Santana" />
+    <link rel="canonical" href="https://alexjsz.vercel.app/" />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://alexjsz.vercel.app/" />
+    <meta property="og:site_name" content="Alex Santana" />
     <meta property="og:title" content="Alex Santana — Sistemas, software e pesquisa" />
-    <meta property="og:description" content="Portfólio de Alex Santana, estudante de Sistemas de Informação na USP." />
-    <meta property="og:image" content="/social-card.svg" />
+    <meta property="og:description" content="Portfólio de Alex Santana, estudante de Sistemas de Informação na USP: dados, back-end e pesquisa em teste de software." />
+    <meta property="og:image" content="https://alexjsz.vercel.app/social-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Portfólio de Alex Santana" />
     <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alex Santana — Sistemas, software e pesquisa" />
+    <meta name="twitter:description" content="Portfólio de Alex Santana, estudante de Sistemas de Informação na USP: dados, back-end e pesquisa em teste de software." />
+    <meta name="twitter:image" content="https://alexjsz.vercel.app/social-card.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <title>Alex Santana — Sistemas, software e pesquisa</title>
+    <script>
+      /* Apply the saved or system theme before first paint to avoid a flash. */
+      try {
+        var q = new URLSearchParams(location.search).get('theme');
+        var t = q === 'light' || q === 'dark' ? q : localStorage.getItem('alex-theme');
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Alex Santana",
+        "url": "https://alexjsz.vercel.app/",
+        "image": "https://alexjsz.vercel.app/images/profile/alex-santana.jpg",
+        "jobTitle": "Estagiário de Dados",
+        "description": "Estudante de Sistemas de Informação na USP com foco em engenharia de software, back-end, dados e pesquisa em teste de software.",
+        "email": "mailto:benalex511@gmail.com",
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "Universidade de São Paulo" },
+        "affiliation": [
+          { "@type": "Organization", "name": "Banco Safra" },
+          { "@type": "Organization", "name": "Síntese Jr." },
+          { "@type": "Organization", "name": "PET-SI EACH-USP" }
+        ],
+        "knowsAbout": ["Engenharia de software", "Desenvolvimento back-end", "Engenharia de dados", "Machine learning", "Teste de software", "Python", "Java", "SQL"],
+        "sameAs": ["https://github.com/alexzjss", "https://www.linkedin.com/in/alex-jsz/"]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
