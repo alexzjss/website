@@ -1,15 +1,18 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { awards, certifications, collective, gallery, hasDetail, highlights, inTrail, organizations, projectHref, projects, research, site, skillGroups, tx, type Area, type Entry, type Lang, type Project, type Trail, type TrailFilter } from './content'
-import { ui, type UI } from './ui'
+import { awards, certifications, collective, contentItems, gallery, highlights, inTrail, organizations, projectHref, projects, research, site, skillGroups, tx, type Entry, type Lang, type Trail, type TrailFilter } from './content'
+import { ui } from './ui'
 import CvPage from './CvPage'
 import ProjectPage from './ProjectPage'
+import ProjectsPage from './ProjectsPage'
+import ContentPage, { ContentCard } from './ContentPage'
+import { SiteFooter, SiteHeader } from './shell'
 import './styles.css'
 
 const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 const hasWindow = typeof window !== 'undefined'
+const latestContent = [...contentItems].sort((x, y) => y.date.localeCompare(x.date))[0]
 const trailKeys: TrailFilter[] = ['all', 'rec', 'pes', 'com']
-const areaKeys: Area[] = ['data', 'research', 'web', 'creative']
 
 function readPreference<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
   try { const value = localStorage.getItem(key) as T | null; return value && allowed.includes(value) ? value : fallback } catch { return fallback }
@@ -41,22 +44,58 @@ function CountUp({ value, suffix = '' }: { value: number; suffix?: string }) {
   return <b ref={ref}>{shown}{shown === value ? suffix : ''}</b>
 }
 
-function ProjectLinks({ project, text }: { project: Project; text: UI }) {
-  const study = hasDetail(project.id)
-  return <div className="project-links">
-    {study && <a className="pill primary" href={`/projetos/${project.id}`} aria-label={`${text.viewStudy}: ${project.name}`}>{text.viewStudy} <span aria-hidden="true">→</span></a>}
-    {project.demo && <a className={`pill${study ? '' : ' primary'}`} href={project.demo} target="_blank" rel="noreferrer" aria-label={`${text.demo}: ${project.name} (${text.open})`}>{text.demo} <span aria-hidden="true">↗</span></a>}
-    <a className="pill" href={project.url} target="_blank" rel="noreferrer" aria-label={`${text.code}: ${project.name} — GitHub (${text.open})`}>{text.code} <span aria-hidden="true">↗</span></a>
-  </div>
+function routeFor(path: string) {
+  const clean = path.replace(/\/+$/, '')
+  if (clean === '/cv') return <CvPage />
+  if (clean === '/projetos') return <ProjectsPage />
+  if (clean === '/conteudos') return <ContentPage />
+  const match = clean.match(/^\/projetos\/([\w-]+)$/)
+  if (match) return <ProjectPage key={match[1]} id={match[1]} />
+  return <Portfolio />
 }
 
+type TransitionDocument = Document & { startViewTransition?: (callback: () => void) => { finished: Promise<void> } }
+
+// Internal links swap pages without a reload, so the top bar stays put and the content animates in.
 function App({ path }: { path?: string }) {
-  const currentPath = path ?? (hasWindow ? window.location.pathname : '/')
-  const clean = currentPath.replace(/\/+$/, '')
-  if (clean === '/cv') return <CvPage />
-  const match = clean.match(/^\/projetos\/([\w-]+)$/)
-  if (match) return <ProjectPage id={match[1]} />
-  return <Portfolio />
+  const [current, setCurrent] = useState(path ?? (hasWindow ? window.location.pathname : '/'))
+
+  useEffect(() => {
+    const show = (url: URL, push: boolean) => {
+      const back = !push
+      const apply = () => {
+        if (push) window.history.pushState(null, '', url.pathname + url.search + url.hash)
+        flushSync(() => setCurrent(url.pathname))
+        const target = url.hash ? document.getElementById(url.hash.slice(1)) : null
+        if (target) target.scrollIntoView({ behavior: 'instant' })
+        else if (push) window.scrollTo({ top: 0, behavior: 'instant' })
+        document.getElementById('main')?.focus({ preventScroll: true })
+      }
+      const start = (document as TransitionDocument).startViewTransition
+      if (!start || reducedMotion()) { apply(); return }
+      const root = document.documentElement
+      root.classList.add('page-nav')
+      root.classList.toggle('page-nav-back', back)
+      const done = () => root.classList.remove('page-nav', 'page-nav-back')
+      start.call(document, apply).finished.then(done, done)
+    }
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      const link = (event.target as Element | null)?.closest?.('a')
+      if (!link || link.target === '_blank' || link.hasAttribute('download')) return
+      const url = new URL(link.href, window.location.href)
+      if (url.origin !== window.location.origin || /\.\w+$/.test(url.pathname)) return
+      if (url.pathname.replace(/\/+$/, '') === window.location.pathname.replace(/\/+$/, '')) return
+      event.preventDefault()
+      show(url, true)
+    }
+    const onPop = () => show(new URL(window.location.href), false)
+    document.addEventListener('click', onClick)
+    window.addEventListener('popstate', onPop)
+    return () => { document.removeEventListener('click', onClick); window.removeEventListener('popstate', onPop) }
+  }, [])
+
+  return routeFor(current)
 }
 
 function Portfolio() {
@@ -73,7 +112,6 @@ function Portfolio() {
     const param = readParam('trilha') as TrailFilter | null
     return param && trailKeys.includes(param) ? param : readPreference('alex-trail', trailKeys, 'all')
   })
-  const [area, setArea] = useState<Area | 'all'>('all')
   const [open, setOpen] = useState<string[]>([])
   const [activeSection, setActiveSection] = useState('home')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -89,13 +127,8 @@ function Portfolio() {
 
   const visibleHighlights = useMemo(() => highlights.filter((item) => inTrail(item.trails, trail)).sort((a, b) => b.sortKey - a.sortKey), [trail])
   const visibleOrganizations = useMemo(() => organizations.filter((item) => inTrail(item.trails, trail)).sort((a, b) => b.sortKey - a.sortKey), [trail])
-  const featured = useMemo(() => projects.filter((project) => project.caseStudy && inTrail(project.trails, trail)), [trail])
-  const others = useMemo(() => projects.filter((project) => !project.caseStudy && inTrail(project.trails, trail)), [trail])
-  const visibleProjects = useMemo(() => area === 'all' ? others : others.filter((project) => project.area === area), [area, others])
-  const areaCounts = useMemo(() => Object.fromEntries(areaKeys.map((key) => [key, others.filter((project) => project.area === key).length])) as Record<Area, number>, [others])
   const photos = useMemo(() => gallery.filter((photo) => inTrail(photo.trails, trail)), [trail])
-  const sectionIds = useMemo(() => ['home', 'experience', 'projects', ...(trail === 'all' || trail === 'pes' ? ['research'] : []), 'awards', ...(photos.length ? ['gallery'] : []), 'about', 'contact'], [trail, photos.length])
-  const numberOf = (id: string) => String(sectionIds.indexOf(id)).padStart(2, '0')
+  const sectionIds = useMemo(() => ['home', 'experience', ...(trail === 'all' || trail === 'pes' ? ['research'] : []), ...(latestContent ? ['content'] : []), 'awards', ...(photos.length ? ['gallery'] : []), 'about', 'contact'], [trail, photos.length])
   const stats = [{ value: 700, suffix: '+' }, { value: 875, suffix: '' }, { value: awards.length, suffix: '' }, { value: projects.length, suffix: '' }]
 
   useEffect(() => {
@@ -125,14 +158,14 @@ function Portfolio() {
     const revealObserver = new IntersectionObserver((entries, current) => entries.forEach((item) => {
       if (item.isIntersecting) { item.target.classList.add('is-visible'); current.unobserve(item.target) }
     }), { threshold: .06 })
-    const revealTargets = document.querySelectorAll('.section-heading, .timeline-entry, .case-study, .pcard, .award, .photo, .about-content, .about-resume, .research-copy, .contact-card')
+    const revealTargets = document.querySelectorAll('.section-heading, .timeline-entry, .case-study, .content-teaser, .award, .photo, .about-content, .about-resume, .research-copy, .contact-card')
     revealTargets.forEach((element) => {
       if (element.classList.contains('is-visible')) return
       if (element.getBoundingClientRect().top < window.innerHeight * .92) { element.classList.add('is-visible'); return }
       element.classList.add('reveal'); revealObserver.observe(element)
     })
     return () => { observer.disconnect(); revealObserver.disconnect() }
-  }, [trail, area, lang])
+  }, [trail, lang])
 
   useEffect(() => {
     const updateProgress = () => {
@@ -192,7 +225,7 @@ function Portfolio() {
 
   const toggle = (id: string) => setOpen((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])
   const chooseTrail = (next: TrailFilter) => {
-    const apply = () => { setTrail(next); setArea('all') }
+    const apply = () => setTrail(next)
     const start = (document as Document & { startViewTransition?: (callback: () => void) => unknown }).startViewTransition
     if (!start || reducedMotion()) { apply(); return }
     start.call(document, () => flushSync(apply))
@@ -253,14 +286,9 @@ function Portfolio() {
     <a className="skip-link" href="#main">{text.skip}</a>
     <div className="reading-progress" role="progressbar" aria-label={text.progress} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}><span ref={progressRef}/></div>
 
-    <div className={`topbar glass${scrolled ? ' scrolled' : ''}`} role="group" aria-label={text.trailLabel}>
-      <div className="segment">{trailKeys.map((key) => <button key={key} className={trail === key ? 'on' : ''} aria-pressed={trail === key} aria-label={text.trails[key].name} onClick={() => chooseTrail(key)}><span className="full">{text.trails[key].name}</span><span className="short" aria-hidden="true">{text.trails[key].short}</span></button>)}</div>
-      <span className="bar-sep" aria-hidden="true"/>
-      <button className="bar-button" onClick={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} aria-label={text.language}>{lang === 'pt-BR' ? 'PT' : 'EN'}</button>
-      <button className="bar-button" onClick={() => { setTheme(theme === 'light' ? 'dark' : 'light'); setThemeManual(true) }} aria-label={theme === 'light' ? text.themeDark : text.themeLight} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾' : '☀'}</button>
-    </div>
+    <SiteHeader current="home" lang={lang} theme={theme} text={text} scrolled={scrolled} onLang={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} onTheme={() => { setTheme(theme === 'light' ? 'dark' : 'light'); setThemeManual(true) }}/>
 
-    <button className="mobile-nav-trigger glass" aria-label={menuOpen ? text.closeMenu : text.menu} aria-expanded={menuOpen} aria-controls="floating-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? '×' : '☰'}<span>{menuOpen ? text.closeMenu : text.menu}</span></button>
+    <button className="mobile-nav-trigger glass" aria-label={menuOpen ? text.closeMenu : text.menu} aria-expanded={menuOpen} aria-controls="floating-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? '×' : '☰'}<span>{menuOpen ? text.closeShort : text.menuShort}</span></button>
     <nav className={`floating-nav glass${menuOpen ? ' menu-open' : ''}`} id="floating-navigation" aria-label={text.navLabel}>
       {sectionIds.map((id) => <a key={id} href={`#${id}`} className={activeSection === id ? 'active' : ''} aria-current={activeSection === id ? 'location' : undefined} onClick={() => setMenuOpen(false)}><span className="nav-icon" aria-hidden="true"><NavIcon name={id}/></span><span className="nav-label">{(text.nav as Record<string, string>)[id]}</span></a>)}
     </nav>
@@ -273,11 +301,10 @@ function Portfolio() {
           <h1 key={lang}><span>{text.hello}</span><br />Alex<span className="accent">.</span></h1>
           <p className="hero-intro" key={trail}>{text.trails[trail].lead}</p>
           <div className="hero-links">
-            <a className="btn glass primary" href="#projects">{text.viewProjects} →</a>
-            <a className="btn glass" href="/documents/CV-pt.pdf" download="Alex-Santana-CV-pt.pdf" aria-label={text.cvPt}>CV · PT</a>
-            <a className="btn glass" href="/documents/CV-en.pdf" download="Alex-Santana-CV-en.pdf" aria-label={text.cvEn}>CV · EN</a>
-            <a className="btn glass" href={site.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
-            <a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+            <a className="btn glass primary" href="/projetos">{text.viewProjects} <span aria-hidden="true">→</span></a>
+            <a className="btn glass" href={text.cvFile} download={text.cvFileName}>{text.cvDownload} <span aria-hidden="true">↓</span></a>
+            <a className="btn glass" href={site.github} target="_blank" rel="noreferrer" aria-label={`GitHub (${text.open})`}>GitHub <span aria-hidden="true">↗</span></a>
+            <a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer" aria-label={`LinkedIn (${text.open})`}>LinkedIn <span aria-hidden="true">↗</span></a>
           </div>
         </div>
         <div className="hero-composition"><div className="portrait-stage" onPointerMove={tiltPortrait} onPointerLeave={resetPortrait}><div className="portrait-frame glass"><div className="portrait-photo"><img src="/images/profile/alex-santana.jpg" alt={text.photoHero} width="709" height="1064" {...{ fetchpriority: 'high' }}/><span className="portrait-glare" aria-hidden="true"/></div></div><span className="portrait-chip glass" aria-hidden="true">USP · SÃO PAULO</span></div></div>
@@ -291,52 +318,38 @@ function Portfolio() {
         {trail !== 'all' && <p className="trail-status">{text.trailShowing}: <strong>{text.trails[trail].name}</strong> · <button onClick={() => chooseTrail('all')}>{text.trailAll}</button></p>}
       </section>
 
-      <section className="section-wrap section" id="experience"><SectionHeading number={numberOf('experience')} label={text.experience} title={text.experienceLead}/>
+      <section className="section-wrap section" id="experience"><SectionHeading label={text.experience} title={text.experienceLead}/>
         <div className="timeline" ref={timelineRef}>
           {visibleHighlights.map((item) => entry(item))}
           {visibleOrganizations.length > 0 && <article className="timeline-entry collective-entry"><span className="timeline-dot" aria-hidden="true"/><p className="period">{tx(collective.period, lang)}<span className="kind kind-academic">{text.kinds.academic}</span></p><h3>{text.orgs}</h3><p className="role">{text.collectiveRole}</p><p className="summary">{tx(collective.summary, lang)}</p><div className="organization-list">{visibleOrganizations.map((item) => entry(item, true))}</div></article>}
         </div>
       </section>
 
-      <section className="section-wrap section" id="projects"><SectionHeading number={numberOf('projects')} label={text.projects} title={text.projectLead}/>
-        {featured.length > 0 && <div className="featured"><h3 className="subheading">{text.caseStudies}</h3>{featured.map((project) => <article className="case-study" key={project.id} style={{ viewTransitionName: `c-${project.id}` }}>
-          {project.image && <a className="case-media" href={projectHref(project)} {...(hasDetail(project.id) ? {} : { target: '_blank', rel: 'noreferrer' })} tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" style={hasDetail(project.id) ? { viewTransitionName: `img-${project.id}` } : undefined} loading="lazy" decoding="async"/></a>}
-          <div className="case-body"><p className="eyebrow">{text.caseLabel} · {text.areas[project.area]}</p><h3>{project.name}</h3><p className="case-lead">{tx(project.description, lang)}</p>
-            {project.caseStudy && <dl className="case-facts"><div><dt>{text.problem}</dt><dd>{tx(project.caseStudy.problem, lang)}</dd></div><div><dt>{text.solution}</dt><dd>{tx(project.caseStudy.solution, lang)}</dd></div><div><dt>{text.result}</dt><dd>{tx(project.caseStudy.result, lang)}</dd></div></dl>}
-            <div className="tags">{project.stack.map((tech) => <span key={tech}>{tech}</span>)}</div><ProjectLinks project={project} text={text}/></div>
-        </article>)}</div>}
-        <h3 className="subheading more">{text.moreProjects}</h3>
-        <div className="area-filter" role="group" aria-label={text.areaFilter}>
-          <button className={`chip glass${area === 'all' ? ' on' : ''}`} aria-pressed={area === 'all'} onClick={() => setArea('all')}>{text.areaAll} <small>{others.length}</small></button>
-          {areaKeys.filter((key) => areaCounts[key] > 0).map((key) => <button key={key} className={`chip glass${area === key ? ' on' : ''}`} aria-pressed={area === key} onClick={() => setArea(key)}>{text.areas[key]} <small>{areaCounts[key]}</small></button>)}
-        </div>
-        <div className="project-grid">{visibleProjects.length ? visibleProjects.map((project) => <article className={`pcard${project.size === 'wide' ? ' wide' : ''}${project.image ? ' has-image' : ''}`} key={project.id} style={{ viewTransitionName: `p-${project.id}` }}>
-          {project.image && <a className={`pcard-media${project.fit === 'contain' ? ' contain' : ''}`} href={projectHref(project)} {...(hasDetail(project.id) ? {} : { target: '_blank', rel: 'noreferrer' })} tabIndex={-1} aria-hidden="true"><img src={project.image} alt="" width="1200" height="750" style={{ objectPosition: project.position, ...(hasDetail(project.id) ? { viewTransitionName: `img-${project.id}` } : {}) }} loading="lazy" decoding="async"/></a>}
-          <div className="pcard-body"><p className="eyebrow"><span className={`area-dot area-${project.area}`} aria-hidden="true"/>{text.areas[project.area]} · {text.status[project.status]}</p><h3>{project.name}</h3><p className="tagline">{tx(project.tagline, lang)}</p><p className="desc">{tx(project.description, lang)}</p><div className="tags">{project.stack.slice(0, 5).map((tech) => <span key={tech}>{tech}</span>)}</div><ProjectLinks project={project} text={text}/></div>
-        </article>) : <p className="empty-state">{text.empty}</p>}</div>
-      </section>
+      {(trail === 'all' || trail === 'pes') && <section className="research-band" id="research"><div className="section-wrap research-inner"><SectionHeading label={text.research} title={text.researchTitle}/><div className="research-copy"><p className="period">{tx(research.period, lang)}</p><p className="research-affiliation">{research.institution}<br/>{research.advisor}</p><p>{tx(research.summary, lang)}</p><div className="research-block"><span className="eyebrow">{text.researchMethod}</span><p>{tx(research.method, lang)}</p></div><div className="research-block"><span className="eyebrow">{text.researchTools}</span><div className="tags">{research.tools.map((tool) => <span key={tool}>{tool}</span>)}</div></div><div className="research-block"><span className="eyebrow">{text.researchStatus}</span><p>{tx(research.status, lang)}</p></div></div></div></section>}
 
-      {(trail === 'all' || trail === 'pes') && <section className="research-band" id="research"><div className="section-wrap research-inner"><SectionHeading number={numberOf('research')} label={text.research} title={text.researchTitle}/><div className="research-copy"><p className="period">{tx(research.period, lang)}</p><p className="research-affiliation">{research.institution}<br/>{research.advisor}</p><p>{tx(research.summary, lang)}</p><div className="research-block"><span className="eyebrow">{text.researchMethod}</span><p>{tx(research.method, lang)}</p></div><div className="research-block"><span className="eyebrow">{text.researchTools}</span><div className="tags">{research.tools.map((tool) => <span key={tool}>{tool}</span>)}</div></div><div className="research-block"><span className="eyebrow">{text.researchStatus}</span><p>{tx(research.status, lang)}</p></div></div></div></section>}
+      {latestContent && <section className="section-wrap section" id="content"><SectionHeading label={text.nav.content} title={text.contentTeaser}/>
+        <div className="content-teaser"><div className="content-teaser-copy"><p>{text.contentTeaserLead}</p><a className="btn glass" href="/conteudos">{text.allContent} <span aria-hidden="true">→</span></a></div><ContentCard item={latestContent} lang={lang} text={text}/></div>
+      </section>}
 
-      <section className="section-wrap section" id="awards"><SectionHeading number={numberOf('awards')} label={text.nav.awards} title={text.awardsTitle}/>
+      <section className="section-wrap section" id="awards"><SectionHeading label={text.nav.awards} title={text.awardsTitle}/>
         <p className="section-lead">{text.awardsLead}</p>
         <ol className="awards">{awards.map((award) => <li className="award glass" key={award.id} style={{ viewTransitionName: `a-${award.id}` }}><span className="award-dot" aria-hidden="true"/><p className="period">{award.year ?? '—'}</p><h3>{tx(award.title, lang)}</h3><p>{tx(award.context, lang)}</p>{award.image && <img src={award.image.src} alt={tx(award.image.alt, lang)} width="798" height="1064" loading="lazy" decoding="async"/>}</li>)}</ol>
       </section>
 
-      {photos.length > 0 && <section className="section-wrap section" id="gallery"><SectionHeading number={numberOf('gallery')} label={text.nav.gallery} title={text.galleryTitle}/>
+      {photos.length > 0 && <section className="section-wrap section" id="gallery"><SectionHeading label={text.nav.gallery} title={text.galleryTitle}/>
         <p className="section-lead">{text.galleryLead}</p>
         <div className="gallery">{photos.map((item, index) => <button className="photo" key={item.id} style={{ viewTransitionName: `ph-${item.id}` }} onClick={() => setLightbox(index)} aria-label={`${text.openPhoto}: ${tx(item.caption, lang)}`}><img src={item.src} alt={tx(item.alt, lang)} width={item.width} height={item.height} loading="lazy" decoding="async"/><span className="photo-caption glass">{tx(item.caption, lang)}</span></button>)}</div>
       </section>}
 
-      <section className="section-wrap section about-section" id="about"><SectionHeading number={numberOf('about')} label={text.about} title={text.aboutTitle}/>
+      <section className="section-wrap section about-section" id="about"><SectionHeading label={text.about} title={text.aboutTitle}/>
         <div className="about-content"><p>{text.aboutText}</p><div className="education-card glass"><span className="eyebrow">{text.education}</span><h3>{text.educationProgram}</h3><p>{text.educationInstitution}</p><span className="education-period">{text.educationStatus}</span><span className="eyebrow languages-label">{text.languages}</span><p>{text.languagesLine}</p></div></div>
         <div className="about-resume"><div className="skill-groups"><h3>{text.skills}</h3>{skillGroups.map((group) => <div className="skill-group" key={group.title.en}><span>{tx(group.title, lang)}</span><div className="tags skill-tags">{group.items.map((item) => item.evidence.length ? <button key={item.name} className={`skill${skill === item.name ? ' on' : ''}`} aria-pressed={skill === item.name} onClick={() => setSkill(skill === item.name ? null : item.name)}>{item.name}</button> : <span key={item.name}>{item.name}</span>)}</div></div>)}
           <div className="skill-panel glass" aria-live="polite">{activeSkill ? <><p className="eyebrow">{text.usedIn} · {activeSkill.name}</p><ul>{activeSkill.evidence.map((link) => link && <li key={link.label}><a href={link.href}>{link.label} <span aria-hidden="true">→</span></a></li>)}</ul></> : <p>{text.skillsHint}</p>}</div></div><div className="honors-group"><h3>{text.certifications}</h3><ul>{certifications.map((item) => <li key={item.en}>{tx(item, lang)}</li>)}</ul></div></div>
       </section>
 
-      <section className="contact-section" id="contact"><div className="section-wrap"><div className="contact-card glass"><SectionHeading number={numberOf('contact')} label={text.contact} title={text.contactTitle}/><div className="contact-content"><p>{text.contactText}</p><div className="contact-links"><a className="btn glass primary" href={`mailto:${site.email}`}>{text.sendEmail} <span aria-hidden="true">↗</span></a><button className="btn glass" onClick={copyEmail}>{text.copyEmail} <span aria-hidden="true">⧉</span></button><a className="btn glass" href={site.github} target="_blank" rel="noreferrer">{text.github} <span aria-hidden="true">↗</span></a><a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer">{text.linkedin} <span aria-hidden="true">↗</span></a><a className="btn glass" href="/cv">{text.cvPage}</a></div><p className="copy-status" role="status" aria-live="polite">{copyState}</p></div></div></div></section>
+      <section className="contact-section" id="contact"><div className="section-wrap"><div className="contact-card glass"><SectionHeading label={text.contact} title={text.contactTitle}/><div className="contact-content"><p>{text.contactText}</p><div className="contact-links"><a className="btn glass primary" href={`mailto:${site.email}`}>{text.sendEmail} <span aria-hidden="true">↗</span></a><button className="btn glass" onClick={copyEmail}>{text.copyEmail} <span aria-hidden="true">⧉</span></button><a className="btn glass" href={site.github} target="_blank" rel="noreferrer">{text.github} <span aria-hidden="true">↗</span></a><a className="btn glass" href={site.linkedin} target="_blank" rel="noreferrer">{text.linkedin} <span aria-hidden="true">↗</span></a><a className="btn glass" href="/cv">{text.cvPage}</a></div><p className="copy-status" role="status" aria-live="polite">{copyState}</p></div></div></div></section>
     </main>
-    <footer className="site-footer"><span>© {new Date().getFullYear()} Alex Santana</span><a href="#home">{text.back}</a></footer>
+    <SiteFooter text={text}/>
 
     <dialog ref={dialogRef} className="lightbox" onClose={() => setLightbox(null)} onClick={(event) => { if (event.target === event.currentTarget) setLightbox(null) }} onKeyDown={(event) => { if (event.key === 'ArrowRight') stepPhoto(1); if (event.key === 'ArrowLeft') stepPhoto(-1) }} aria-label={photo ? tx(photo.caption, lang) : text.openPhoto}>
       {photo && <figure><img src={photo.src} alt={tx(photo.alt, lang)}/><figcaption className="glass">{tx(photo.caption, lang)}</figcaption></figure>}
@@ -346,12 +359,12 @@ function Portfolio() {
   </div>
 }
 
-function SectionHeading({ number, label, title }: { number: string; label: string; title: string }) { return <div className="section-heading"><span className="section-number" aria-hidden="true">{number} /</span><div><p className="eyebrow">{label}</p><h2>{title}</h2></div></div> }
+function SectionHeading({ label, title }: { label: string; title: string }) { return <div className="section-heading"><p className="eyebrow">{label}</p><h2>{title}</h2></div> }
 function NavIcon({ name }: { name: string }) {
   const paths: Record<string, React.ReactNode> = {
     home: <><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></>,
     experience: <><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></>,
-    projects: <><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></>,
+    content: <><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></>,
     research: <><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3M8 15h8"/></>,
     awards: <><path d="M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H4v1a3 3 0 0 0 4 3M16 6h4v1a3 3 0 0 1-4 3M12 13v4M8 21h8M10 17h4"/></>,
     gallery: <><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></>,

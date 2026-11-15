@@ -20,6 +20,21 @@ const cv = inject(template, render('/cv'))
 await mkdir('dist/cv', { recursive: true })
 await writeFile('dist/cv/index.html', cv)
 
+// Section pages: same shell, own title, description and canonical URL.
+const page = (path, title, description) => inject(template, render(path))
+  .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+  .replace('<link rel="canonical" href="https://alexjsz.vercel.app/" />', `<link rel="canonical" href="https://alexjsz.vercel.app${path}" />`)
+  .replace('<meta property="og:url" content="https://alexjsz.vercel.app/" />', `<meta property="og:url" content="https://alexjsz.vercel.app${path}" />`)
+  .replace(/(<meta (?:property="og:title"|name="twitter:title") content=")[^"]*(")/g, `$1${title}$2`)
+  .replace(/(<meta (?:name="description"|property="og:description"|name="twitter:description") content=")[^"]*(")/g, `$1${description}$2`)
+for (const [path, title, description] of [
+  ['/projetos', 'Projetos — Alex Santana', 'Todos os projetos de Alex Santana: estudos de caso, ferramentas de dados, web e experimentos.'],
+  ['/conteudos', 'Conteúdos — Alex Santana', 'Vídeos, workshops e materiais do Claude Builders Club na USP, por Alex Santana, Campus Ambassador do Claude.'],
+]) {
+  await mkdir(`dist${path}`, { recursive: true })
+  await writeFile(`dist${path}/index.html`, page(path, title, description))
+}
+
 // One static page per project case study.
 const projects = JSON.parse(await readFile('src/data/projects.json', 'utf8'))
 const details = JSON.parse(await readFile('src/data/details.json', 'utf8'))
@@ -42,4 +57,4 @@ for (const id of Object.keys(details)) {
 }
 
 await rm(ssrDir, { recursive: true, force: true })
-console.log(`prerendered index, cv and ${Object.keys(details).length} project pages`)
+console.log(`prerendered index, cv, projetos, conteudos and ${Object.keys(details).length} project pages`)

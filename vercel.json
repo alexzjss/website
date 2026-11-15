@@ -5,6 +5,8 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/cv", "destination": "/cv/index.html" },
+    { "source": "/projetos", "destination": "/projetos/index.html" },
+    { "source": "/conteudos", "destination": "/conteudos/index.html" },
     { "source": "/projetos/:id", "destination": "/projetos/:id/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]

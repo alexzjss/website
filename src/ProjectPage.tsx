@@ -1,67 +1,29 @@
-import { useEffect, useState } from 'react'
-import { details, projects, site, tx, type Lang } from './content'
-import { ui } from './ui'
+import { details, projects, tx } from './content'
+import { Backdrop, SiteFooter, SiteHeader, useMeta, usePrefs } from './shell'
 import ArchDiagram from './Diagram'
 import './styles.css'
 
-const hasWindow = typeof window !== 'undefined'
 const order = Object.keys(details)
 
-function readLang(): Lang {
-  try {
-    const param = new URLSearchParams(window.location.search).get('lang')
-    if (param === 'en') return 'en'
-    if (param === 'pt') return 'pt-BR'
-    return localStorage.getItem('alex-lang') === 'en' ? 'en' : 'pt-BR'
-  } catch { return 'pt-BR' }
-}
-function readTheme(): 'light' | 'dark' {
-  try {
-    const param = new URLSearchParams(window.location.search).get('theme')
-    if (param === 'light' || param === 'dark') return param
-    const stored = localStorage.getItem('alex-theme')
-    if (stored === 'light' || stored === 'dark') return stored
-  } catch { /* storage can be unavailable */ }
-  return hasWindow && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 export default function ProjectPage({ id }: { id: string }) {
-  const [lang, setLang] = useState<Lang>(readLang)
-  const [theme, setTheme] = useState<'light' | 'dark'>(readTheme)
-  const text = ui[lang]
+  const { lang, theme, text, toggleLang, toggleTheme } = usePrefs()
   const project = projects.find((item) => item.id === id)
   const detail = details[id]
+  useMeta(project ? `${project.name} — Alex Santana` : text.title, project ? tx(project.tagline, lang) : text.description)
 
-  useEffect(() => {
-    document.documentElement.lang = lang
-    document.documentElement.dataset.theme = theme
-    if (project) {
-      document.title = `${project.name} — Alex Santana`
-      document.querySelector('meta[name="description"]')?.setAttribute('content', tx(project.tagline, lang))
-      document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${project.name} — Alex Santana`)
-      document.querySelector('meta[property="og:description"]')?.setAttribute('content', tx(project.tagline, lang))
-    }
-    try { localStorage.setItem('alex-lang', lang) } catch { /* ignore */ }
-  }, [lang, theme, project])
-
-  if (!project || !detail) return <main className="pp-missing"><p><a href="/">← {text.cvBack}</a></p></main>
+  if (!project || !detail) return <main className="pp-missing"><p><a href="/projetos">← {text.allProjects}</a></p></main>
 
   const position = order.indexOf(id)
   const next = projects.find((item) => item.id === order[(position + 1) % order.length])!
   const previous = projects.find((item) => item.id === order[(position - 1 + order.length) % order.length])!
 
   return <div className="page-shell pp">
-    <div className="blobs" aria-hidden="true"><i/><i/><i/></div>
-    <a className="skip-link" href="#main">{text.skip}</a>
-    <div className="topbar glass pp-bar" role="group">
-      <a className="bar-link" href="/#projects">← {text.ppBack}</a>
-      <span className="bar-sep" aria-hidden="true"/>
-      <button className="bar-button" onClick={() => setLang(lang === 'pt-BR' ? 'en' : 'pt-BR')} aria-label={text.language}>{lang === 'pt-BR' ? 'PT' : 'EN'}</button>
-      <button className="bar-button" onClick={() => { const nextTheme = theme === 'light' ? 'dark' : 'light'; setTheme(nextTheme); try { localStorage.setItem('alex-theme', nextTheme) } catch { /* ignore */ } }} aria-label={theme === 'light' ? text.themeDark : text.themeLight} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾' : '☀'}</button>
-    </div>
+    <Backdrop text={text}/>
+    <SiteHeader current="projects" lang={lang} theme={theme} text={text} onLang={toggleLang} onTheme={toggleTheme}/>
 
     <main id="main" tabIndex={-1} className="section-wrap">
       <header className="pp-head">
+        <a className="back-link" href="/projetos"><span aria-hidden="true">←</span> {text.allProjects}</a>
         <p className="eyebrow"><span className={`area-dot area-${project.area}`} aria-hidden="true"/>{text.areas[project.area]} · {text.status[project.status]}</p>
         <h1>{project.name}</h1>
         <p className="pp-tagline">{tx(project.tagline, lang)}</p>
@@ -94,6 +56,6 @@ export default function ProjectPage({ id }: { id: string }) {
         <a className="glass" href={`/projetos/${next.id}`}><small>{text.ppNext} →</small><b>{next.name}</b></a>
       </nav>
     </main>
-    <footer className="site-footer"><span>© {new Date().getFullYear()} {site.name}</span><a href="/#projects">{text.ppBack} ↑</a></footer>
+    <SiteFooter text={text}/>
   </div>
 }

@@ -1,0 +1,70 @@
+/* Phone layout: thumb-sized targets, a compact hero that shows the face and the actions on the first screen,
+   swipeable reading trails, and no hover effects that stick after a tap. */
+@media(max-width:650px){
+  /* Top bar and section menu */
+  .topbar .segment a{padding:10px 11px}
+  .bar-button{min-height:40px;min-width:38px}
+  .mobile-nav-trigger{left:auto;right:16px;height:46px}
+  .floating-nav{left:auto;right:16px;bottom:max(72px,calc(env(safe-area-inset-bottom) + 70px))}
+  .floating-nav a{height:46px}
+
+  /* Hero: portrait becomes an avatar above the name, actions line up in a grid */
+  .hero{gap:18px;padding-top:92px;padding-bottom:28px}
+  .hero-copy,.hero-composition{transform:none;opacity:1}
+  .hero-composition{order:-1;place-items:start}
+  .portrait-stage{width:104px;margin:0;animation:none}
+  .portrait-frame{padding:5px;border-radius:32px}
+  .portrait-photo{border-radius:27px}
+  .portrait-chip{display:none}
+  .status-chip{margin-bottom:14px}
+  .hero .eyebrow{display:none}
+  .hero h1{margin-bottom:18px}
+  .hero-links{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hero-links .btn{justify-content:center}
+  .hero-links .btn:nth-child(-n+2){grid-column:1/-1}
+
+  /* Reading trails: one swipeable row instead of three stacked cards */
+  .trails{padding-top:36px}
+  .trail-grid{display:flex;gap:12px;margin-inline:-18px;padding:4px 18px 12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .trail-grid::-webkit-scrollbar{display:none}
+  .trail-card{flex:0 0 80%;min-height:138px;scroll-snap-align:center}
+  .trail-status{margin-top:6px}
+
+  /* Touch targets */
+  .btn{min-height:46px;padding-inline:20px}
+  .chip{padding:10px 16px}
+  .pill{padding:10px 16px}
+  .skill{padding:8px 13px;font-size:13px}
+  .disclosure{min-height:44px}
+  .entry-link{padding:8px 0}
+  .trail-status button,.page-empty button{padding:10px 0}
+  .site-footer{gap:4px 24px}
+  .site-footer nav{gap:0;margin-inline:-10px}
+  .site-footer nav a{padding:10px}
+  .lb-close,.lb-nav{width:48px;height:48px}
+
+  /* Rhythm */
+  .section{padding-top:64px}
+  .contact-section{padding-top:64px}
+  .contact-links{display:grid;grid-template-columns:1fr 1fr}
+  .contact-links .btn{justify-content:center}
+  .contact-links .btn:nth-child(-n+2),.contact-links .btn:last-child{grid-column:1/-1}
+  .project-links{gap:10px}
+  .pp-links{display:grid;grid-template-columns:1fr 1fr}
+  .pp-links .btn{justify-content:center}
+  .pp-links .btn:only-child{grid-column:1/-1}
+
+  /* Lighter backdrop for phone GPUs */
+  .blobs i{animation:none;filter:blur(60px)}
+}
+@media(max-width:350px){
+  .topbar .segment a{padding:10px 7px;font-size:12px}
+  .hero h1{font-size:72px}
+}
+/* On touch screens a tap leaves :hover stuck, so lifts and zooms only run for real pointers */
+@media(hover:none){
+  .btn:hover,.chip:hover,.bar-button:hover,.pill:hover,.stat:hover,.trail-card:hover,.pcard:hover,.ccard:hover,.skill:hover,.skill-panel a:hover,.pp-next a:hover{transform:none}
+  .case-media:hover img,.pcard:hover .pcard-media img,.photo:hover img{transform:none}
+  .ccard:hover .ccard-mark{transform:none}
+  .glass:hover::after{opacity:0}
+}

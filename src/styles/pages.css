@@ -1,0 +1,108 @@
+/* Site-wide page navigation, the /projetos and /conteudos pages, and layout refinements layered over main.css */
+
+/* Top bar: page links share the segment look */
+.topbar .segment a{border-radius:30px;padding:8px 15px;font-size:13px;color:var(--muted);transition:background var(--standard),color var(--standard)}
+.topbar .segment a:hover{color:var(--ink)}
+.topbar .segment a.on{background:var(--glass-on);color:var(--ink);font-weight:600;box-shadow:0 2px 10px rgb(0 0 0 / .1),inset 0 1px 0 var(--glass-hi)}
+.bar-button{min-height:36px}
+
+/* Readability and touch targets */
+body{font-size:16px}
+.skill{padding:5px 12px;font-size:12.5px}
+.tags span{font-size:12px;padding:3px 10px}
+.pill{padding:8px 16px}
+.disclosure{min-height:40px}
+.btn small{opacity:.75;font-size:11.5px;font-weight:600}
+
+/* Sections use the full column: the numbered gutter is gone, since sections are not a sequence */
+.section-heading{display:block}
+.section-heading .eyebrow{margin:0 0 10px}
+.timeline{margin-left:8px}
+.subheading,.case-study,.area-filter,.project-grid,.awards,.gallery,.about-content,.about-resume,.section-lead{margin-left:0}
+.research-copy{padding-top:0}
+.contact-content{padding-top:8px}
+
+/* Footer */
+.site-footer{flex-wrap:wrap;gap:10px 24px;margin-top:40px;padding:22px 0 26px;border-top:1px solid var(--line)}
+.site-footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
+.site-footer a{color:var(--muted)}
+.site-footer a:hover{color:var(--ink)}
+.contact-section{padding-bottom:30px}
+
+/* Sub-pages */
+.subpage main{padding-bottom:40px}
+.page-head{padding-top:132px;margin-bottom:34px}
+.page-head h1{font-size:clamp(54px,9vw,108px);line-height:.95;letter-spacing:-.05em;margin:0 0 16px}
+.page-lead{max-width:640px;margin:0;font-size:clamp(17px,2vw,20px);line-height:1.6;color:var(--muted)}
+.page-section{margin-top:64px}
+.page-section>h2{display:flex;align-items:baseline;gap:10px;margin:0 0 20px;font-size:clamp(26px,3vw,34px);line-height:1.15}
+.page-section>h2 small{font:600 13px var(--font-body);letter-spacing:0;color:var(--muted)}
+.back-link{display:inline-flex;gap:6px;margin-bottom:18px;font-size:13px;font-weight:600;color:var(--muted);transition:color var(--fast)}
+.back-link:hover{color:var(--ink)}
+
+/* Project filters */
+.filters{display:grid;gap:10px}
+.filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.filter-name{flex:0 0 132px;font-size:12.5px;color:var(--muted)}
+.filter-count{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.page-empty{margin-top:40px}
+.page-empty button{border:0;background:none;padding:0;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+
+/* Content: Claude Builders Club */
+.club{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;align-items:center;padding:14px;border-radius:30px}
+.club-banner{display:block;width:100%;height:auto;border-radius:20px}
+.club-body{display:grid;gap:14px;justify-items:start;padding:10px 14px 10px 0}
+.club-id{display:flex;align-items:center;gap:13px}
+.club-id h2{margin:0;font-size:24px;line-height:1.2}
+.club-id p{margin:0;font-size:13px;color:var(--muted)}
+.club-text{margin:0;max-width:52ch;color:var(--muted)}
+.content-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.ccard{display:grid;grid-template-columns:132px minmax(0,1fr);gap:18px;padding:12px;border-radius:26px;transition:transform 380ms var(--spring)}
+.ccard:hover{transform:translateY(-3px)}
+.ccard-poster{position:relative;display:grid;place-items:center;aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:linear-gradient(160deg,var(--accent),var(--accent-2));color:var(--on-accent)}
+.ccard-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ccard-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:rgb(255 255 255 / .22);box-shadow:inset 0 0 0 1px rgb(255 255 255 / .5);transition:transform 380ms var(--spring)}
+.ccard:hover .ccard-mark{transform:scale(1.12)}
+.ccard-mark svg{width:22px;height:22px}
+.ccard-platform{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:11px;font-weight:600;letter-spacing:.04em}
+.ccard-body{display:flex;flex-direction:column;gap:6px;min-width:0;padding:8px 8px 8px 0}
+.ccard-meta{font-size:12.5px;color:var(--muted)}
+.ccard b{font-family:var(--font-head);font-size:22px;font-weight:600;line-height:1.2;letter-spacing:-.02em;text-wrap:balance}
+.ccard-summary{font-size:13.5px;line-height:1.6;color:var(--muted)}
+.ccard-cta{margin-top:auto;padding-top:8px;font-size:13px;font-weight:600;color:var(--accent)}
+.content-empty{max-width:640px;margin:0;padding:22px 24px;border:1px dashed var(--line);border-radius:20px;color:var(--muted)}
+.content-empty a{color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.content-teaser{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:34px;align-items:center}
+.content-teaser-copy p{margin:0 0 18px;font-size:17px;color:var(--muted)}
+
+@media(max-width:900px){
+  .content-grid,.content-teaser{grid-template-columns:1fr}
+  .content-teaser{gap:20px}
+}
+@media(max-width:650px){
+  .topbar .segment a{padding:8px 10px;font-size:12.5px}
+  .page-head{padding-top:100px}
+  .page-section{margin-top:48px}
+  .filter-name{flex-basis:100%}
+  .club{grid-template-columns:1fr;gap:14px}
+  .club-body{padding:4px 8px 10px}
+  .ccard{grid-template-columns:104px minmax(0,1fr);gap:14px}
+  .ccard b{font-size:19px}
+  .section-lead{margin-top:-14px}
+  .mobile-nav-trigger~.site-footer{padding-bottom:76px}
+}
+
+/* Page-to-page transitions: the top bar and backdrop hold still, the active tab slides, and the page content rises in.
+   The page-nav class is set only while a navigation runs, so trail and filter changes keep their own softer cross-fade. */
+.blobs{view-transition-name:backdrop}
+.topbar .segment a.on{view-transition-name:nav-pill}
+::view-transition-group(nav-pill){animation-duration:420ms;animation-timing-function:var(--spring)}
+::view-transition-group(topbar),::view-transition-group(backdrop){animation-duration:420ms}
+html.page-nav::view-transition-old(root){animation:page-leave 180ms cubic-bezier(.4,0,1,1) both}
+html.page-nav::view-transition-new(root){animation:page-enter 460ms cubic-bezier(.22,.8,.24,1) 90ms both}
+html.page-nav-back::view-transition-old(root){animation-name:page-leave-back}
+html.page-nav-back::view-transition-new(root){animation-name:page-enter-back}
+@keyframes page-leave{to{opacity:0;transform:translateY(-10px) scale(.992)}}
+@keyframes page-enter{from{opacity:0;transform:translateY(22px)}}
+@keyframes page-leave-back{to{opacity:0;transform:translateY(10px) scale(.992)}}
+@keyframes page-enter-back{from{opacity:0;transform:translateY(-22px)}}
