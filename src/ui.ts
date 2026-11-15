@@ -1,4 +1,4 @@
-import type { Area, Kind, Lang, Trail } from './content'
+import type { Area, ContentType, Kind, Lang, Trail } from './content'
 
 type Strings = {
   nav: Record<string, string>
@@ -7,7 +7,7 @@ type Strings = {
 }
 
 const pt = {
-  nav: { home: 'Início', experience: 'Experiência', projects: 'Projetos', research: 'Pesquisa', awards: 'Conquistas', gallery: 'Em fotos', about: 'Sobre', contact: 'Contato' },
+  nav: { home: 'Início', experience: 'Experiência', projects: 'Projetos', content: 'Conteúdos', research: 'Pesquisa', awards: 'Conquistas', gallery: 'Em fotos', about: 'Sobre', contact: 'Contato' },
   trails: {
     all: { name: 'Tudo', short: 'Tudo', blurb: 'O site completo.', lead: 'Sou estudante de Sistemas de Informação na USP e desenvolvo software, participo de pesquisa em teste de software e de projetos universitários nas áreas de dados, IA e tecnologia.' },
     rec: { name: 'Recrutador', short: 'Recrut', blurb: 'Estágio, projetos entregues, stack e currículo. O caminho mais curto.', lead: 'Estudante de Sistemas de Informação na USP, com estágio em dados no Banco Safra e sistemas de back-end e dados usados por mais de 700 alunos.' },
@@ -32,18 +32,29 @@ const pt = {
   galleryTitle: 'Eventos, palestras e visitas', galleryLead: 'Bastidores da vida universitária.', openPhoto: 'Ampliar foto', closePhoto: 'Fechar', prevPhoto: 'Foto anterior', nextPhoto: 'Foto seguinte',
   stats: ['alunos usam o DaSIboard', 'versões defeituosas reais na pesquisa', 'prêmios e títulos', 'projetos publicados'],
   copyEmail: 'Copiar e-mail', copied: 'E-mail copiado', copyFail: 'Não consegui copiar, use o botão de e-mail',
-  themeLight: 'Ativar tema claro', themeDark: 'Ativar tema escuro', language: 'Mudar idioma para inglês', navLabel: 'Navegação por seções', menu: 'Abrir navegação', closeMenu: 'Fechar navegação', progress: 'Progresso de leitura',
+  themeLight: 'Ativar tema claro', themeDark: 'Ativar tema escuro', language: 'Mudar idioma para inglês', navLabel: 'Navegação por seções', menu: 'Abrir navegação por seções', closeMenu: 'Fechar navegação por seções', menuShort: 'Seções', closeShort: 'Fechar', progress: 'Progresso de leitura',
   photoHero: 'Retrato de Alex Santana', skip: 'Pular para o conteúdo', hello: 'Oi, eu sou', portfolio: 'PORTFÓLIO', back: 'Voltar ao topo ↑', numbers: 'Números',
   statusChip: 'Estagiário de dados · Banco Safra · Jan 2027', viewProjects: 'Ver projetos',
   title: 'Alex Santana — Sistemas, software e pesquisa', description: 'Portfólio de Alex Santana, estudante de Sistemas de Informação na USP: dados, back-end e pesquisa em teste de software.',
   ppBack: 'Projetos', ppOverview: 'Visão geral', ppHow: 'Como funciona', ppDecisions: 'Decisões técnicas', ppLimits: 'Limitações e uso responsável', ppStack: 'Stack', ppNext: 'Próximo projeto', ppPrev: 'Projeto anterior', ppMetrics: 'Em números', ppDiagram: 'Diagrama de arquitetura', viewStudy: 'Ver estudo', usedIn: 'Usado em', skillsHint: 'Toque em uma competência para ver onde usei.', skillsNone: 'Sem projeto associado ainda.',
+  pages: { home: 'Início', projects: 'Projetos', content: 'Conteúdos' }, pagesLabel: 'Páginas do site', footerLabel: 'Rodapé',
+  allProjects: 'Ver todos os projetos', cvDownload: 'Baixar currículo', cvFile: '/documents/CV-pt.pdf', cvFileName: 'Alex-Santana-CV-pt.pdf',
+  projectsMetaTitle: 'Projetos — Alex Santana', projectsPageLead: 'Tudo o que construí, dos estudos de caso aos experimentos. Filtre por trilha de leitura ou por área.',
+  areaName: 'Área', projectCountOne: 'projeto', projectCountMany: 'projetos', clearFilters: 'Limpar filtros',
+  contentTitle: 'Conteúdos', contentMetaTitle: 'Conteúdos — Alex Santana', contentLead: 'Vídeos, workshops e materiais que produzo como Campus Ambassador do Claude na USP, pelo Claude Builders Club.',
+  clubText: 'O clube reúne estudantes da USP que querem aprender e construir com IA. Os conteúdos saem primeiro no Instagram.', followClub: 'Seguir @claude.usp', clubBannerAlt: 'Selo “I’m a Claude Campus Ambassador”, do programa Claude by Anthropic',
+  contentTypes: { video: 'Vídeos', workshop: 'Workshops', event: 'Eventos' } as Record<ContentType, string>,
+  contentKind: { video: 'Vídeo', workshop: 'Workshop', event: 'Evento' } as Record<ContentType, string>,
+  contentOpen: { video: 'Assistir no', workshop: 'Ver no', event: 'Ver no' } as Record<ContentType, string>,
+  contentEmpty: { video: 'Nenhum vídeo publicado ainda. Os próximos aparecem aqui e no', workshop: 'Nenhum workshop publicado ainda. Os próximos aparecem aqui e no', event: 'Nenhum evento publicado ainda. Os próximos aparecem aqui e no' } as Record<ContentType, string>,
+  contentTeaser: 'Vídeos e workshops do Claude Builders Club', contentTeaserLead: 'Sou Campus Ambassador do Claude na USP. O conteúdo mais recente:', allContent: 'Ver todos os conteúdos',
   cvTitle: 'Alex Santana — Currículo', cvHeadline: 'Estudante de Sistemas de Informação · USP · Dados, back-end e pesquisa', cvPrint: 'Imprimir ou salvar PDF', cvBack: 'Voltar ao portfólio',
   cvSections: { summary: 'Resumo', experience: 'Experiência', research: 'Pesquisa', projects: 'Projetos selecionados', skills: 'Competências', education: 'Formação', awards: 'Conquistas', certs: 'Certificações', languages: 'Idiomas', orgs: 'Organizações universitárias' },
   cvSummary: 'Estudante de Sistemas de Informação na USP com foco em engenharia de software, back-end, dados e inteligência artificial. Combino desenvolvimento, pesquisa em teste e depuração de software e projetos de tecnologia na comunidade universitária.',
 } satisfies Strings
 
 const en = {
-  nav: { home: 'Home', experience: 'Experience', projects: 'Projects', research: 'Research', awards: 'Awards', gallery: 'Photos', about: 'About', contact: 'Contact' },
+  nav: { home: 'Home', experience: 'Experience', projects: 'Projects', content: 'Content', research: 'Research', awards: 'Awards', gallery: 'Photos', about: 'About', contact: 'Contact' },
   trails: {
     all: { name: 'All', short: 'All', blurb: 'The full site.', lead: 'I study Information Systems at USP, work on software testing research, and take part in university technology projects across data, AI, and software development.' },
     rec: { name: 'Recruiter', short: 'Recruit', blurb: 'Internship, shipped projects, stack, and résumé. The shortest path.', lead: 'Information Systems student at USP, with a data internship at Banco Safra and backend and data systems used by more than 700 students.' },
@@ -68,11 +79,22 @@ const en = {
   galleryTitle: 'Events, talks, and visits', galleryLead: 'Behind the scenes of university life.', openPhoto: 'Enlarge photo', closePhoto: 'Close', prevPhoto: 'Previous photo', nextPhoto: 'Next photo',
   stats: ['students use DaSIboard', 'real buggy versions in the research', 'awards and titles', 'published projects'],
   copyEmail: 'Copy email', copied: 'Email copied', copyFail: 'Could not copy, use the email button',
-  themeLight: 'Switch to light theme', themeDark: 'Switch to dark theme', language: 'Mudar idioma para português', navLabel: 'Section navigation', menu: 'Open navigation', closeMenu: 'Close navigation', progress: 'Reading progress',
+  themeLight: 'Switch to light theme', themeDark: 'Switch to dark theme', language: 'Mudar idioma para português', navLabel: 'Section navigation', menu: 'Open section navigation', closeMenu: 'Close section navigation', menuShort: 'Sections', closeShort: 'Close', progress: 'Reading progress',
   photoHero: 'Portrait of Alex Santana', skip: 'Skip to content', hello: 'Hi, I’m', portfolio: 'PORTFOLIO', back: 'Back to top ↑', numbers: 'By the numbers',
   statusChip: 'Data intern · Banco Safra · Jan 2027', viewProjects: 'View projects',
   title: 'Alex Santana — Systems, software, and research', description: 'Portfolio of Alex Santana, Information Systems student at USP: data, backend, and software testing research.',
   ppBack: 'Projects', ppOverview: 'Overview', ppHow: 'How it works', ppDecisions: 'Technical decisions', ppLimits: 'Limitations and responsible use', ppStack: 'Stack', ppNext: 'Next project', ppPrev: 'Previous project', ppMetrics: 'By the numbers', ppDiagram: 'Architecture diagram', viewStudy: 'View case study', usedIn: 'Used in', skillsHint: 'Select a skill to see where I used it.', skillsNone: 'No linked project yet.',
+  pages: { home: 'Home', projects: 'Projects', content: 'Content' }, pagesLabel: 'Site pages', footerLabel: 'Footer',
+  allProjects: 'View all projects', cvDownload: 'Download résumé', cvFile: '/documents/CV-en.pdf', cvFileName: 'Alex-Santana-CV-en.pdf',
+  projectsMetaTitle: 'Projects — Alex Santana', projectsPageLead: 'Everything I have built, from case studies to experiments. Filter by reading path or by area.',
+  areaName: 'Area', projectCountOne: 'project', projectCountMany: 'projects', clearFilters: 'Clear filters',
+  contentTitle: 'Content', contentMetaTitle: 'Content — Alex Santana', contentLead: 'Videos, workshops, and materials I produce as a Claude Campus Ambassador at USP, through the Claude Builders Club.',
+  clubText: 'The club brings together USP students who want to learn and build with AI. Content goes out on Instagram first.', followClub: 'Follow @claude.usp', clubBannerAlt: '“I’m a Claude Campus Ambassador” badge from the Claude by Anthropic program',
+  contentTypes: { video: 'Videos', workshop: 'Workshops', event: 'Events' } as Record<ContentType, string>,
+  contentKind: { video: 'Video', workshop: 'Workshop', event: 'Event' } as Record<ContentType, string>,
+  contentOpen: { video: 'Watch on', workshop: 'View on', event: 'View on' } as Record<ContentType, string>,
+  contentEmpty: { video: 'No videos published yet. New ones will show up here and on', workshop: 'No workshops published yet. New ones will show up here and on', event: 'No events published yet. New ones will show up here and on' } as Record<ContentType, string>,
+  contentTeaser: 'Videos and workshops from the Claude Builders Club', contentTeaserLead: 'I am a Claude Campus Ambassador at USP. The latest piece:', allContent: 'View all content',
   cvTitle: 'Alex Santana — Résumé', cvHeadline: 'Information Systems student · USP · Data, backend, and research', cvPrint: 'Print or save as PDF', cvBack: 'Back to portfolio',
   cvSections: { summary: 'Summary', experience: 'Experience', research: 'Research', projects: 'Selected projects', skills: 'Skills', education: 'Education', awards: 'Awards', certs: 'Certificates', languages: 'Languages', orgs: 'University organizations' },
   cvSummary: 'Information Systems student at USP focused on software engineering, backend, data, and artificial intelligence. I combine development, software testing and debugging research, and technology projects in the university community.',

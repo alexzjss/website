@@ -7,6 +7,7 @@ import profileData from './data/profile.json'
 import awardsData from './data/awards.json'
 import galleryData from './data/gallery.json'
 import detailsData from './data/details.json'
+import contentData from './data/content.json'
 
 export type Lang = 'pt-BR' | 'en'
 export type Copy = { 'pt-BR': string; en: string }
@@ -19,6 +20,10 @@ export type Project = { id: string; name: string; description: Copy; tagline: Co
 export type Entry = { id: string; kind?: Kind; trails: Trail[]; link?: { href: string; label: Copy }; name: string; role: Copy; period: Copy; sortKey: number; summary: Copy; details: Copy; logo?: string }
 export type Award = { id: string; year?: string; title: Copy; context: Copy; image?: { src: string; alt: Copy } }
 export type Photo = { id: string; src: string; width: number; height: number; alt: Copy; caption: Copy; trails: Trail[] }
+
+export type ContentType = 'video' | 'workshop' | 'event'
+export type ContentItem = { id: string; type: ContentType; platform: string; date: string; url: string; title: Copy; summary: Copy; image?: string }
+export type Club = { name: string; handle: string; url: string; logo: string; banner: string }
 
 export type Evidence = { kind: 'project' | 'entry'; id: string }
 export type Skill = { name: string; evidence: Evidence[] }
@@ -38,6 +43,11 @@ export const skillGroups = profileData.skillGroups as { title: Copy; items: Skil
 export const certifications = profileData.certifications as Copy[]
 export const awards = awardsData as Award[]
 export const gallery = galleryData as Photo[]
+
+export const club = contentData.club as Club
+export const contentItems = contentData.items as ContentItem[]
+/** Dates are stored as YYYY-MM-DD and formatted in UTC so server and client render the same day. */
+export const formatDate = (iso: string, lang: Lang) => new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`))
 
 export const inTrail = (trails: Trail[], trail: TrailFilter) => trail === 'all' || trails.includes(trail)
 export const details = detailsData as unknown as Record<string, Detail>

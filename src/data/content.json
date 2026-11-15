@@ -1,0 +1,26 @@
+{
+  "club": {
+    "name": "Claude Builders Club USP",
+    "handle": "claude.usp",
+    "url": "https://www.instagram.com/claude.usp/",
+    "logo": "/images/organizations/claude.jpg",
+    "banner": "/images/experiences/claude-campus-ambassador.jpeg"
+  },
+  "items": [
+    {
+      "id": "claude-sistema-operacional",
+      "type": "video",
+      "platform": "Instagram",
+      "date": "2026-11-13",
+      "url": "https://www.instagram.com/reel/DfsoMOYTNVJ/",
+      "title": {
+        "pt-BR": "O Claude construiu um sistema operacional do zero",
+        "en": "Claude built an operating system from scratch"
+      },
+      "summary": {
+        "pt-BR": "Um engenheiro da Anthropic entregou uma pasta vazia ao Fable 5.2. Em 8 dias, mais de mil agentes trabalhando em paralelo criaram um sistema operacional completo.",
+        "en": "An Anthropic engineer handed Fable 5.2 an empty folder. In 8 days, more than a thousand agents working in parallel built a complete operating system."
+      }
+    }
+  ]
+}

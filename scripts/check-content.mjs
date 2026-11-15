@@ -49,5 +49,15 @@ const awards = load('awards')
 unique(awards, 'awards')
 for (const a of awards) { copy(a.title, `awards/${a.id}.title`); copy(a.context, `awards/${a.id}.context`); if (a.image) { image(a.image.src, `awards/${a.id}`); copy(a.image.alt, `awards/${a.id}.alt`) } }
 
+const content = load('content')
+unique(content.items, 'content')
+image(content.club.logo, 'content/club.logo'); image(content.club.banner, 'content/club.banner')
+for (const c of content.items) {
+  copy(c.title, `content/${c.id}.title`); copy(c.summary, `content/${c.id}.summary`); image(c.image, `content/${c.id}.image`)
+  if (!['video', 'workshop', 'event'].includes(c.type)) errors.push(`content/${c.id}: invalid type`)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(c.date)) errors.push(`content/${c.id}: date must be YYYY-MM-DD`)
+  if (!/^https:\/\//.test(c.url)) errors.push(`content/${c.id}: url must be https`)
+}
+
 if (errors.length) { console.error(errors.join('\n')); process.exit(1) }
-console.log(`content ok: ${entries.length} experiences, ${projects.length} projects, ${gallery.length} photos, ${awards.length} awards`)
+console.log(`content ok: ${entries.length} experiences, ${projects.length} projects, ${gallery.length} photos, ${awards.length} awards, ${content.items.length} content items`)
