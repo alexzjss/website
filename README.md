@@ -39,6 +39,16 @@ The hero portrait is `public/images/profile/alex-santana.jpg`. Replace it with a
 
 Public profile links and email are in `src/App.tsx`. The phone number is not displayed as website text.
 
+### Acervo (textos, estudos e pesquisas)
+
+Os conteúdos longos vivem no repositório [alexzjss/acervo](https://github.com/alexzjss/acervo), como HTML sem estilo marcado com `data-*` (o padrão está em `PADRAO.md` lá). O site só aplica o visual:
+
+- `scripts/acervo.mjs` roda antes do `dev` e do `build`: baixa o acervo (clone raso em `.acervo-cache/`, ou a pasta indicada em `ACERVO_DIR`; `ACERVO_REPO` muda o endereço), renderiza as fórmulas LaTeX com KaTeX e gera `src/generated/acervo.json` (índice e sumário), `public/acervo/<slug>.html` (corpo) e `public/acervo/widgets/` (ferramentas interativas). Os três são ignorados pelo git.
+- Cada arquivo vira `/conteudos/<slug>` (`src/AcervoPage.tsx`) e entra na lista de `/conteudos`, no pré-render e no `sitemap.xml`. Rascunhos (`acervo:estado` = `rascunho`) só aparecem com `ACERVO_DRAFTS=1`.
+- O estilo de todos os blocos, tabelas, figuras SVG e widgets está em `src/styles/acervo.css`, usando os tokens do site (claro e escuro). Novo valor no vocabulário do acervo exige uma regra nesse arquivo.
+- Para publicar um texto novo basta dar push no acervo. Com o segredo `VERCEL_DEPLOY_HOOK` configurado lá, a Vercel refaz o build sozinha; sem ele, rode um novo deploy.
+- Conteúdo em Markdown ainda não é publicado.
+
 ## Publish with GitHub and Vercel
 
 Connect this repository to a Vercel project and use the repository root as the project root. `vercel.json` sets the Vite framework, `npm run build`, and `dist` as the output directory. Pushes to the configured production branch trigger deployments. Confirm that the Vercel project's Root Directory points to the repository root if a deployment does not use this configuration.

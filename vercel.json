@@ -8,6 +8,7 @@
     { "source": "/projetos", "destination": "/projetos/index.html" },
     { "source": "/conteudos", "destination": "/conteudos/index.html" },
     { "source": "/projetos/:id", "destination": "/projetos/:id/index.html" },
+    { "source": "/conteudos/:slug", "destination": "/conteudos/:slug/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
