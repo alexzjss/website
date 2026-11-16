@@ -1,0 +1,49 @@
+name: sincronizar-acervo
+
+# O site baixa o acervo (alexzjss/acervo) a cada build. Este fluxo verifica de hora em hora
+# se o conteúdo ou os widgets mudaram lá; se sim, registra a nova versão em acervo.lock na
+# main. Esse commit dispara o deploy da Vercel, que refaz o build com o acervo atualizado.
+# Não precisa de segredo. Também pode ser rodado à mão (Actions → sincronizar-acervo → Run workflow).
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sincronizar-acervo
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Ler a versão atual do acervo
+        id: acervo
+        run: |
+          git clone --quiet --depth 1 https://github.com/alexzjss/acervo .acervo-cache
+          # só conteúdo e widgets importam: mudanças em README, validador etc. não geram deploy
+          novo=$(git -C .acervo-cache rev-parse HEAD:conteudo HEAD:widgets | tr '\n' ' ' | sed 's/ $//')
+          atual=$(cat acervo.lock 2>/dev/null || true)
+          echo "versão do acervo: $novo"
+          echo "registrada:       $atual"
+          echo "novo=$novo" >> "$GITHUB_OUTPUT"
+          if [ "$novo" != "$atual" ]; then echo "mudou=true" >> "$GITHUB_OUTPUT"; fi
+          rm -rf .acervo-cache
+
+      - name: Registrar a nova versão (dispara o deploy)
+        if: steps.acervo.outputs.mudou == 'true'
+        env:
+          NOVO: ${{ steps.acervo.outputs.novo }}
+        run: |
+          echo "$NOVO" > acervo.lock
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add acervo.lock
+          git commit -m "Atualiza o acervo"
+          git push origin HEAD:main

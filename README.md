@@ -46,7 +46,7 @@ Os conteúdos longos vivem no repositório [alexzjss/acervo](https://github.com/
 - `scripts/acervo.mjs` roda antes do `dev` e do `build`: baixa o acervo (clone raso em `.acervo-cache/`, ou a pasta indicada em `ACERVO_DIR`; `ACERVO_REPO` muda o endereço), renderiza as fórmulas LaTeX com KaTeX e gera `src/generated/acervo.json` (índice e sumário), `public/acervo/<slug>.html` (corpo) e `public/acervo/widgets/` (ferramentas interativas). Os três são ignorados pelo git.
 - Cada arquivo vira `/conteudos/<slug>` (`src/AcervoPage.tsx`) e entra na lista de `/conteudos`, no pré-render e no `sitemap.xml`. Rascunhos (`acervo:estado` = `rascunho`) só aparecem com `ACERVO_DRAFTS=1`.
 - O estilo de todos os blocos, tabelas, figuras SVG e widgets está em `src/styles/acervo.css`, usando os tokens do site (claro e escuro). Novo valor no vocabulário do acervo exige uma regra nesse arquivo.
-- Para publicar um texto novo basta dar push no acervo. Com o segredo `VERCEL_DEPLOY_HOOK` configurado lá, a Vercel refaz o build sozinha; sem ele, rode um novo deploy.
+- Para publicar um texto novo basta dar push no acervo. O fluxo `.github/workflows/sincronizar-acervo.yml` confere de hora em hora (e sob demanda, em Actions → Run workflow) se `conteudo/` ou `widgets/` mudaram lá; se sim, atualiza `acervo.lock` na main, e esse commit dispara o deploy da Vercel. Não precisa de segredo. Para publicar na hora, rode o fluxo à mão. (Alternativa mais rápida: um Deploy Hook da Vercel guardado como segredo `VERCEL_DEPLOY_HOOK` no repositório do acervo.)
 - Conteúdo em Markdown ainda não é publicado.
 
 ## Publish with GitHub and Vercel
