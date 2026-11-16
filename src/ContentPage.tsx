@@ -1,3 +1,4 @@
+import { acervo, acervoDate, acervoHref } from './acervo'
 import { club, contentItems, formatDate, tx, type ContentItem, type ContentType, type Lang } from './content'
 import { Backdrop, SiteFooter, SiteHeader, useMeta, usePrefs } from './shell'
 import type { UI } from './ui'
@@ -51,6 +52,18 @@ export default function ContentPage() {
             : <p className="content-empty">{text.contentEmpty[type]} <a href={club.url} target="_blank" rel="noreferrer">@{club.handle}</a>.</p>}
         </section>
       })}
+
+      {acervo.length > 0 && <section className="page-section" aria-labelledby="content-acervo">
+        <h2 id="content-acervo">{text.acervoTitle}<small>{acervo.length}</small></h2>
+        <p className="acervo-lead">{text.acervoLead}</p>
+        <div className="acervo-grid">{acervo.map((entry) => <a key={entry.slug} className="acard glass" href={acervoHref(entry)}>
+          <span className="ccard-meta">{text.acervoTypes[entry.type] ?? entry.type}{entry.updated && <> · <time dateTime={entry.updated}>{acervoDate(entry.updated, lang)}</time></>}{entry.state !== 'concluido' && <> · {text.acervoState[entry.state]}</>}</span>
+          <b>{entry.title}</b>
+          <span className="ccard-summary">{entry.description}</span>
+          {entry.tags.length > 0 && <span className="tags">{entry.tags.slice(0, 5).map((tag) => <span key={tag}>{tag}</span>)}</span>}
+          <span className="ccard-cta">{text.acervoRead} <span aria-hidden="true">→</span></span>
+        </a>)}</div>
+      </section>}
     </main>
     <SiteFooter text={text}/>
   </div>

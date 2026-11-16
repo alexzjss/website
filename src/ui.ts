@@ -51,6 +51,9 @@ const pt = {
   cvTitle: 'Alex Santana — Currículo', cvHeadline: 'Estudante de Sistemas de Informação · USP · Dados, back-end e pesquisa', cvPrint: 'Imprimir ou salvar PDF', cvBack: 'Voltar ao portfólio',
   cvSections: { summary: 'Resumo', experience: 'Experiência', research: 'Pesquisa', projects: 'Projetos selecionados', skills: 'Competências', education: 'Formação', awards: 'Conquistas', certs: 'Certificações', languages: 'Idiomas', orgs: 'Organizações universitárias' },
   cvSummary: 'Estudante de Sistemas de Informação na USP com foco em engenharia de software, back-end, dados e inteligência artificial. Combino desenvolvimento, pesquisa em teste e depuração de software e projetos de tecnologia na comunidade universitária.',
+  acervoTitle: 'Textos e estudos', acervoLead: 'Cadernos de estudo, textos e pesquisas do meu acervo pessoal.', acervoRead: 'Ler', acervoToc: 'Neste conteúdo', acervoUpdated: 'Atualizado em', acervoLoading: 'Carregando…', acervoFail: 'Não consegui carregar este conteúdo.', acervoLangNote: 'Disponível só em português',
+  acervoTypes: { estudos: 'Caderno de estudo', textos: 'Texto', pesquisas: 'Pesquisa', elementos: 'Elemento', outros: 'Conteúdo' } as Record<string, string>,
+  acervoState: { rascunho: 'Rascunho', 'em-andamento': 'Em andamento', concluido: 'Concluído' } as Record<string, string>,
 } satisfies Strings
 
 const en = {
@@ -98,6 +101,9 @@ const en = {
   cvTitle: 'Alex Santana — Résumé', cvHeadline: 'Information Systems student · USP · Data, backend, and research', cvPrint: 'Print or save as PDF', cvBack: 'Back to portfolio',
   cvSections: { summary: 'Summary', experience: 'Experience', research: 'Research', projects: 'Selected projects', skills: 'Skills', education: 'Education', awards: 'Awards', certs: 'Certificates', languages: 'Languages', orgs: 'University organizations' },
   cvSummary: 'Information Systems student at USP focused on software engineering, backend, data, and artificial intelligence. I combine development, software testing and debugging research, and technology projects in the university community.',
+  acervoTitle: 'Writing and studies', acervoLead: 'Study notebooks, texts, and research from my personal archive.', acervoRead: 'Read', acervoToc: 'In this piece', acervoUpdated: 'Updated', acervoLoading: 'Loading…', acervoFail: 'Could not load this piece.', acervoLangNote: 'Available in Portuguese only',
+  acervoTypes: { estudos: 'Study notebook', textos: 'Text', pesquisas: 'Research', elementos: 'Element', outros: 'Content' } as Record<string, string>,
+  acervoState: { rascunho: 'Draft', 'em-andamento': 'In progress', concluido: 'Complete' } as Record<string, string>,
 } satisfies Strings
 
 export const ui: Record<Lang, typeof pt> = { 'pt-BR': pt, en }

@@ -6,6 +6,7 @@ import CvPage from './CvPage'
 import ProjectPage from './ProjectPage'
 import ProjectsPage from './ProjectsPage'
 import ContentPage, { ContentCard } from './ContentPage'
+import AcervoPage from './AcervoPage'
 import { SiteFooter, SiteHeader } from './shell'
 import './styles.css'
 
@@ -49,6 +50,8 @@ function routeFor(path: string) {
   if (clean === '/cv') return <CvPage />
   if (clean === '/projetos') return <ProjectsPage />
   if (clean === '/conteudos') return <ContentPage />
+  const piece = clean.match(/^\/conteudos\/([\w-]+)$/)
+  if (piece) return <AcervoPage key={piece[1]} slug={piece[1]} />
   const match = clean.match(/^\/projetos\/([\w-]+)$/)
   if (match) return <ProjectPage key={match[1]} id={match[1]} />
   return <Portfolio />

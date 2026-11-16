@@ -3,3 +3,6 @@ dist
 dist-ssr
 .vite
 *.local
+src/generated
+public/acervo
+.acervo-cache

@@ -56,5 +56,29 @@ for (const id of Object.keys(details)) {
   await writeFile(`dist/projetos/${id}/index.html`, html)
 }
 
+// One static page per acervo piece (alexzjss/acervo). The body is injected by the component from globalThis.
+const acervo = JSON.parse(await readFile('src/generated/acervo.json', 'utf8'))
+const attr = (text) => text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+globalThis.__ACERVO_PAGES__ = {}
+for (const entry of acervo) globalThis.__ACERVO_PAGES__[entry.slug] = await readFile(`public/acervo/${entry.slug}.html`, 'utf8')
+for (const entry of acervo) {
+  const path = `/conteudos/${entry.slug}`
+  const title = attr(`${entry.title} — Alex Santana`)
+  const description = attr(entry.description)
+  const html = inject(template, render(path))
+    .replace(/<title>[^<]*<\/title>/, () => `<title>${title}</title>`)
+    .replace(`<link rel="canonical" href="${origin}/" />`, () => `<link rel="canonical" href="${origin}${path}" />`)
+    .replace(`<meta property="og:url" content="${origin}/" />`, () => `<meta property="og:url" content="${origin}${path}" />`)
+    .replace(/(<meta (?:property="og:title"|name="twitter:title") content=")[^"]*(")/g, (_, a, b) => `${a}${title}${b}`)
+    .replace(/(<meta (?:name="description"|property="og:description"|name="twitter:description") content=")[^"]*(")/g, (_, a, b) => `${a}${description}${b}`)
+  await mkdir(`dist${path}`, { recursive: true })
+  await writeFile(`dist${path}/index.html`, html)
+}
+if (acervo.length) {
+  const sitemap = await readFile('dist/sitemap.xml', 'utf8')
+  const urls = acervo.map((entry) => `  <url>\n    <loc>${origin}/conteudos/${entry.slug}</loc>\n    <lastmod>${entry.updated || entry.created}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`).join('')
+  await writeFile('dist/sitemap.xml', sitemap.replace('</urlset>', `${urls}</urlset>`))
+}
+
 await rm(ssrDir, { recursive: true, force: true })
-console.log(`prerendered index, cv, projetos, conteudos and ${Object.keys(details).length} project pages`)
+console.log(`prerendered index, cv, projetos, conteudos, ${Object.keys(details).length} project pages and ${acervo.length} acervo pages`)
